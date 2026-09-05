@@ -16,13 +16,25 @@ function SelectorDeRolTemporal() {
   );
 }
 
+// Restricción de acceso por rol (HU-001: "Solo un usuario con rol docente
+// puede realizar la acción"). Es una restricción de UX sobre el rol simulado
+// del Sprint 1, no un mecanismo de seguridad real; la validación definitiva
+// debe existir en el backend.
+function RutaSoloDocente({ children }) {
+  const { rol } = useAuth();
+  if (rol !== 'docente') {
+    return <p style={{ padding: '1rem' }}>Esta sección está disponible solo para el rol Docente.</p>;
+  }
+  return children;
+}
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <SelectorDeRolTemporal />
         <Routes>
-          <Route path="/docente" element={<PanelDocente />} />
+          <Route path="/docente" element={<RutaSoloDocente><PanelDocente /></RutaSoloDocente>} />
           <Route path="/estudiante" element={<PanelEstudiante />} />
           <Route path="/" element={<Navigate to="/docente" />} />
         </Routes>
