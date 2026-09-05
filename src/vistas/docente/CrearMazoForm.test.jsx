@@ -30,9 +30,28 @@ describe('CrearMazoForm', () => {
     fireEvent.change(screen.getByLabelText(/semana\/periodo/i), { target: { value: '3' } });
     fireEvent.change(screen.getByLabelText(/obra literaria/i), { target: { value: 'Things Fall Apart' } });
     fireEvent.change(screen.getByLabelText(/autor/i), { target: { value: 'Chinua Achebe' } });
+    fireEvent.change(screen.getByLabelText(/fecha de apertura/i), { target: { value: '2026-09-08' } });
+    fireEvent.change(screen.getByLabelText(/fecha de cierre/i), { target: { value: '2026-09-14' } });
 
     fireEvent.click(screen.getByRole('button', { name: /crear mazo/i }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(/creado correctamente/i);
+  });
+
+  it('muestra un error si la fecha de cierre es anterior a la de apertura', async () => {
+    render(<CrearMazoForm />);
+
+    await waitFor(() => screen.getByRole('option', { name: /literatura anglófona/i }));
+
+    fireEvent.change(screen.getByLabelText(/curso\/grupo/i), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText(/semana\/periodo/i), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText(/obra literaria/i), { target: { value: 'Things Fall Apart' } });
+    fireEvent.change(screen.getByLabelText(/autor/i), { target: { value: 'Chinua Achebe' } });
+    fireEvent.change(screen.getByLabelText(/fecha de apertura/i), { target: { value: '2026-09-10' } });
+    fireEvent.change(screen.getByLabelText(/fecha de cierre/i), { target: { value: '2026-09-05' } });
+
+    fireEvent.click(screen.getByRole('button', { name: /crear mazo/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/fecha de cierre debe ser igual o posterior/i);
   });
 });

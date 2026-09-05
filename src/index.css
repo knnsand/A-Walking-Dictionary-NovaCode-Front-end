@@ -1,111 +1,268 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --font-sans: 'Inter', system-ui, sans-serif;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+  /* Colores aproximados, extraídos visualmente de crear_mazo_tema_claro.png.
+     Si en el equipo existe una guía de estilo con valores hex exactos (Figma, etc.),
+     reemplazar estos por los oficiales. */
+  --color-bg-page: #F4F6F9;
+  --color-bg-card: #FFFFFF;
+  --color-bg-header: #F8FAFC;
+  --color-border: #E2E8F0;
+  --color-text-main: #1E293B;
+  --color-text-muted: #64748B;
+  --color-primary: #1E2A4A;
+  --color-primary-contrast: #FFFFFF;
+  --color-info-bg: #EAF3FC;
+  --color-info-border: #3B82F6;
+  --color-info-text: #1E40AF;
+  --color-success-bg: #E6F4EA;
+  --color-success-text: #1E4620;
+  --color-success-border: #1E4620;
+  --color-error-bg: #FDECEA;
+  --color-error-text: #611A15;
+  --color-error-border: #611A15;
 }
 
 body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-main);
   margin: 0;
+  padding: 0;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+/* ---- Tarjeta contenedora (equivalente visual al modal del mockup,
+   pero como sección de página, no como diálogo emergente) ---- */
+.card-mazo {
+  width: 100%;
+  max-width: 680px;
+  margin: 24px auto;
+  background-color: var(--color-bg-card);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-mazo__header {
   display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: var(--color-bg-header);
+  border-bottom: 1px solid var(--color-border);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+.card-mazo__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: var(--color-primary);
+  flex-shrink: 0;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
+.card-mazo__title {
   margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-main);
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
+.card-mazo__subtitle {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.card-mazo__body {
+  padding: 20px;
+}
+
+.card-mazo__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  background-color: var(--color-bg-header);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---- Formulario ---- */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 12px;
   border-radius: 4px;
-  color: var(--text-h);
+  border: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  background-color: #FFFFFF;
+  font-family: var(--font-sans);
+  box-sizing: border-box;
+  outline: none;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--color-info-border);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* ---- Selector tipo "chip" (usado para variante regional y estado) ---- */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-option {
+  position: relative;
+}
+
+.chip-option input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.chip-option label {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-text-main);
+  cursor: pointer;
+  user-select: none;
+}
+
+.chip-option input:checked + label {
+  border-color: var(--color-info-border);
+  border-width: 2px;
+  font-weight: 600;
+}
+
+/* ---- Aviso informativo (info box) ---- */
+.info-box {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background-color: var(--color-info-bg);
+  border-left: 3px solid var(--color-info-border);
+  color: var(--color-info-text);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+/* ---- Botones ---- */
+.btn {
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  color: var(--color-text-main);
+  border-color: var(--color-border);
+}
+
+/* ---- Modificador de card-mazo sin relleno interno (para listas) ---- */
+.card-mazo__body--flush {
+  padding: 0;
+}
+
+/* ---- Lista de mazos ---- */
+.mazo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mazo-list__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mazo-list__item:last-child {
+  border-bottom: none;
+}
+
+.mazo-list__info strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--color-text-main);
+}
+
+.mazo-list__meta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-abierto {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.badge-cerrado {
+  background-color: #F1F5F9;
+  color: var(--color-text-muted);
+}
+
+.empty-state {
+  padding: 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
 }
