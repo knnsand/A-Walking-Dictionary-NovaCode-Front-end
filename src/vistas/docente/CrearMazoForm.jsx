@@ -3,9 +3,11 @@ import { listarCursos } from '../../cliente-api/cursosApi';
 import { crearMazo } from '../../cliente-api/mazosApi';
 import { Aviso } from '../../componentes/comunes/Aviso';
 
-// Lista fija basada en los ejemplos de Entrega 1 (p. 19). Ampliarla es una
-// decisión de contenido, no de arquitectura.
 const VARIANTES_REGIONALES = ['Británico', 'Nigeriano', 'Jamaicano', 'Ghanés'];
+const ESTADOS = [
+  { value: 'abierto', label: 'Abierto' },
+  { value: 'cerrado', label: 'Cerrado' },
+];
 
 const CAMPOS_OBLIGATORIOS = ['curso_id', 'nombre_lectura', 'autor', 'semana', 'variante_regional_predeterminada'];
 
@@ -29,6 +31,18 @@ export function CrearMazoForm({ onMazoCreado }) {
   function handleChange(evento) {
     const { name, value } = evento.target;
     setForm((anterior) => ({ ...anterior, [name]: value }));
+  }
+
+  function handleReset() {
+    setForm({
+      curso_id: '',
+      nombre_lectura: '',
+      autor: '',
+      semana: '',
+      variante_regional_predeterminada: VARIANTES_REGIONALES[0],
+      estado: 'abierto',
+    });
+    setAviso({ tipo: null, mensaje: null });
   }
 
   function validar() {
@@ -57,49 +71,94 @@ export function CrearMazoForm({ onMazoCreado }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Crear estructura de mazo</h2>
+    <form className="card-mazo" onSubmit={handleSubmit}>
+      <div className="card-mazo__header">
+        <div className="card-mazo__icon" aria-hidden="true" />
+        <div>
+          <h2 className="card-mazo__title">Crear Nuevo Mazo de Estudio</h2>
+          <p className="card-mazo__subtitle">Herramienta exclusiva de creación para el Docente</p>
+        </div>
+      </div>
 
-      <Aviso tipo={aviso.tipo} mensaje={aviso.mensaje} />
+      <div className="card-mazo__body">
+        <Aviso tipo={aviso.tipo} mensaje={aviso.mensaje} />
 
-      <label htmlFor="curso_id">Curso/grupo</label>
-      <select id="curso_id" name="curso_id" value={form.curso_id} onChange={handleChange}>
-        <option value="">Selecciona un curso</option>
-        {cursos.map((curso) => (
-          <option key={curso.id_curso} value={curso.id_curso}>{curso.nombre}</option>
-        ))}
-      </select>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label" htmlFor="semana">Semana/periodo</label>
+            <input id="semana" className="form-input" type="text" name="semana" value={form.semana} onChange={handleChange} />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="curso_id">Curso/grupo</label>
+            <select id="curso_id" className="form-select" name="curso_id" value={form.curso_id} onChange={handleChange}>
+              <option value="">Selecciona un curso</option>
+              {cursos.map((curso) => (
+                <option key={curso.id_curso} value={curso.id_curso}>{curso.nombre}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-      <label htmlFor="semana">Semana/periodo</label>
-      <input id="semana" type="text" name="semana" value={form.semana} onChange={handleChange} />
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label" htmlFor="nombre_lectura">Obra literaria / lectura asignada</label>
+            <input id="nombre_lectura" className="form-input" type="text" name="nombre_lectura" value={form.nombre_lectura} onChange={handleChange} />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="autor">Autor</label>
+            <input id="autor" className="form-input" type="text" name="autor" value={form.autor} onChange={handleChange} />
+          </div>
+        </div>
 
-      <label htmlFor="nombre_lectura">Obra literaria / lectura asignada</label>
-      <input id="nombre_lectura" type="text" name="nombre_lectura" value={form.nombre_lectura} onChange={handleChange} />
+        <div className="form-group">
+          <span className="form-label">Variante regional predeterminada</span>
+          <div className="chip-group" role="radiogroup" aria-label="Variante regional predeterminada">
+            {VARIANTES_REGIONALES.map((variante) => (
+              <div className="chip-option" key={variante}>
+                <input
+                  type="radio"
+                  id={`variante-${variante}`}
+                  name="variante_regional_predeterminada"
+                  value={variante}
+                  checked={form.variante_regional_predeterminada === variante}
+                  onChange={handleChange}
+                />
+                <label htmlFor={`variante-${variante}`}>{variante}</label>
+              </div>
+            ))}
+          </div>
+        </div>
 
-      <label htmlFor="autor">Autor</label>
-      <input id="autor" type="text" name="autor" value={form.autor} onChange={handleChange} />
+        <div className="form-group">
+          <span className="form-label">Estado inicial</span>
+          <div className="chip-group" role="radiogroup" aria-label="Estado inicial">
+            {ESTADOS.map((opcion) => (
+              <div className="chip-option" key={opcion.value}>
+                <input
+                  type="radio"
+                  id={`estado-${opcion.value}`}
+                  name="estado"
+                  value={opcion.value}
+                  checked={form.estado === opcion.value}
+                  onChange={handleChange}
+                />
+                <label htmlFor={`estado-${opcion.value}`}>{opcion.label}</label>
+              </div>
+            ))}
+          </div>
+        </div>
 
-      <label htmlFor="variante_regional_predeterminada">Variante regional predeterminada</label>
-      <select
-        id="variante_regional_predeterminada"
-        name="variante_regional_predeterminada"
-        value={form.variante_regional_predeterminada}
-        onChange={handleChange}
-      >
-        {VARIANTES_REGIONALES.map((variante) => (
-          <option key={variante} value={variante}>{variante}</option>
-        ))}
-      </select>
+        <div className="info-box">
+          Una vez creado el mazo, los estudiantes del curso podrán aportar palabras y ejemplos para tu revisión.
+        </div>
+      </div>
 
-      <label htmlFor="estado">Estado inicial</label>
-      <select id="estado" name="estado" value={form.estado} onChange={handleChange}>
-        <option value="abierto">Abierto</option>
-        <option value="cerrado">Cerrado</option>
-      </select>
-
-      <button type="submit" disabled={enviando}>
-        {enviando ? 'Creando...' : 'Crear mazo'}
-      </button>
+      <div className="card-mazo__footer">
+        <button type="button" className="btn btn-secondary" onClick={handleReset}>Cancelar</button>
+        <button type="submit" className="btn btn-primary" disabled={enviando}>
+          {enviando ? 'Creando...' : 'Crear mazo'}
+        </button>
+      </div>
     </form>
   );
 }
