@@ -9,18 +9,22 @@ const ESTADOS = [
   { value: 'cerrado', label: 'Cerrado' },
 ];
 
-const CAMPOS_OBLIGATORIOS = ['curso_id', 'nombre_lectura', 'autor', 'semana', 'variante_regional_predeterminada'];
+const CAMPOS_OBLIGATORIOS = ['curso_id', 'nombre_lectura', 'autor', 'semana', 'variante_regional_predeterminada', 'fecha_apertura', 'fecha_cierre'];
+
+const FORM_INICIAL = {
+  curso_id: '',
+  nombre_lectura: '',
+  autor: '',
+  semana: '',
+  variante_regional_predeterminada: VARIANTES_REGIONALES[0],
+  estado: 'abierto',
+  fecha_apertura: '',
+  fecha_cierre: '',
+};
 
 export function CrearMazoForm({ onMazoCreado }) {
   const [cursos, setCursos] = useState([]);
-  const [form, setForm] = useState({
-    curso_id: '',
-    nombre_lectura: '',
-    autor: '',
-    semana: '',
-    variante_regional_predeterminada: VARIANTES_REGIONALES[0],
-    estado: 'abierto',
-  });
+  const [form, setForm] = useState(FORM_INICIAL);
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
   const [enviando, setEnviando] = useState(false);
 
@@ -34,26 +38,29 @@ export function CrearMazoForm({ onMazoCreado }) {
   }
 
   function handleReset() {
-    setForm({
-      curso_id: '',
-      nombre_lectura: '',
-      autor: '',
-      semana: '',
-      variante_regional_predeterminada: VARIANTES_REGIONALES[0],
-      estado: 'abierto',
-    });
+    setForm(FORM_INICIAL);
     setAviso({ tipo: null, mensaje: null });
   }
 
-  function validar() {
+  function validarCamposObligatorios() {
     return CAMPOS_OBLIGATORIOS.every((campo) => String(form[campo]).trim() !== '');
+  }
+
+  function validarFechas() {
+    if (!form.fecha_apertura || !form.fecha_cierre) return true;
+    return new Date(form.fecha_cierre) >= new Date(form.fecha_apertura);
   }
 
   async function handleSubmit(evento) {
     evento.preventDefault();
 
-    if (!validar()) {
+    if (!validarCamposObligatorios()) {
       setAviso({ tipo: 'error', mensaje: 'Completa todos los campos obligatorios antes de crear el mazo.' });
+      return;
+    }
+
+    if (!validarFechas()) {
+      setAviso({ tipo: 'error', mensaje: 'La fecha de cierre debe ser igual o posterior a la fecha de apertura.' });
       return;
     }
 
@@ -61,7 +68,7 @@ export function CrearMazoForm({ onMazoCreado }) {
     try {
       const mazoCreado = await crearMazo({ ...form, curso_id: Number(form.curso_id) });
       setAviso({ tipo: 'exito', mensaje: `Mazo "${mazoCreado.nombre_lectura}" creado correctamente.` });
-      setForm((anterior) => ({ ...anterior, nombre_lectura: '', autor: '', semana: '' }));
+      setForm((anterior) => ({ ...anterior, nombre_lectura: '', autor: '', semana: '', fecha_apertura: '', fecha_cierre: '' }));
       onMazoCreado?.(mazoCreado);
     } catch (error) {
       setAviso({ tipo: 'error', mensaje: `No se pudo crear el mazo: ${error.message}` });
@@ -107,6 +114,17 @@ export function CrearMazoForm({ onMazoCreado }) {
           <div className="form-group">
             <label className="form-label" htmlFor="autor">Autor</label>
             <input id="autor" className="form-input" type="text" name="autor" value={form.autor} onChange={handleChange} />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label" htmlFor="fecha_apertura">Fecha de apertura *</label>
+            <input id="fecha_apertura" className="form-input" type="date" name="fecha_apertura" value={form.fecha_apertura} onChange={handleChange} />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="fecha_cierre">Fecha de cierre *</label>
+            <input id="fecha_cierre" className="form-input" type="date" name="fecha_cierre" value={form.fecha_cierre} onChange={handleChange} />
           </div>
         </div>
 
