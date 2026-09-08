@@ -8,8 +8,6 @@ export function PanelDocente() {
   return (
     <div>
       <CrearMazoForm onMazoCreado={() => setRefrescarTrigger((valor) => valor + 1)} />
-      <hr />
-      <h2>Mazos creados</h2>
       <ListaMazosCreados refrescarTrigger={refrescarTrigger} />
     </div>
   );

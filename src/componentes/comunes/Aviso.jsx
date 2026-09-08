@@ -1,13 +1,13 @@
 export function Aviso({ tipo, mensaje }) {
   if (!mensaje) return null;
 
-  const estilos = {
-    exito: { background: '#e6f4ea', color: '#1e4620', border: '1px solid #1e4620' },
-    error: { background: '#fdecea', color: '#611a15', border: '1px solid #611a15' },
+  const clases = {
+    exito: { background: 'var(--color-success-bg)', color: 'var(--color-success-text)', border: '1px solid var(--color-success-border)' },
+    error: { background: 'var(--color-error-bg)', color: 'var(--color-error-text)', border: '1px solid var(--color-error-border)' },
   };
 
   return (
-    <div role="alert" style={{ padding: '0.5rem 1rem', borderRadius: '4px', margin: '0.5rem 0', ...estilos[tipo] }}>
+    <div role="alert" style={{ padding: '10px 14px', borderRadius: '4px', marginBottom: '12px', ...clases[tipo] }}>
       {mensaje}
     </div>
   );
