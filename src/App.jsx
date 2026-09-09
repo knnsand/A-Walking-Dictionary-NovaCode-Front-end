@@ -9,7 +9,7 @@ import { PanelDocente } from './vistas/docente/PanelDocente';
 import { RevisionPalabras } from './vistas/docente/RevisionPalabras';
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
 
-import './App.css';
+
 
 function SelectorDeRolTemporal() {
   const { rol, setRol } = useAuth();

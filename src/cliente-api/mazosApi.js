@@ -1,21 +1,31 @@
 import { apiRequest } from './httpClient';
-import { mockListarMazos, mockCrearMazo } from './mocks/mazosMock';
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
+import { mockListarMazos, mockCrearMazo, mockActualizarEstadoMazo} from './mocks/mazosMock';
+import { USE_MOCK } from './apiConfig';
 
 export async function listarMazos() {
   if (USE_MOCK) {
-    return Promise.resolve(mockListarMazos());
+    return mockListarMazos();
   }
   return apiRequest('/decks');
 }
 
 export async function crearMazo(datos) {
   if (USE_MOCK) {
-    return Promise.resolve(mockCrearMazo(datos));
+    return mockCrearMazo(datos);
   }
   return apiRequest('/decks', {
     method: 'POST',
     body: JSON.stringify(datos),
+  });
+}
+
+export async function actualizarEstadoMazo(idMazo, estado) {
+  if (USE_MOCK) {
+    return mockActualizarEstadoMazo(idMazo, estado);
+  }
+
+  return apiRequest(`/decks/${idMazo}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ estado }),
   });
 }
