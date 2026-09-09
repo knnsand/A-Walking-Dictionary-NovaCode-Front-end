@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 
 import { AuthProvider } from './contexto/AuthProvider';
-
+import { ThemeProvider } from './contexto/ThemeProvider';
 import { useAuth } from './contexto/useAuth';
 
+import { LayoutPrincipal } from './componentes/comunes/LayoutPrincipal';
 import { PanelDocente } from './vistas/docente/PanelDocente';
-
+import { RevisionPalabras } from './vistas/docente/RevisionPalabras';
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
 
 
@@ -22,29 +23,18 @@ function SelectorDeRolTemporal() {
   return (
     <div style={{ padding: '0.5rem', background: '#eee' }}>
       Rol simulado actual: <strong>{rol}</strong>{' '}
-      <button onClick={() => cambiarRol('docente')}>
-        Ver como Docente
-      </button>
-      <button onClick={() => cambiarRol('estudiante')}>
-        Ver como Estudiante
-      </button>
+      <button onClick={() => cambiarRol('docente')}>Ver como Docente</button>
+      <button onClick={() => cambiarRol('estudiante')}>Ver como Estudiante</button>
+      <button onClick={() => cambiarRol('invitado')}>Ver como Invitado</button>
     </div>
   );
 }
 
-// Restricción de acceso por rol (HU-001: "Solo un usuario con rol docente
-// puede realizar la acción"). Es una restricción de UX sobre el rol simulado
-// del Sprint 1, no un mecanismo de seguridad real; la validación definitiva
-// debe existir en el backend.
 function RutaSoloDocente({ children }) {
   const { rol } = useAuth();
 
   if (rol !== 'docente') {
-    return (
-      <p style={{ padding: '1rem' }}>
-        Esta sección está disponible solo para el rol Docente.
-      </p>
-    );
+    return <p style={{ padding: '1rem' }}>Esta sección está disponible solo para el rol Docente.</p>;
   }
 
   return children;
@@ -52,32 +42,37 @@ function RutaSoloDocente({ children }) {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <SelectorDeRolTemporal />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <SelectorDeRolTemporal />
 
-        <Routes>
-          <Route
-            path="/docente"
-            element={
-              <RutaSoloDocente>
-                <PanelDocente />
-              </RutaSoloDocente>
-            }
-          />
+          <Routes>
+            <Route path="/docente" element={<LayoutPrincipal contadores={{ pendientes: 2 }} />}>
+              <Route index element={<PanelDocente />} />
+              <Route
+                path="revision-palabras"
+                element={
+                  <RutaSoloDocente>
+                    <RevisionPalabras />
+                  </RutaSoloDocente>
+                }
+              />
+            </Route>
 
-          <Route
-            path="/estudiante"
-            element={<PanelEstudiante />}
-          />
+            <Route path="/estudiante" element={<LayoutPrincipal />}>
+              <Route index element={<PanelEstudiante />} />
+            </Route>
 
-          <Route
-            path="/"
-            element={<Navigate to="/docente" />}
-          />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+            <Route path="/invitado" element={<LayoutPrincipal />}>
+              <Route index element={<p>Vista de demostración para invitados (en construcción)</p>} />
+            </Route>
+
+            <Route path="/" element={<Navigate to="/docente" />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
