@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { listarMazos } from '../../cliente-api/mazosApi';
 
+import { MazoItem } from './crear-mazo/MazoItem';
+
 export function ListaMazosCreados({ refrescarTrigger }) {
   const [mazos, setMazos] = useState([]);
 
@@ -28,17 +30,7 @@ export function ListaMazosCreados({ refrescarTrigger }) {
         ) : (
           <ul className="mazo-list">
             {mazos.map((mazo) => (
-              <li className="mazo-list__item" key={mazo.id_mazo}>
-                <div className="mazo-list__info">
-                  <strong>{mazo.nombre_lectura}</strong>
-                  <span className="mazo-list__meta">
-                    {mazo.autor} · Semana {mazo.semana} · {mazo.variante_regional_predeterminada}
-                  </span>
-                </div>
-                <span className={`badge ${mazo.estado === 'abierto' ? 'badge-abierto' : 'badge-cerrado'}`}>
-                  {mazo.estado === 'abierto' ? 'Abierto' : 'Cerrado'}
-                </span>
-              </li>
+              <MazoItem key={mazo.id_mazo} mazo={mazo} />
             ))}
           </ul>
         )}
