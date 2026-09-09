@@ -8,7 +8,7 @@ import { PanelDocente } from './vistas/docente/PanelDocente';
 
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
 
-import './App.css';
+
 
 function SelectorDeRolTemporal() {
   const { rol, setRol } = useAuth();

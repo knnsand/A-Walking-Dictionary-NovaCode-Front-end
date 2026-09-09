@@ -3,6 +3,7 @@ import { listarCursos } from '../../../cliente-api/cursosApi';
 import { crearMazo } from '../../../cliente-api/mazosApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
 
+import './crear-mazo.css';
 
 import {
   validarCamposObligatorios,
@@ -16,7 +17,7 @@ import {
 } from './crearMazo.constants';
 
 
-export function CrearMazoForm({ onMazoCreado }) {
+export function CrearMazoForm({ onMazoCreado, onCerrar }) {
   const [cursos, setCursos] = useState([]);
   const [form, setForm] = useState(FORM_INICIAL);
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
@@ -29,11 +30,6 @@ export function CrearMazoForm({ onMazoCreado }) {
   function handleChange(evento) {
     const { name, value } = evento.target;
     setForm((anterior) => ({ ...anterior, [name]: value }));
-  }
-
-  function handleReset() {
-    setForm(FORM_INICIAL);
-    setAviso({ tipo: null, mensaje: null });
   }
 
   async function handleSubmit(evento) {
@@ -65,11 +61,48 @@ export function CrearMazoForm({ onMazoCreado }) {
   return (
     <form className="card-mazo" onSubmit={handleSubmit}>
       <div className="card-mazo__header">
-        <div className="card-mazo__icon" aria-hidden="true" />
+        <div className="card-mazo__icon" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    width="22"
+    height="22"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M5 4.5C5 3.67 5.67 3 6.5 3H19V18H6.5C5.67 18 5 18.67 5 19.5V4.5Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M5 19.5C5 18.67 5.67 18 6.5 18H19V21H6.5C5.67 21 5 20.33 5 19.5Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9 7H15M9 10H15"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+  </svg>
+</div>
         <div>
           <h2 className="card-mazo__title">Crear Nuevo Mazo de Estudio</h2>
           <p className="card-mazo__subtitle">Herramienta exclusiva de creación para el Docente</p>
         </div>
+
+          <button
+            type="button"
+            className="card-mazo__close"
+            onClick={onCerrar}
+            aria-label="Cerrar"
+          >
+            ×
+          </button>      
+        
       </div>
 
       <div className="card-mazo__body">
@@ -157,7 +190,7 @@ export function CrearMazoForm({ onMazoCreado }) {
       </div>
 
       <div className="card-mazo__footer">
-        <button type="button" className="btn btn-secondary" onClick={handleReset}>Cancelar</button>
+        <button type="button" className="btn btn-secondary" onClick={onCerrar}> Cancelar</button>
         <button type="submit" className="btn btn-primary" disabled={enviando}>
           {enviando ? 'Creando...' : 'Crear mazo'}
         </button>

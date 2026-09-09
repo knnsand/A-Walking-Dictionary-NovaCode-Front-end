@@ -1,21 +1,41 @@
-export function MazoItem({ mazo }) {
+import { actualizarEstadoMazo } from '../../../cliente-api/mazosApi';
+
+export function MazoItem({ mazo, onEstadoActualizado }) {
+  async function handleEstadoChange(evento) {
+    const nuevoEstado = evento.target.value;
+
+    try {
+      const mazoActualizado = await actualizarEstadoMazo(
+        mazo.id_mazo,
+        nuevoEstado
+      );
+
+      onEstadoActualizado?.(mazoActualizado);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <li className="mazo-list__item">
       <div className="mazo-list__info">
         <strong>{mazo.nombre_lectura}</strong>
 
         <span className="mazo-list__meta">
-          {mazo.autor} · Semana {mazo.semana} · {mazo.variante_regional_predeterminada}
+          {mazo.autor} · Semana {mazo.semana} ·{' '}
+          {mazo.variante_regional_predeterminada}
         </span>
       </div>
 
-      <span
-        className={`badge ${
-          mazo.estado === 'abierto' ? 'badge-abierto' : 'badge-cerrado'
-        }`}
+      <select
+        className="form-select"
+        value={mazo.estado}
+        onChange={handleEstadoChange}
+        aria-label={`Estado del mazo ${mazo.nombre_lectura}`}
       >
-        {mazo.estado === 'abierto' ? 'Abierto' : 'Cerrado'}
-      </span>
+        <option value="abierto">Abierto</option>
+        <option value="cerrado">Cerrado</option>
+      </select>
     </li>
   );
 }
