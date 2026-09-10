@@ -36,7 +36,10 @@ export function ModalCrearMazo({ onCerrar, onMazoCreado }) {
       onClick={handleClicFondo}
     >
       <div className="modal-card">
-        <CrearMazoForm onMazoCreado={handleMazoCreado} />
+        <CrearMazoForm
+          onMazoCreado={handleMazoCreado}
+          onCerrar={onCerrar}
+        />
       </div>
     </div>
   );
