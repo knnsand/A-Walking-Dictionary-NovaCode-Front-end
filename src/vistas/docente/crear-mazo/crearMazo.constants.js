@@ -16,8 +16,6 @@ export const CAMPOS_OBLIGATORIOS = [
   'autor',
   'semana',
   'variante_regional_predeterminada',
-  'fecha_apertura',
-  'fecha_cierre',
 ];
 
 export const FORM_INICIAL = {

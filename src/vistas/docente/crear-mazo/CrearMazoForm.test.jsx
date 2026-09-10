@@ -38,6 +38,33 @@ describe('CrearMazoForm', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(/creado correctamente/i);
   });
 
+  it('crea el mazo correctamente sin fechas', async () => {
+  render(<CrearMazoForm />);
+
+  await waitFor(() =>
+    screen.getByRole('option', { name: /literatura anglófona/i })
+  );
+
+  fireEvent.change(screen.getByLabelText(/curso\/grupo/i), {
+    target: { value: '1' },
+  });
+  fireEvent.change(screen.getByLabelText(/semana\/periodo/i), {
+    target: { value: '3' },
+  });
+  fireEvent.change(screen.getByLabelText(/obra literaria/i), {
+    target: { value: 'Things Fall Apart' },
+  });
+  fireEvent.change(screen.getByLabelText(/autor/i), {
+    target: { value: 'Chinua Achebe' },
+  });
+
+  fireEvent.click(screen.getByRole('button', { name: /crear mazo/i }));
+
+  expect(await screen.findByRole('alert')).toHaveTextContent(
+    /creado correctamente/i
+  );
+});
+
   it('muestra un error si la fecha de cierre es anterior a la de apertura', async () => {
     render(<CrearMazoForm />);
 

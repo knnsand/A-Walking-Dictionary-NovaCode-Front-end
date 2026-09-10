@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { CrearMazoForm } from './CrearMazoForm';
-
+import { CrearMazoForm } from "./crear-mazo/CrearMazoForm";
 /**
  * Envoltorio de modal para CrearMazoForm (HU-001). No modifica la
  * lógica interna del formulario -- solo lo presenta flotando sobre
@@ -37,7 +36,10 @@ export function ModalCrearMazo({ onCerrar, onMazoCreado }) {
       onClick={handleClicFondo}
     >
       <div className="modal-card">
-        <CrearMazoForm onMazoCreado={handleMazoCreado} />
+        <CrearMazoForm
+          onMazoCreado={handleMazoCreado}
+          onCerrar={onCerrar}
+        />
       </div>
     </div>
   );

@@ -57,3 +57,59 @@ export function mockActualizarContexto(cardId, contexto) {
 export function mockListarAprobadas() {
   return tarjetas.filter((t) => t.estado === 'revisado_docente');
 }
+
+export function mockRegistrarTarjeta(idMazo, datos) {
+  const nuevaTarjeta = {
+    id_tarjeta: tarjetas.length + 1,
+    mazo_id: idMazo,
+    palabra: datos.palabra,
+    traduccion: datos.traduccion,
+    definicion: datos.definicion,
+    ejemplo: datos.ejemplo || '',
+    estado: 'pendiente_revision',
+  };
+
+  tarjetas = [...tarjetas, nuevaTarjeta];
+
+  return nuevaTarjeta;
+}
+
+export function mockVerificarDuplicado(
+  mazoId,
+  palabra,
+  definicion,
+  ejemplo
+) {
+  const tarjetasDelMazo = tarjetas.filter(
+    (tarjeta) => tarjeta.mazo_id === mazoId
+  );
+
+  const tarjetaExistente = tarjetasDelMazo.find(
+    (tarjeta) =>
+      tarjeta.palabra.trim().toLowerCase() === palabra.trim().toLowerCase()
+  );
+
+  if (!tarjetaExistente) {
+    return {
+      existe: false,
+      tipo: null,
+      tarjeta: null,
+    };
+  }
+
+  const mismaDefinicion =
+    tarjetaExistente.definicion.trim().toLowerCase() ===
+    definicion.trim().toLowerCase();
+
+  const mismoEjemplo =
+    (tarjetaExistente.ejemplo || '').trim().toLowerCase() ===
+    (ejemplo || '').trim().toLowerCase();
+
+  return {
+    existe: true,
+    tipo: mismaDefinicion && mismoEjemplo
+      ? 'duplicado_exacto'
+      : 'acepcion_adicional',
+    tarjeta: tarjetaExistente,
+  };
+}

@@ -137,11 +137,11 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
 
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label" htmlFor="fecha_apertura">Fecha de apertura *</label>
+            <label className="form-label" htmlFor="fecha_apertura">Fecha de apertura </label>
             <input id="fecha_apertura" className="form-input" type="date" name="fecha_apertura" value={form.fecha_apertura} onChange={handleChange} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="fecha_cierre">Fecha de cierre *</label>
+            <label className="form-label" htmlFor="fecha_cierre">Fecha de cierre </label>
             <input id="fecha_cierre" className="form-input" type="date" name="fecha_cierre" value={form.fecha_cierre} onChange={handleChange} />
           </div>
         </div>
