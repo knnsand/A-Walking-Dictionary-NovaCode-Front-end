@@ -80,16 +80,36 @@ export function mockVerificarDuplicado(
   definicion,
   ejemplo
 ) {
-  const tarjetaExistente = tarjetas.find(
-    (tarjeta) =>
-      tarjeta.mazo_id === mazoId &&
-      tarjeta.palabra.toLowerCase() === palabra.toLowerCase() &&
-      tarjeta.definicion.toLowerCase() === definicion.toLowerCase() &&
-      (tarjeta.ejemplo || '').toLowerCase() === (ejemplo || '').toLowerCase()
+  const tarjetasDelMazo = tarjetas.filter(
+    (tarjeta) => tarjeta.mazo_id === mazoId
   );
 
+  const tarjetaExistente = tarjetasDelMazo.find(
+    (tarjeta) =>
+      tarjeta.palabra.trim().toLowerCase() === palabra.trim().toLowerCase()
+  );
+
+  if (!tarjetaExistente) {
+    return {
+      existe: false,
+      tipo: null,
+      tarjeta: null,
+    };
+  }
+
+  const mismaDefinicion =
+    tarjetaExistente.definicion.trim().toLowerCase() ===
+    definicion.trim().toLowerCase();
+
+  const mismoEjemplo =
+    (tarjetaExistente.ejemplo || '').trim().toLowerCase() ===
+    (ejemplo || '').trim().toLowerCase();
+
   return {
-    existe: Boolean(tarjetaExistente),
-    tarjeta: tarjetaExistente || null,
+    existe: true,
+    tipo: mismaDefinicion && mismoEjemplo
+      ? 'duplicado_exacto'
+      : 'acepcion_adicional',
+    tarjeta: tarjetaExistente,
   };
 }

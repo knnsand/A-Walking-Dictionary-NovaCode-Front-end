@@ -1,4 +1,5 @@
 export const FORM_INICIAL = {
+  mazo_id: '',
   palabra: '',
   traduccion: '',
   definicion: '',
