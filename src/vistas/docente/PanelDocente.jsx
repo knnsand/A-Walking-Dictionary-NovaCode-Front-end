@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { CrearMazoForm } from './crear-mazo/CrearMazoForm';
+import { ModalCrearMazo } from './ModalCrearMazo';
 import { ListaMazosCreados } from './ListaMazosCreados';
 
 export function PanelDocente() {
@@ -25,12 +25,10 @@ export function PanelDocente() {
       </button>
 
       {mostrarFormulario && (
-        <div className="modal-overlay">
-          <CrearMazoForm
-            onMazoCreado={manejarMazoCreado}
-            onCerrar={() => setMostrarFormulario(false)}
-          />
-        </div>
+        <ModalCrearMazo
+          onMazoCreado={manejarMazoCreado}
+          onCerrar={() => setMostrarFormulario(false)}
+        />
       )}
     </div>
   );
