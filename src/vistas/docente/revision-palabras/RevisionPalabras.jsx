@@ -1,34 +1,21 @@
 import { useEffect, useState, useCallback } from 'react';
-import { listarTarjetasPendientes, listarTarjetasAprobadas, aprobarTarjeta, rechazarTarjeta, actualizarContextoTarjeta } from '../../cliente-api/tarjetasApi';
-import { listarCitasPendientes, aprobarCita, declinarCita } from '../../cliente-api/citasApi';
+import { listarTarjetasPendientes, listarTarjetasAprobadas, aprobarTarjeta, actualizarContextoTarjeta } from '../../../cliente-api/tarjetasApi';
+import { listarCoautoriasPendientes, aprobarCoautoria, rechazarCoautoria } from '../../../cliente-api/coautoriaApi';
+import { Aviso } from '../../../componentes/comunes/Aviso';
 import { TarjetaPendienteCard } from './TarjetaPendienteCard';
-import { CitaPendienteCard } from './CitaPendienteCard';
+import { CoautoriaPendienteCard } from '../coautoria/CoautoriaPendienteCard';
 import { EtiquetaContextoModal } from './EtiquetaContextoModal';
-import { Aviso } from '../../componentes/comunes/Aviso';
+import { TABS } from './revisionPalabras.constants';
 
-const TABS = [
-  { id: 'nuevos', label: 'Nuevos Términos' },
-  { id: 'citas', label: 'Citas y Sentidos' },
-  { id: 'historial', label: 'Historial Aprobadas' },
-];
+import './revision-palabras.css';
 
-/**
- * Vista principal de HU-004 y HU-005.
- *
- * HU-004: lista tarjetas pendientes, permite editar y rechazar.
- * HU-005: asignar registro y variante regional es un paso OBLIGATORIO
- * antes de aprobar -- al presionar "Aprobar" se abre
- * EtiquetaContextoModal (ver tarjetaParaAprobar); solo al confirmar
- * el contexto ahí se ejecutan juntas aprobarTarjeta() y
- * actualizarContextoTarjeta(). Si el docente cancela el modal, la
- * tarjeta permanece pendiente sin cambios.
- */
 export function RevisionPalabras() {
   const [tabActivo, setTabActivo] = useState('nuevos');
   const [pendientes, setPendientes] = useState([]);
   const [aprobadas, setAprobadas] = useState([]);
-  const [citas, setCitas] = useState([]);
+  const [coautorias, setCoautorias] = useState([]);
   const [idEnEdicion, setIdEnEdicion] = useState(null);
+  const [idCoautoriaEnEdicion, setIdCoautoriaEnEdicion] = useState(null);
   const [tarjetaParaAprobar, setTarjetaParaAprobar] = useState(null);
   const [guardandoAprobacion, setGuardandoAprobacion] = useState(false);
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
@@ -41,24 +28,20 @@ export function RevisionPalabras() {
     listarTarjetasAprobadas().then(setAprobadas);
   }, []);
 
-  const cargarCitas = useCallback(() => {
-    listarCitasPendientes().then(setCitas);
+  const cargarCoautorias = useCallback(() => {
+    listarCoautoriasPendientes().then(setCoautorias);
   }, []);
 
   useEffect(() => {
     cargarPendientes();
     cargarAprobadas();
-    cargarCitas();
-  }, [cargarPendientes, cargarAprobadas, cargarCitas]);
+    cargarCoautorias();
+  }, [cargarPendientes, cargarAprobadas, cargarCoautorias]);
 
-  // HU-004: click en "Aprobar" ya no aprueba directo -- abre el modal
-  // de contexto (HU-005) guardando también las ediciones pendientes.
   function handleSolicitarAprobacion(tarjeta, datosEditados) {
     setTarjetaParaAprobar({ ...tarjeta, ...datosEditados });
   }
 
-  // HU-005: se confirma el contexto -> se aprueba la tarjeta con las
-  // ediciones y el contexto juntos, como una sola acción del usuario.
   async function handleConfirmarAprobacion(contexto) {
     const { id_tarjeta, traduccion, definicion, ejemplo } = tarjetaParaAprobar;
     setGuardandoAprobacion(true);
@@ -77,33 +60,24 @@ export function RevisionPalabras() {
     }
   }
 
-  async function handleRechazar(id) {
+  async function handleAprobarCoautoria(idCoautoria, datosEditados) {
     try {
-      await rechazarTarjeta(id);
-      setAviso({ tipo: 'exito', mensaje: 'Tarjeta rechazada.' });
-      cargarPendientes();
+      await aprobarCoautoria(idCoautoria, datosEditados);
+      setAviso({ tipo: 'exito', mensaje: 'Coautoría aprobada.' });
+      setIdCoautoriaEnEdicion(null);
+      cargarCoautorias();
     } catch (error) {
-      setAviso({ tipo: 'error', mensaje: `No se pudo rechazar la tarjeta: ${error.message}` });
+      setAviso({ tipo: 'error', mensaje: `No se pudo aprobar la coautoría: ${error.message}` });
     }
   }
 
-  async function handleAprobarCita(idCita) {
+  async function handleRechazarCoautoria(idCoautoria) {
     try {
-      await aprobarCita(idCita);
-      setAviso({ tipo: 'exito', mensaje: 'Cita aprobada.' });
-      cargarCitas();
+      await rechazarCoautoria(idCoautoria);
+      setAviso({ tipo: 'exito', mensaje: 'Coautoría rechazada.' });
+      cargarCoautorias();
     } catch (error) {
-      setAviso({ tipo: 'error', mensaje: `No se pudo aprobar la cita: ${error.message}` });
-    }
-  }
-
-  async function handleDeclinarCita(idCita) {
-    try {
-      await declinarCita(idCita);
-      setAviso({ tipo: 'exito', mensaje: 'Cita declinada.' });
-      cargarCitas();
-    } catch (error) {
-      setAviso({ tipo: 'error', mensaje: `No se pudo declinar la cita: ${error.message}` });
+      setAviso({ tipo: 'error', mensaje: `No se pudo rechazar la coautoría: ${error.message}` });
     }
   }
 
@@ -112,9 +86,9 @@ export function RevisionPalabras() {
       <div className="card-mazo__header">
         <div className="card-mazo__icon" aria-hidden="true" />
         <div>
-          <h2 className="card-mazo__title">Revisión de Vocabulario y Citas Literarias</h2>
+          <h2 className="card-mazo__title">Revisión de Vocabulario y Coautorías</h2>
           <p className="card-mazo__subtitle">
-            Valida las propuestas de términos sometidas por los estudiantes del curso.
+            Valida las propuestas de términos y coautorías sometidas por los estudiantes del curso.
           </p>
         </div>
       </div>
@@ -132,8 +106,8 @@ export function RevisionPalabras() {
             {tab.id === 'nuevos' && pendientes.length > 0 && (
               <span className="sidebar__badge">{pendientes.length}</span>
             )}
-            {tab.id === 'citas' && citas.length > 0 && (
-              <span className="sidebar__badge">{citas.length}</span>
+            {tab.id === 'coautoria' && coautorias.length > 0 && (
+              <span className="sidebar__badge">{coautorias.length}</span>
             )}
           </button>
         ))}
@@ -154,23 +128,24 @@ export function RevisionPalabras() {
                 onIniciarEdicion={() => setIdEnEdicion(tarjeta.id_tarjeta)}
                 onCancelarEdicion={() => setIdEnEdicion(null)}
                 onAprobar={(datosEditados) => handleSolicitarAprobacion(tarjeta, datosEditados)}
-                onRechazar={() => handleRechazar(tarjeta.id_tarjeta)}
               />
             ))
           )
         )}
 
-        {/* Fuera de alcance de HU-004/HU-005 -- ver nota en citasMock.js */}
-        {tabActivo === 'citas' && (
-          citas.length === 0 ? (
-            <p className="empty-state">No hay citas pendientes de revisión.</p>
+        {tabActivo === 'coautoria' && (
+          coautorias.length === 0 ? (
+            <p className="empty-state">No hay coautorías pendientes de revisión.</p>
           ) : (
-            citas.map((cita) => (
-              <CitaPendienteCard
-                key={cita.id_cita}
-                cita={cita}
-                onAprobar={handleAprobarCita}
-                onDeclinar={handleDeclinarCita}
+            coautorias.map((coautoria) => (
+              <CoautoriaPendienteCard
+                key={coautoria.id_coautoria}
+                coautoria={coautoria}
+                enEdicion={idCoautoriaEnEdicion === coautoria.id_coautoria}
+                onIniciarEdicion={() => setIdCoautoriaEnEdicion(coautoria.id_coautoria)}
+                onCancelarEdicion={() => setIdCoautoriaEnEdicion(null)}
+                onAprobar={(datosEditados) => handleAprobarCoautoria(coautoria.id_coautoria, datosEditados)}
+                onRechazar={() => handleRechazarCoautoria(coautoria.id_coautoria)}
               />
             ))
           )
