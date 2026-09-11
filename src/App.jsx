@@ -6,10 +6,8 @@ import { useAuth } from './contexto/useAuth';
 
 import { LayoutPrincipal } from './componentes/comunes/LayoutPrincipal';
 import { PanelDocente } from './vistas/docente/PanelDocente';
-import { RevisionPalabras } from './vistas/docente/RevisionPalabras';
+import { RevisionPalabras } from './vistas/docente/revision-palabras/RevisionPalabras';
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
-
-
 
 function SelectorDeRolTemporal() {
   const { rol, setRol } = useAuth();
@@ -40,11 +38,11 @@ function RutaSoloDocente({ children }) {
   return children;
 }
 
-function App() {
+export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <ThemeProvider>
+        <AuthProvider>
           <SelectorDeRolTemporal />
 
           <Routes>
@@ -68,12 +66,10 @@ function App() {
               <Route index element={<p>Vista de demostración para invitados (en construcción)</p>} />
             </Route>
 
-            <Route path="/" element={<Navigate to="/docente" />} />
+            <Route path="/" element={<Navigate to="/docente" replace />} />
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </ThemeProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
-
-export default App;
