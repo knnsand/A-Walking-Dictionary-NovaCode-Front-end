@@ -1,7 +1,4 @@
 :root {
-  /* Colores aproximados, extraídos visualmente de crear_mazo_tema_claro.png.
-     Si en el equipo existe una guía de estilo con valores hex exactos (Figma, etc.),
-     reemplazar estos por los oficiales. */
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
   --color-bg-page: #F4F6F9;
@@ -29,53 +26,165 @@ body {
   color: var(--color-text-main);
   margin: 0;
   padding: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* ============================================================
+   AVISOS (Aviso.jsx)
+   ============================================================ */
+.aviso { padding: 10px 14px; border-radius: 4px; margin-bottom: 12px; }
+.aviso--exito { background: var(--color-success-bg); color: var(--color-success-text); border: 1px solid var(--color-success-border); }
+.aviso--error { background: var(--color-error-bg); color: var(--color-error-text); border: 1px solid var(--color-error-border); }
 
+.empty-state { padding: 24px; text-align: center; color: var(--color-text-muted); font-size: 0.9rem; }
 
-.empty-state {
-  padding: 24px;
-  text-align: center;
+/* ============================================================
+   TARJETA CONTENEDORA GLOBAL (card-mazo)
+   Usada por: CrearMazoForm, RevisionPalabras, EtiquetaContextoModal.
+   No es exclusiva de "crear mazo": es la librería visual base para
+   cualquier tarjeta/formulario/modal de la app.
+   ============================================================ */
+.card-mazo {
+  width: 100%;
+  max-width: 680px;
+  margin: 24px auto;
+  background-color: var(--color-bg-card);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-mazo__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  background-color: var(--color-bg-card);
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+}
+
+.card-mazo__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: #ffffff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-mazo__title { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--color-text-main); }
+.card-mazo__subtitle { margin: 4px 0 0; font-size: 0.85rem; color: var(--color-text-muted); }
+.card-mazo__body { padding: 24px; }
+.card-mazo__body--flush { padding: 0; }
+
+.card-mazo__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  background-color: var(--color-bg-header);
+  border-top: 1px solid var(--color-border);
+}
+
+.card-mazo__close {
+  margin-left: auto;
+  border: none;
+  background: transparent;
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.card-mazo__close:hover { color: var(--color-text-main); }
+
+/* ============================================================
+   FORMULARIO GLOBAL
+   ============================================================ */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 0.75rem; font-weight: 700; color: var(--color-text-main);
+  text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 7px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%; min-height: 42px; padding: 10px 12px; border-radius: 6px;
+  border: 1px solid var(--color-border); font-size: 0.9rem; background-color: #FFFFFF;
+  font-family: var(--font-sans); box-sizing: border-box; outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--color-info-border); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
-.aviso {
-  padding: 10px 14px;
-  border-radius: 4px;
-  margin-bottom: 12px;
+/* ---- Selector tipo "chip" ---- */
+.chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-option { position: relative; }
+.chip-option input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.chip-option label {
+  display: inline-block; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--color-border);
+  font-size: 0.85rem; color: var(--color-text-main); cursor: pointer; user-select: none;
+}
+.chip-option input:checked + label { border-color: var(--color-info-border); border-width: 2px; font-weight: 600; }
+
+.info-box {
+  display: flex; gap: 8px; padding: 12px 14px; border-radius: 6px; background-color: var(--color-info-bg);
+  border-left: 3px solid var(--color-info-border); color: var(--color-info-text); font-size: 0.85rem; margin-bottom: 8px;
 }
 
-.aviso--exito {
-  background: var(--color-success-bg);
-  color: var(--color-success-text);
-  border: 1px solid var(--color-success-border);
+/* ============================================================
+   BOTONES GLOBALES
+   ============================================================ */
+.btn { padding: 10px 18px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.btn-primary { background-color: var(--color-primary); color: var(--color-primary-contrast); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-secondary { background-color: #FFFFFF; color: var(--color-text-main); border-color: var(--color-border); }
+.btn-rechazar { background-color: var(--color-error-bg); color: var(--color-error-text); border-color: var(--color-error-border); }
+
+/* ============================================================
+   LISTAS Y BADGES GLOBALES
+   ============================================================ */
+.mazo-list { list-style: none; margin: 0; padding: 0; }
+.mazo-list__item { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--color-border); }
+.mazo-list__item:last-child { border-bottom: none; }
+.mazo-list__info strong { display: block; font-size: 0.95rem; color: var(--color-text-main); }
+.mazo-list__meta { font-size: 0.8rem; color: var(--color-text-muted); }
+
+.badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+.badge-abierto { background-color: var(--color-success-bg); color: var(--color-success-text); }
+.badge-cerrado { background-color: #F1F5F9; color: var(--color-text-muted); }
+
+.tag-contexto {
+  display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.7rem;
+  background-color: var(--color-info-bg); color: var(--color-info-text); margin-right: 6px;
 }
 
-.aviso--error {
-  background: var(--color-error-bg);
-  color: var(--color-error-text);
-  border: 1px solid var(--color-error-border);
+/* ============================================================
+   MODAL GLOBAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: center; align-items: center;
+  padding: 24px; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px);
+}
+.modal-overlay .card-mazo {
+  width: 100%; max-width: 760px; max-height: calc(100vh - 48px); margin: 0;
+  border: none; border-radius: 14px; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25); overflow-y: auto;
 }
 
-.badge-cerrado {
-  background-color: #F1F5F9;
-  color: var(--color-text-muted);
-}
-
-.empty-state {
-  padding: 24px;
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
+@media (max-width: 700px) {
+  .modal-overlay { align-items: flex-start; padding: 16px; overflow-y: auto; }
+  .modal-overlay .card-mazo { max-height: none; }
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+  .card-mazo__header, .card-mazo__body, .card-mazo__footer { padding-left: 18px; padding-right: 18px; }
 }
 
 /* ============================================================
    MODO OSCURO
-   Se activa poniendo data-theme="oscuro" en <html> (lo hace
-   ThemeProvider, ver contexto/ThemeProvider.jsx). El tema claro
-   de arriba sigue siendo el default; esto solo sobreescribe
-   variables cuando data-theme="oscuro" está presente.
+   Se activa con data-theme="oscuro" en <html> (ThemeProvider.jsx).
    ============================================================ */
 [data-theme='oscuro'] {
   --color-bg-page: #0F172A;
@@ -97,10 +206,6 @@ body {
   --color-error-border: #EF4444;
 }
 
-body {
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
 [data-theme='oscuro'] .form-input,
 [data-theme='oscuro'] .form-select,
 [data-theme='oscuro'] .form-textarea {
@@ -108,59 +213,45 @@ body {
   color: var(--color-text-main);
   border-color: var(--color-border);
 }
+[data-theme='oscuro'] .btn-secondary { background-color: var(--color-bg-card); color: var(--color-text-main); }
+[data-theme='oscuro'] .badge-cerrado { background-color: #334155; color: var(--color-text-muted); }
 
-[data-theme='oscuro'] .btn-secondary {
-  background-color: var(--color-bg-card);
-  color: var(--color-text-main);
-}
-
-[data-theme='oscuro'] .badge-cerrado {
-  background-color: #334155;
-  color: var(--color-text-muted);
-}
-
+/* ============================================================
+   LAYOUT COMÚN (Sidebar + Topbar) — usado por los 3 roles
+   ============================================================ */
 .app-shell { display: flex; min-height: 100vh; }
-
 .app-shell__sidebar {
-  width: 260px;
-  flex-shrink: 0;
-  background-color: var(--color-bg-card);
-  border-right: 1px solid var(--color-border);
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
+  width: 260px; flex-shrink: 0; background-color: var(--color-bg-card); border-right: 1px solid var(--color-border);
+  display: flex; flex-direction: column; padding: 20px 0;
 }
-
-.sidebar__brand { padding: 0 20px 20px; border-bottom: 1px solid var(--color-border); margin-bottom: 16px; display:flex; gap:10px; align-items:center; }
+.sidebar__brand { padding: 0 20px 20px; border-bottom: 1px solid var(--color-border); margin-bottom: 16px; display: flex; gap: 10px; align-items: center; }
 .sidebar__brand-icon { width: 36px; height: 36px; border-radius: 8px; background-color: var(--color-primary); flex-shrink: 0; }
-.sidebar__brand-title { font-weight: 700; font-size: 0.95rem; color: var(--color-text-main); margin: 0; }
+.sidebar__brand-title { font-weight: 700; font-size: 0.95rem; color: var(--color-text-main); margin: 0; font-family: var(--font-serif); }
 .sidebar__brand-subtitle { font-size: 0.65rem; color: var(--color-text-muted); margin: 2px 0 0; }
 
 .sidebar__crear-btn {
-  margin: 0 20px 16px; padding: 10px 14px; border-radius: 6px;
-  background: var(--color-primary); color: var(--color-primary-contrast);
-  border: none; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem;
+  margin: 0 20px 16px; padding: 10px 14px; border-radius: 6px; background: var(--color-primary);
+  color: var(--color-primary-contrast); border: none; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem;
 }
+.sidebar__crear-btn--estudiante { opacity: 0.55; cursor: not-allowed; }
 
 .sidebar__seccion-titulo { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-muted); padding: 0 20px; margin: 16px 0 8px; }
 .sidebar__nav { list-style: none; margin: 0; padding: 0; }
 .sidebar__nav-item a, .sidebar__nav-item button {
-  display: flex; align-items: center; justify-content: space-between; width: 100%;
-  padding: 10px 20px; background: none; border: none; text-align: left;
-  font-size: 0.88rem; color: var(--color-text-main); cursor: pointer; text-decoration: none;
-  font-family: inherit;
+  display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 20px;
+  background: none; border: none; text-align: left; font-size: 0.88rem; color: var(--color-text-main);
+  cursor: pointer; text-decoration: none; font-family: inherit;
 }
 .sidebar__nav-item a.activo, .sidebar__nav-item a[aria-current='page'] {
-  background-color: var(--color-info-bg); color: var(--color-info-text);
-  font-weight: 600; border-left: 3px solid var(--color-info-border);
+  background-color: var(--color-info-bg); color: var(--color-info-text); font-weight: 600; border-left: 3px solid var(--color-info-border);
 }
 .sidebar__badge { background-color: #DC2626; color: #fff; font-size: 0.65rem; padding: 1px 7px; border-radius: 999px; }
 
 .sidebar__footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--color-border); }
 .sidebar__tema-btn {
-  display: flex; align-items: center; gap: 8px; background: none;
-  border: 1px solid var(--color-border); border-radius: 6px; padding: 8px 10px;
-  width: 100%; cursor: pointer; color: var(--color-text-main); font-size: 0.8rem; font-family: inherit;
+  display: flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--color-border);
+  border-radius: 6px; padding: 8px 10px; width: 100%; cursor: pointer; color: var(--color-text-main);
+  font-size: 0.8rem; font-family: inherit;
 }
 .sidebar__usuario { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
 .sidebar__avatar { width: 32px; height: 32px; border-radius: 50%; background-color: var(--color-primary); flex-shrink: 0; }
@@ -174,33 +265,21 @@ body {
 .topbar__menu-btn { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--color-text-main); }
 .pagina { padding: 24px; }
 
+/* ============================================================
+   TARJETA DE REVISIÓN — compartida por Revisión de Palabras y
+   Coautoría (ambas usan .tarjeta-pendiente).
+   ============================================================ */
 .tarjeta-pendiente { border: 1px solid var(--color-border); border-radius: 8px; padding: 16px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 10px; }
 .tarjeta-pendiente__encabezado { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.tarjeta-pendiente__palabra { margin: 0; font-size: 1.1rem; color: var(--color-text-main); }
+.tarjeta-pendiente__palabra { margin: 0; font-size: 1.1rem; color: var(--color-text-main); font-family: var(--font-serif); }
 .tarjeta-pendiente__cita { background-color: var(--color-bg-header); border-left: 3px solid var(--color-border); padding: 10px 12px; font-style: italic; font-size: 0.85rem; border-radius: 4px; }
 .tarjeta-pendiente__cita-autor { display: block; font-style: normal; color: var(--color-text-muted); margin-top: 4px; font-size: 0.8rem; }
 .tarjeta-pendiente__meta { font-size: 0.8rem; color: var(--color-text-muted); }
 .tarjeta-pendiente__acciones { display: flex; flex-wrap: wrap; gap: 8px; }
-.btn-rechazar { background-color: var(--color-error-bg); color: var(--color-error-text); border-color: var(--color-error-border); }
-.tag-contexto { display:inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.7rem; background-color: var(--color-info-bg); color: var(--color-info-text); margin-right:6px; }
 
-.modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.55); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
-.modal-card { margin: 0; max-height: 90vh; overflow-y: auto; }
-
-.tabs { display: flex; gap: 4px; padding: 0 20px; border-bottom: 1px solid var(--color-border); overflow-x: auto; }
-.tabs__item {
-  padding: 12px 16px; background: none; border: none; border-bottom: 2px solid transparent;
-  font-size: 0.85rem; font-weight: 600; color: var(--color-text-muted); cursor: pointer;
-  display: flex; align-items: center; gap: 6px; white-space: nowrap; font-family: inherit;
-}
-.tabs__item--activo { color: var(--color-primary); border-bottom-color: var(--color-primary); }
-
-.grid-aprobadas { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
-.card-aprobada { border: 1px solid var(--color-border); border-radius: 8px; padding: 14px; }
-.card-aprobada__encabezado { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.card-aprobada__definicion { font-size: 0.85rem; color: var(--color-text-main); margin: 0 0 8px; }
-.card-aprobada__autor { font-size: 0.75rem; color: var(--color-text-muted); margin: 0; }
-
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 900px) {
   .app-shell__sidebar {
     position: fixed; inset-block: 0; left: 0; width: 260px;
@@ -210,25 +289,13 @@ body {
   .topbar__menu-btn { display: block; }
 }
 
-@media (max-width: 768px) {
-  .form-row { grid-template-columns: 1fr; }
-}
-
 @media (max-width: 600px) {
   .pagina { padding: 14px; }
   .tarjeta-pendiente__acciones { flex-direction: column; }
   .tarjeta-pendiente__acciones .btn { width: 100%; }
 }
 
-.sidebar__brand-title,
-.card-mazo__title,
-.tarjeta-pendiente__palabra,
-.card-aprobada__encabezado strong,
-h1, h2, h3 {
-  font-family: var(--font-serif);
-}
-
-.sidebar__crear-btn--estudiante {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
+/* ============================================================
+   TIPOGRAFÍA DE TÍTULOS (serif)
+   ============================================================ */
+.card-mazo__title, h1, h2, h3 { font-family: var(--font-serif); }
