@@ -71,14 +71,48 @@ export function TarjetaPendienteCard({
           </div>
         </>
       ) : (
-        <>
-          <p><strong>Definición:</strong> {tarjeta.definicion}</p>
-          <div className="tarjeta-pendiente__cita">
-            "{tarjeta.ejemplo}"
-            <span className="tarjeta-pendiente__cita-autor">— Aportado por {tarjeta.estudiante}</span>
-          </div>
-        </>
-      )}
+  <>
+    <p>
+      <strong>Definición:</strong> {tarjeta.definicion}
+    </p>
+
+    <div className="tarjeta-pendiente__cita">
+      "{tarjeta.ejemplo}"
+      <span className="tarjeta-pendiente__cita-autor">
+        — Aportado por {tarjeta.estudiante}
+      </span>
+    </div>
+
+    {tarjeta.aportes?.filter(
+      aporte => aporte.tipo_aporte === 'acepcion_nueva'
+    ).length > 0 && (
+      <div className="tarjeta-pendiente__acepciones">
+        <strong>Acepciones adicionales:</strong>
+
+        {tarjeta.aportes
+          .filter(aporte => aporte.tipo_aporte === 'acepcion_nueva')
+          .map(aporte => (
+            <div
+              key={aporte.id_aporte}
+              className="tarjeta-pendiente__acepcion"
+            >
+              <p>
+                <strong>Definición:</strong>{' '}
+                {aporte.definicion_aportada}
+              </p>
+
+              {aporte.ejemplo_aportado && (
+                <p>
+                  <strong>Ejemplo:</strong>{' '}
+                  {aporte.ejemplo_aportado}
+                </p>
+              )}
+            </div>
+          ))}
+      </div>
+    )}
+  </>
+)}
 
       <p className="tarjeta-pendiente__meta">
         Propuesta por <strong>{tarjeta.estudiante}</strong> ({tarjeta.correo_estudiante}) el {tarjeta.fecha_aporte}
