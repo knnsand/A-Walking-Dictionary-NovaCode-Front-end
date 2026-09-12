@@ -7,7 +7,5 @@ export function validarCamposObligatorios(form) {
 }
 
 export function validarFechas(form) {
-  if (!form.fecha_apertura || !form.fecha_cierre) return true;
-
   return new Date(form.fecha_cierre) >= new Date(form.fecha_apertura);
 }

@@ -26,8 +26,9 @@ de referencia para el frontend.
 | `semana`                            | string/number     | Formulario                       | Sí |
 | `variante_regional_predeterminada`  | string            | Formulario (lista fija: Británico, Nigeriano, Jamaicano, Ghanés) | Sí |
 | `estado`                            | string (`"abierto"`\|`"cerrado"`) | Formulario, default `"abierto"` | Sí, con valor por defecto |
-| `fecha_apertura`                    | string (ISO date) | Formulario                       | **No** — confirmado por backend (William): la gestiona el frontend |
-| `fecha_cierre`                      | string (ISO date) | Formulario                       | **No** — confirmado por backend (William): la gestiona el frontend |
+| `fecha_apertura` | string (ISO date) | Formulario | **Sí** — el esquema real (`mazo.fecha_apertura DATE NOT NULL` en `init.sql`) lo exige |
+(William): la gestiona el frontend |
+| `fecha_cierre`   | string (ISO date) | Formulario | **Sí** — el esquema real (`mazo.fecha_cierre DATE NOT NULL` en `init.sql`) lo exige |(William): la gestiona el frontend |
 | `fecha_creacion`                    | string (ISO date) | Generado por el backend          | No — nunca la envía el frontend |
 
 ## Reglas de validación (frontend)
@@ -53,3 +54,19 @@ del backend ("Ana Docente"). Verificar con:
 **Pendiente de eliminar cuando llegue HU-015:** en ese momento, `docente_id` debe derivarse
 de la sesión autenticada (token JWT), no de una variable de entorno — tal como ya lo
 anticipa el comentario de `MazoController.crear()` en el backend.
+
+## Fechas de apertura y cierre obligatorias (corrección, 2026-09-12)
+
+**Contexto:** esta documentación indicaba previamente que `fecha_apertura` y `fecha_cierre`
+eran opcionales. Una prueba de integración real contra el backend levantado con Docker
+reveló que PostgreSQL rechaza la creación de un mazo sin fechas
+(`invalid input syntax for type date: ""`), porque el esquema real (`init.sql`) las define
+como `DATE NOT NULL` — lo cual contradecía lo documentado aquí.
+
+**Decisión del equipo:** en vez de modificar el esquema de base de datos (lo que exigiría
+una migración y que cada integrante recree su volumen local de PostgreSQL), se decide
+alinear el frontend al esquema real: `fecha_apertura` y `fecha_cierre` pasan a ser
+obligatorias en el formulario de creación de mazo.
+
+**Nota:** Se confirma con William que la nota anterior sobre este punto fue un
+malentendido, y en el back no se cumplio exactamente con la documentacion, sin embargo ya fue resuelto por el front

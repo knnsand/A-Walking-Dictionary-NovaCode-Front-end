@@ -44,7 +44,7 @@ describe('CrearMazoForm', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(/creado correctamente/i);
   });
 
-  it('crea el mazo correctamente sin fechas', async () => {
+  it('muestra un error si no se completan las fechas (ahora obligatorias)', async () => {
   render(<CrearMazoForm />);
 
   await waitFor(() =>
@@ -67,7 +67,7 @@ describe('CrearMazoForm', () => {
   fireEvent.click(screen.getByRole('button', { name: /crear mazo/i }));
 
   expect(await screen.findByRole('alert')).toHaveTextContent(
-    /creado correctamente/i
+    /completa todos los campos obligatorios/i
   );
 });
 
