@@ -6,8 +6,10 @@ vi.mock('../../../contexto/useAuth', () => ({
   useAuth: () => ({ docenteId: 1, rol: 'docente' }),
 }));
 
-vi.mock('../../cliente-api/cursosApi', () => ({
-  listarCursos: vi.fn().mockResolvedValue([{ id_curso: 1, nombre: 'Literatura Anglófona - Grupo 1' }]),
+vi.mock('../../../cliente-api/cursosApi', () => ({
+  listarCursos: vi.fn().mockResolvedValue([
+    { id_curso: 1, nombre: 'Literatura Anglófona - Grupo 1' },
+  ]),
 }));
 
 vi.mock('../../../cliente-api/mazosApi', () => ({
