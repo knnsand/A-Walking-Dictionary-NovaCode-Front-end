@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { listarCursos } from '../../../cliente-api/cursosApi';
 import { crearMazo } from '../../../cliente-api/mazosApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
+import { useAuth } from '../../../contexto/useAuth';
 
 import './crear-mazo.css';
 
@@ -18,6 +19,7 @@ import {
 
 
 export function CrearMazoForm({ onMazoCreado, onCerrar }) {
+  const { docenteId } = useAuth();
   const [cursos, setCursos] = useState([]);
   const [form, setForm] = useState(FORM_INICIAL);
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
@@ -45,9 +47,21 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
       return;
     }
 
+    if (!docenteId) {
+      setAviso({
+        tipo: 'error',
+        mensaje: 'No hay un docente simulado configurado (VITE_DOCENTE_ID_SIMULADO). Revisa tu archivo .env.local.',
+      });
+      return;
+    }
+
     setEnviando(true);
     try {
-      const mazoCreado = await crearMazo({ ...form, curso_id: Number(form.curso_id) });
+      const mazoCreado = await crearMazo({
+        ...form,
+        curso_id: Number(form.curso_id),
+        docente_id: docenteId,
+      });
       setAviso({ tipo: 'exito', mensaje: `Mazo "${mazoCreado.nombre_lectura}" creado correctamente.` });
       setForm((anterior) => ({ ...anterior, nombre_lectura: '', autor: '', semana: '', fecha_apertura: '', fecha_cierre: '' }));
       onMazoCreado?.(mazoCreado);

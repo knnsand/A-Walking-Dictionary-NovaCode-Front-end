@@ -2,11 +2,15 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { CrearMazoForm } from './CrearMazoForm';
 
+vi.mock('../../../contexto/useAuth', () => ({
+  useAuth: () => ({ docenteId: 1, rol: 'docente' }),
+}));
+
 vi.mock('../../cliente-api/cursosApi', () => ({
   listarCursos: vi.fn().mockResolvedValue([{ id_curso: 1, nombre: 'Literatura Anglófona - Grupo 1' }]),
 }));
 
-vi.mock('../../cliente-api/mazosApi', () => ({
+vi.mock('../../../cliente-api/mazosApi', () => ({
   crearMazo: vi.fn().mockResolvedValue({
     id_mazo: 1,
     nombre_lectura: 'Things Fall Apart',
