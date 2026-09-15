@@ -2,11 +2,17 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { CrearMazoForm } from './CrearMazoForm';
 
-vi.mock('../../cliente-api/cursosApi', () => ({
-  listarCursos: vi.fn().mockResolvedValue([{ id_curso: 1, nombre: 'Literatura Anglófona - Grupo 1' }]),
+vi.mock('../../../contexto/useAuth', () => ({
+  useAuth: () => ({ docenteId: 1, rol: 'docente' }),
 }));
 
-vi.mock('../../cliente-api/mazosApi', () => ({
+vi.mock('../../../cliente-api/cursosApi', () => ({
+  listarCursos: vi.fn().mockResolvedValue([
+    { id_curso: 1, nombre: 'Literatura Anglófona - Grupo 1' },
+  ]),
+}));
+
+vi.mock('../../../cliente-api/mazosApi', () => ({
   crearMazo: vi.fn().mockResolvedValue({
     id_mazo: 1,
     nombre_lectura: 'Things Fall Apart',
@@ -38,7 +44,7 @@ describe('CrearMazoForm', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(/creado correctamente/i);
   });
 
-  it('crea el mazo correctamente sin fechas', async () => {
+  it('muestra un error si no se completan las fechas (ahora obligatorias)', async () => {
   render(<CrearMazoForm />);
 
   await waitFor(() =>
@@ -61,7 +67,7 @@ describe('CrearMazoForm', () => {
   fireEvent.click(screen.getByRole('button', { name: /crear mazo/i }));
 
   expect(await screen.findByRole('alert')).toHaveTextContent(
-    /creado correctamente/i
+    /completa todos los campos obligatorios/i
   );
 });
 

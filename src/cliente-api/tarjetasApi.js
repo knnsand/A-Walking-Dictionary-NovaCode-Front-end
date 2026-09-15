@@ -2,6 +2,7 @@ import { apiRequest } from './httpClient';
 import {
   mockListarPendientes,
   mockAprobarTarjeta,
+  mockEditarTarjeta,
   mockRechazarTarjeta,
   mockActualizarContexto,
   mockListarAprobadas,
@@ -11,19 +12,34 @@ import {
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
-/** HU-004: lista tarjetas en estado pendiente_revision. */
+/** HU-004 (CA-2.1.1): lista tarjetas en estado pendiente_revision. */
 export async function listarTarjetasPendientes() {
   if (USE_MOCK) return Promise.resolve(mockListarPendientes());
-  return apiRequest('/cards?estado=pendiente_revision');
+  return apiRequest('/cards/pending');
 }
 
-/** HU-004: aprueba una tarjeta, con correcciones opcionales del docente. */
-export async function aprobarTarjeta(cardId, datosEditados = {}) {
-  if (USE_MOCK) return Promise.resolve(mockAprobarTarjeta(cardId, datosEditados));
-  return apiRequest(`/cards/${cardId}/approve`, {
-    method: 'PATCH',
-    body: JSON.stringify(datosEditados),
+/**
+ * HU-004 (CA-2.1.2, paso "editar/corregir"): guarda correcciones sobre una tarjeta que
+ * todavía está pendiente de revisión. Debe llamarse ANTES de aprobarTarjeta(): el backend
+ * exige que la tarjeta siga en 'pendiente_revision' para aceptar la edición.
+ */
+export async function editarTarjeta(cardId, datos) {
+  if (USE_MOCK) return Promise.resolve(mockEditarTarjeta(cardId, datos));
+  return apiRequest(`/cards/${cardId}`, {
+    method: 'PUT',
+    body: JSON.stringify(datos),
   });
+}
+
+/**
+ * HU-004 (CA-2.1.2, paso "aprobar"): aprueba una tarjeta pendiente.
+ *
+ * El backend (PATCH /cards/:id/approve) no lee el body de esta petición -- cualquier
+ * corrección debe guardarse antes con editarTarjeta().
+ */
+export async function aprobarTarjeta(cardId) {
+  if (USE_MOCK) return Promise.resolve(mockAprobarTarjeta(cardId));
+  return apiRequest(`/cards/${cardId}/approve`, { method: 'PATCH' });
 }
 
 /** Rechaza una tarjeta pendiente (mostrado en el mockup como "Rechazar"). */
@@ -44,7 +60,7 @@ export async function actualizarContextoTarjeta(cardId, contexto) {
 /** Pestaña "Historial Aprobadas": tarjetas ya validadas por la docente. */
 export async function listarTarjetasAprobadas() {
   if (USE_MOCK) return Promise.resolve(mockListarAprobadas());
-  return apiRequest('/cards?estado=revisado_docente');
+  return apiRequest('/cards/approved');
 }
 
 /**
