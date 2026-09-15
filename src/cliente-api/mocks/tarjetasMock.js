@@ -65,9 +65,16 @@ export function mockListarPendientes() {
     }));
 }
 
-export function mockAprobarTarjeta(cardId, datosEditados) {
+export function mockAprobarTarjeta(cardId) {
   tarjetas = tarjetas.map((t) =>
-    t.id_tarjeta === cardId ? { ...t, ...datosEditados, estado: 'revisado_docente' } : t
+    t.id_tarjeta === cardId ? { ...t, estado: 'revisado_docente' } : t
+  );
+  return tarjetas.find((t) => t.id_tarjeta === cardId);
+}
+
+export function mockEditarTarjeta(cardId, datos) {
+  tarjetas = tarjetas.map((t) =>
+    t.id_tarjeta === cardId ? { ...t, ...datos } : t
   );
   return tarjetas.find((t) => t.id_tarjeta === cardId);
 }
@@ -191,8 +198,8 @@ export function mockVerificarDuplicado(
 
   if (!tarjetaExistente) {
     return {
-      existe: false,
-      tipo: null,
+      duplicado: false,
+      resultado: 'creada',
       tarjeta: null,
     };
   }
@@ -206,8 +213,8 @@ export function mockVerificarDuplicado(
     (ejemplo || '').trim().toLowerCase();
 
   return {
-    existe: true,
-    tipo: mismaDefinicion && mismoEjemplo
+    duplicado: true,
+    resultado: mismaDefinicion && mismoEjemplo
       ? 'coautoria'
       : 'acepcion_nueva',
     tarjeta: tarjetaExistente,

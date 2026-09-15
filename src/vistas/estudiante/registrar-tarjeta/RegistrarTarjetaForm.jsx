@@ -71,14 +71,14 @@ async function handleSubmit(evento) {
   }
 
   try {
-    const resultado = await verificarDuplicado(
+    const chequeo = await verificarDuplicado(
       Number(form.mazo_id),
       form.palabra,
       form.definicion,
       form.ejemplo
     );
 
-    if (resultado.existe && resultado.tipo === 'coautoria') {
+    if (chequeo.duplicado && chequeo.resultado === 'coautoria') {
       setError(
         'Esta palabra ya fue aportada en el mazo con la misma información.'
       );
@@ -103,7 +103,7 @@ async function handleSubmit(evento) {
     }
   } catch (error) {
     console.error(error);
-    setError('No fue posible procesar la palabra. Intenta nuevamente.');
+    setError(error.message || 'No fue posible procesar la palabra. Intenta nuevamente.');
   }
 }
 

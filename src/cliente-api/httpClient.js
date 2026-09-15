@@ -10,7 +10,15 @@ export async function apiRequest(path, options = {}) {
   });
 
   if (!response.ok) {
-    const mensaje = `Error ${response.status} al llamar ${path}`;
+    let mensaje = `Error ${response.status} al llamar ${path}`;
+    try {
+      const cuerpo = await response.json();
+      if (cuerpo?.error) {
+        mensaje = cuerpo.error;
+      }
+    } catch {
+      // El cuerpo no era JSON o vino vacío; se conserva el mensaje genérico.
+    }
     throw new Error(mensaje);
   }
 

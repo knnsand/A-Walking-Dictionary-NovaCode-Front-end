@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { listarTarjetasPendientes, listarTarjetasAprobadas, aprobarTarjeta, rechazarTarjeta, actualizarContextoTarjeta } from '../../cliente-api/tarjetasApi';
+import { listarTarjetasPendientes, listarTarjetasAprobadas, editarTarjeta, aprobarTarjeta, rechazarTarjeta, actualizarContextoTarjeta } from '../../cliente-api/tarjetasApi';
 import { listarCitasPendientes, aprobarCita, declinarCita } from '../../cliente-api/citasApi';
 import { TarjetaPendienteCard } from './TarjetaPendienteCard';
 import { CitaPendienteCard } from './CitaPendienteCard';
@@ -57,13 +57,16 @@ export function RevisionPalabras() {
     setTarjetaParaAprobar({ ...tarjeta, ...datosEditados });
   }
 
-  // HU-005: se confirma el contexto -> se aprueba la tarjeta con las
-  // ediciones y el contexto juntos, como una sola acción del usuario.
+  // HU-005: se confirma el contexto -> se guardan las ediciones (mientras la tarjeta
+  // sigue pendiente_revision), se aprueba y se aplica el contexto, como una sola acción
+  // del usuario. El orden importa: editarTarjeta() exige 'pendiente_revision', así que debe
+  // ir antes de aprobarTarjeta() (que la mueve a 'revisado_docente').
   async function handleConfirmarAprobacion(contexto) {
     const { id_tarjeta, traduccion, definicion, ejemplo } = tarjetaParaAprobar;
     setGuardandoAprobacion(true);
     try {
-      await aprobarTarjeta(id_tarjeta, { traduccion, definicion, ejemplo });
+      await editarTarjeta(id_tarjeta, { traduccion, definicion, ejemplo });
+      await aprobarTarjeta(id_tarjeta);
       await actualizarContextoTarjeta(id_tarjeta, contexto);
       setAviso({ tipo: 'exito', mensaje: 'Tarjeta aprobada con su contexto lingüístico y habilitada para el quiz.' });
       setIdEnEdicion(null);
