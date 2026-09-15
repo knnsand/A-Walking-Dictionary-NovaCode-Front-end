@@ -45,7 +45,7 @@ useEffect(() => {
     setExito('');
   }
 
- async function handleSubmit(evento) {
+async function handleSubmit(evento) {
   evento.preventDefault();
 
   setError('');
@@ -78,30 +78,29 @@ useEffect(() => {
       form.ejemplo
     );
 
-    if (resultado.existe) {
-  if (resultado.tipo === 'duplicado_exacto') {
-    setError(
-      'Esta palabra ya fue aportada en el mazo con la misma información.'
-    );
-  } else {
-    setError(
-      'Esta palabra ya fue aportada en el mazo. Puedes agregar una acepción adicional.'
-    );
-  }
+    if (resultado.existe && resultado.tipo === 'coautoria') {
+      setError(
+        'Esta palabra ya fue aportada en el mazo con la misma información.'
+      );
+      return;
+    }
 
-  return;
-}
-
-    await registrarTarjeta(Number(form.mazo_id), {
+    const registro = await registrarTarjeta(Number(form.mazo_id), {
       palabra: form.palabra.trim(),
       traduccion: form.traduccion.trim(),
       definicion: form.definicion.trim(),
       ejemplo: form.ejemplo.trim(),
     });
 
-    setExito(
-      'Palabra enviada correctamente para revisión docente.'
-    );
+    if (registro.resultado === 'acepcion_nueva') {
+      setExito(
+        'Acepción adicional registrada correctamente para revisión docente.'
+      );
+    } else {
+      setExito(
+        'Palabra enviada correctamente para revisión docente.'
+      );
+    }
   } catch (error) {
     console.error(error);
     setError('No fue posible procesar la palabra. Intenta nuevamente.');
