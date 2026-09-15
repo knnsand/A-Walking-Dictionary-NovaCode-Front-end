@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Aviso } from '../../componentes/comunes/Aviso';
+import { Aviso } from "../../../componentes/comunes/Aviso";
 
 const REGISTROS = ['Formal', 'Informal', 'Slang', 'Coloquial', 'Anticuado'];
 const VARIANTES_REGIONALES = ['Británico', 'Nigeriano', 'Jamaicano', 'Ghanés', 'Estadounidense'];
@@ -12,7 +12,7 @@ const VARIANTES_REGIONALES = ['Británico', 'Nigeriano', 'Jamaicano', 'Ghanés',
  *
  * Campos según criterio de aceptación literal de HU-005: "La tarjeta
  * permite seleccionar registro (Formal, informal, slang, coloquial,
- * anticuado) y variante dialectal" -- 2 campos, no 3.
+ * anticuado) y variante dialectal".
  *
  * No llama a la API directamente: delega en onConfirmar(contexto),
  * para que RevisionPalabras.jsx orqueste juntas la aprobación

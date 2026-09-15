@@ -1,0 +1,82 @@
+/* Estilos EXCLUSIVOS de la pantalla Revisión de Palabras: el
+   sistema de pestañas (Nuevos Términos / Coautoría / Historial)
+   y la grilla de tarjetas aprobadas.
+
+   Todo lo que comparten esta pantalla y la de Coautoría
+   (.tarjeta-pendiente, .btn, .badge, .tag-contexto, .modal-overlay)
+   vive en index.css como librería visual global -- no se repite
+   aquí para no duplicar código, siguiendo la misma convención que
+   crear-mazo/crear-mazo.css. */
+
+/* Barra de pestañas: fila horizontal con scroll si no caben todas
+   en pantallas angostas (overflow-x: auto). */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+/* Cada pestaña individual. El borde inferior transparente por
+   defecto se vuelve visible (color primario) solo cuando la
+   pestaña está activa -- ver .tabs__item--activo abajo. */
+.tabs__item {
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px; /* separa el texto del badge de contador, si lo hay */
+  white-space: nowrap; /* evita que el texto de la pestaña se parta en dos líneas */
+  font-family: inherit;
+}
+
+/* Estado activo: se aplica dinámicamente vía className en
+   RevisionPalabras.jsx según cuál pestaña esté seleccionada. */
+.tabs__item--activo {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Grilla responsiva para "Historial Aprobadas": tantas columnas
+   como quepan de mínimo 220px cada una, ajustándose solas al ancho
+   de pantalla disponible (sin necesidad de media queries manuales). */
+.grid-aprobadas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+/* Tarjeta individual dentro de la grilla de aprobadas. Es más
+   compacta que .tarjeta-pendiente porque aquí solo se muestra
+   información de solo lectura (no hay acciones ni edición). */
+.card-aprobada {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.card-aprobada__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-aprobada__definicion {
+  font-size: 0.85rem;
+  color: var(--color-text-main);
+  margin: 0 0 8px;
+}
+
+.card-aprobada__autor {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
