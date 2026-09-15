@@ -19,11 +19,33 @@ if (!DOCENTE_ID_SIMULADO) {
   );
 }
 
+// TEMPORAL (Sprint 1): mismo mecanismo que DOCENTE_ID_SIMULADO, pero para el estudiante que
+// registra palabras (HU-1.2 / CA-1.2.1). Debe coincidir con un id_inscripcion sembrado en
+// seed.sql del backend (con una BD recién creada: 1 = Juan, 2 = María, 3 = Carlos). Se
+// elimina cuando exista login real (HU-5.4) y el inscripcion_id se derive de la sesión.
+const INSCRIPCION_ID_SIMULADA = Number(import.meta.env.VITE_INSCRIPCION_ID_SIMULADA) || null;
+
+if (!INSCRIPCION_ID_SIMULADA) {
+  // Aviso solo en consola de desarrollo: si falta la variable de entorno, registrar una
+  // palabra fallará en el backend con 400 "inscripcion_id es obligatorio".
+  console.warn(
+    'VITE_INSCRIPCION_ID_SIMULADA no está configurado o no es un número válido. ' +
+    'Registrar palabras fallará contra el backend real hasta configurarlo en .env.local.'
+  );
+}
+
 export function AuthProvider({ children }) {
   const [rol, setRol] = useState('docente');
 
   return (
-    <AuthContext.Provider value={{ rol, setRol, docenteId: DOCENTE_ID_SIMULADO }}>
+    <AuthContext.Provider
+      value={{
+        rol,
+        setRol,
+        docenteId: DOCENTE_ID_SIMULADO,
+        inscripcionId: INSCRIPCION_ID_SIMULADA,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

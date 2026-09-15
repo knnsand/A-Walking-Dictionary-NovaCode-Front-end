@@ -12,8 +12,10 @@ import {
 
 import { listarMazos } from '../../../cliente-api/mazosApi';
 import { verificarDuplicado, registrarTarjeta } from '../../../cliente-api/tarjetasApi';
+import { useAuth } from '../../../contexto/useAuth';
 
 export function RegistrarTarjetaForm({ onCerrar }) {
+  const { inscripcionId } = useAuth();
   const [form, setForm] = useState(FORM_INICIAL);
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
@@ -70,6 +72,13 @@ async function handleSubmit(evento) {
     return;
   }
 
+  if (!inscripcionId) {
+    setError(
+      'No hay una inscripción simulada configurada (VITE_INSCRIPCION_ID_SIMULADA). Revisa tu archivo .env.local.'
+    );
+    return;
+  }
+
   try {
     const chequeo = await verificarDuplicado(
       Number(form.mazo_id),
@@ -90,6 +99,7 @@ async function handleSubmit(evento) {
       traduccion: form.traduccion.trim(),
       definicion: form.definicion.trim(),
       ejemplo: form.ejemplo.trim(),
+      inscripcion_id: inscripcionId,
     });
 
     if (registro.resultado === 'acepcion_nueva') {
