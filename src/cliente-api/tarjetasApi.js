@@ -60,7 +60,7 @@ export async function actualizarContextoTarjeta(cardId, contexto) {
 /** Pestaña "Historial Aprobadas": tarjetas ya validadas por la docente. */
 export async function listarTarjetasAprobadas() {
   if (USE_MOCK) return Promise.resolve(mockListarAprobadas());
-  return apiRequest('/cards?estado=revisado_docente');
+  return apiRequest('/cards/approved');
 }
 
 /**
