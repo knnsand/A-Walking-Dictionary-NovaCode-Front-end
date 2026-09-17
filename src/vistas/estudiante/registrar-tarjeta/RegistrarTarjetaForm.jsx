@@ -20,20 +20,21 @@ export function RegistrarTarjetaForm({ onCerrar }) {
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
   const [mazos, setMazos] = useState([]);
+  const [confirmacion, setConfirmacion] = useState(null);
 
-useEffect(() => {
-  async function cargarMazos() {
-    try {
-      const datos = await listarMazos();
-      setMazos(datos);
-    } catch (error) {
-      console.error(error);
-      setError('No fue posible cargar los mazos disponibles.');
+  useEffect(() => {
+    async function cargarMazos() {
+      try {
+        const datos = await listarMazos();
+        setMazos(datos);
+      } catch (error) {
+        console.error(error);
+        setError('No fue posible cargar los mazos disponibles.');
+      }
     }
-  }
 
-  cargarMazos();
-}, []);
+    cargarMazos();
+  }, []);
 
   function handleChange(evento) {
     const { name, value } = evento.target;
@@ -45,77 +46,92 @@ useEffect(() => {
 
     setError('');
     setExito('');
+    setConfirmacion(null);
   }
 
-async function handleSubmit(evento) {
-  evento.preventDefault();
+  async function handleSubmit(evento) {
+    evento.preventDefault();
 
-  setError('');
-  setExito('');
+    setError('');
+    setExito('');
 
-  if (!validarCamposObligatorios(form)) {
-    setError(
-      'Completa los campos obligatorios: palabra, traducción y definición.'
-    );
-    return;
-  }
-
-  if (!validarEjemplo(form.ejemplo)) {
-    setError(
-      `El ejemplo no puede superar los ${LIMITE_EJEMPLO} caracteres.`
-    );
-    return;
-  }
-
-  if (!form.mazo_id) {
-    setError('Selecciona un mazo para continuar.');
-    return;
-  }
-
-  if (!inscripcionId) {
-    setError(
-      'No hay una inscripción simulada configurada (VITE_INSCRIPCION_ID_SIMULADA). Revisa tu archivo .env.local.'
-    );
-    return;
-  }
-
-  try {
-    const chequeo = await verificarDuplicado(
-      Number(form.mazo_id),
-      form.palabra,
-      form.definicion,
-      form.ejemplo
-    );
-
-    if (chequeo.duplicado && chequeo.resultado === 'coautoria') {
+    if (!validarCamposObligatorios(form)) {
       setError(
-        'Esta palabra ya fue aportada en el mazo con la misma información.'
+        'Completa los campos obligatorios: palabra, traducción y definición.'
       );
       return;
     }
 
-    const registro = await registrarTarjeta(Number(form.mazo_id), {
-      palabra: form.palabra.trim(),
-      traduccion: form.traduccion.trim(),
-      definicion: form.definicion.trim(),
-      ejemplo: form.ejemplo.trim(),
-      inscripcion_id: inscripcionId,
-    });
-
-    if (registro.resultado === 'acepcion_nueva') {
-      setExito(
-        'Acepción adicional registrada correctamente para revisión docente.'
+    if (!validarEjemplo(form.ejemplo)) {
+      setError(
+        `El ejemplo no puede superar los ${LIMITE_EJEMPLO} caracteres.`
       );
-    } else {
-      setExito(
-        'Palabra enviada correctamente para revisión docente.'
-      );
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    setError(error.message || 'No fue posible procesar la palabra. Intenta nuevamente.');
+
+    if (!form.mazo_id) {
+      setError('Selecciona un mazo para continuar.');
+      return;
+    }
+
+    if (!inscripcionId) {
+      setError(
+        'No hay una inscripción simulada configurada (VITE_INSCRIPCION_ID_SIMULADA). Revisa tu archivo .env.local.'
+      );
+      return;
+    }
+
+    try {
+      const chequeo = await verificarDuplicado(
+        Number(form.mazo_id),
+        form.palabra,
+        form.definicion,
+        form.ejemplo
+      );
+
+      if (chequeo.duplicado) {
+        setConfirmacion(chequeo.resultado);
+        return;
+      }
+
+      await enviarTarjeta();
+    } catch (error) {
+      console.error(error);
+      setError(error.message || 'No fue posible procesar la palabra. Intenta nuevamente.');
+    }
   }
-}
+
+  async function enviarTarjeta() {
+    try {
+      const registro = await registrarTarjeta(Number(form.mazo_id), {
+        palabra: form.palabra.trim(),
+        traduccion: form.traduccion.trim(),
+        definicion: form.definicion.trim(),
+        ejemplo: form.ejemplo.trim(),
+        inscripcion_id: inscripcionId,
+      });
+
+      if (registro.resultado === 'coautoria') {
+        setExito(
+          'Se te registró como coautor: esta palabra ya existía en el mazo con la misma información.'
+        );
+      } else if (registro.resultado === 'acepcion_nueva') {
+        setExito(
+          'Acepción adicional registrada correctamente para revisión docente.'
+        );
+      } else {
+        setExito(
+          'Palabra enviada correctamente para revisión docente.'
+        );
+      }
+
+      setForm(FORM_INICIAL);
+      setConfirmacion(null);
+    } catch (error) {
+      console.error(error);
+      setError(error.message || 'No fue posible procesar la palabra. Intenta nuevamente.');
+    }
+  }
 
   return (
     <form className="form-tarjeta" onSubmit={handleSubmit}>
@@ -149,6 +165,45 @@ async function handleSubmit(evento) {
         <p className="form-success" role="status">
           {exito}
         </p>
+      )}
+
+      {confirmacion && (
+        <div className="form-tarjeta__notice" role="alert">
+          {confirmacion === 'coautoria' ? (
+            <>
+              <strong>⚠️ Esta palabra ya existe en el mazo, con la misma definición.</strong>
+              <p>
+                Se te sumará como coautor del aporte existente; no se creará
+                una tarjeta nueva.
+              </p>
+            </>
+          ) : (
+            <>
+              <strong>⚠️ Esta palabra ya existe en el mazo, con una definición distinta.</strong>
+              <p>
+                Tu aporte se guardará como una acepción adicional, sin
+                sobrescribir la existente.
+              </p>
+            </>
+          )}
+
+          <div className="form-tarjeta__footer">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setConfirmacion(null)}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={enviarTarjeta}
+            >
+              Confirmar y enviar
+            </button>
+          </div>
+        </div>
       )}
 
       <section className="form-tarjeta__section">
