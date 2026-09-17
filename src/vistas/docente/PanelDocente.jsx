@@ -1,15 +1,14 @@
 import { useState } from 'react';
-
 import { ModalCrearMazo } from './ModalCrearMazo';
 import { ListaMazosCreados } from './ListaMazosCreados';
 
 export function PanelDocente() {
   const [refrescarTrigger, setRefrescarTrigger] = useState(0);
-  const [mostrarFormulario, setMostrarFormulario] = useState(true);
+  const [mostrarFormularioMazo, setMostrarFormularioMazo] = useState(true);
 
   function manejarMazoCreado() {
     setRefrescarTrigger((valor) => valor + 1);
-    setMostrarFormulario(false);
+    setMostrarFormularioMazo(false);
   }
 
   return (
@@ -19,17 +18,16 @@ export function PanelDocente() {
       <button
         type="button"
         className="btn btn-primary"
-        onClick={() => setMostrarFormulario(true)}
+        onClick={() => setMostrarFormularioMazo(true)}
       >
         Crear nuevo mazo
       </button>
 
-      {mostrarFormulario && (
-        <ModalCrearMazo
-          onMazoCreado={manejarMazoCreado}
-          onCerrar={() => setMostrarFormulario(false)}
-        />
+      {mostrarFormularioMazo && (
+        <ModalCrearMazo onMazoCreado={manejarMazoCreado} onCerrar={() => setMostrarFormularioMazo(false)} />
       )}
+
+      
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { LayoutPrincipal } from './componentes/comunes/LayoutPrincipal';
 import { PanelDocente } from './vistas/docente/PanelDocente';
 import { RevisionPalabras } from './vistas/docente/revision-palabras/RevisionPalabras';
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
+import { CursosEstudiantes } from './vistas/docente/cursos/CursosEstudiantes';
 
 function SelectorDeRolTemporal() {
   const { rol, setRol } = useAuth();
@@ -53,6 +54,14 @@ export default function App() {
                 element={
                   <RutaSoloDocente>
                     <RevisionPalabras />
+                  </RutaSoloDocente>
+                }
+              />
+              <Route
+                path="cursos"
+                element={
+                  <RutaSoloDocente>
+                    <CursosEstudiantes />
                   </RutaSoloDocente>
                 }
               />

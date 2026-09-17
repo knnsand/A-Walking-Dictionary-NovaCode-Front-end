@@ -9,6 +9,7 @@ import { AuthContext } from './AuthContext';
 // Cuando se implemente HU-015, este valor debe eliminarse y derivarse del token de sesión,
 // tal como ya lo anticipa el comentario de MazoController.crear() en el backend.
 const DOCENTE_ID_SIMULADO = Number(import.meta.env.VITE_DOCENTE_ID_SIMULADO) || null;
+const ESTUDIANTE_ID_SIMULADO = Number(import.meta.env.VITE_ESTUDIANTE_ID_SIMULADO) || null;
 
 if (!DOCENTE_ID_SIMULADO) {
   // Aviso solo en consola de desarrollo: si falta la variable de entorno, cualquier
@@ -34,6 +35,13 @@ if (!INSCRIPCION_ID_SIMULADA) {
   );
 }
 
+if (!ESTUDIANTE_ID_SIMULADO) {
+  console.warn(
+    'VITE_ESTUDIANTE_ID_SIMULADO no está configurado o no es un número válido. ' +
+    'Unirse a un curso (HU-014) fallará contra el backend real hasta configurarlo en .env.local.'
+  );
+}
+
 export function AuthProvider({ children }) {
   const [rol, setRol] = useState('docente');
 
@@ -44,6 +52,7 @@ export function AuthProvider({ children }) {
         setRol,
         docenteId: DOCENTE_ID_SIMULADO,
         inscripcionId: INSCRIPCION_ID_SIMULADA,
+        estudianteId: ESTUDIANTE_ID_SIMULADO,
       }}
     >
       {children}
