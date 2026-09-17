@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { ModalRegistrarTarjeta } from './registrar-tarjeta/ModalRegistrarTarjeta';
+import { ModalUnirseCurso } from './unirse-curso/ModalUnirseCurso';
 
 export function PanelEstudiante() {
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mostrarFormularioTarjeta, setMostrarFormularioTarjeta] = useState(false);
+  const [mostrarFormularioUnirse, setMostrarFormularioUnirse] = useState(false);
 
   return (
     <div className="panel-estudiante">
@@ -12,19 +14,31 @@ export function PanelEstudiante() {
           <p>Registra nuevas palabras en los mazos disponibles.</p>
         </div>
 
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => setMostrarFormulario(true)}
-        >
-          Registrar palabra
-        </button>
+        <div className="panel-estudiante__acciones">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setMostrarFormularioTarjeta(true)}
+          >
+            Registrar palabra
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setMostrarFormularioUnirse(true)}
+          >
+            Unirme a un curso
+          </button>
+        </div>
       </div>
 
-      {mostrarFormulario && (
-        <ModalRegistrarTarjeta
-          onCerrar={() => setMostrarFormulario(false)}
-        />
+      {mostrarFormularioTarjeta && (
+        <ModalRegistrarTarjeta onCerrar={() => setMostrarFormularioTarjeta(false)} />
+      )}
+
+      {mostrarFormularioUnirse && (
+        <ModalUnirseCurso onCerrar={() => setMostrarFormularioUnirse(false)} />
       )}
     </div>
   );

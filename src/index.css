@@ -317,3 +317,9 @@ body {
    TIPOGRAFÍA DE TÍTULOS (serif)
    ============================================================ */
 .card-mazo__title, h1, h2, h3 { font-family: var(--font-serif); }
+
+.panel-estudiante__acciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+} 
