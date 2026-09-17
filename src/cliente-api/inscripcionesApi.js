@@ -19,7 +19,7 @@ export async function unirseCurso(codigoAcceso, estudianteId) {
 }
   return apiRequest('/courses/enroll', {
     method: 'POST',
-    body: JSON.stringify({ codigo_acceso: codigoAcceso }),
+    body: JSON.stringify({ codigo_acceso: codigoAcceso, estudiante_id: estudianteId }),
   });
 }
 

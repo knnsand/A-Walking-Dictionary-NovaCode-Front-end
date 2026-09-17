@@ -24,7 +24,7 @@ describe('UnirseCursoForm', () => {
     fireEvent.change(screen.getByLabelText(/código de acceso/i), { target: { value: 'LIT2026' } });
     fireEvent.click(screen.getByRole('button', { name: /unirse a curso/i }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/te uniste al curso correctamente/i);
-    expect(unirseCurso).toHaveBeenCalledWith('LIT2026');
+    expect(unirseCurso).toHaveBeenCalledWith('LIT2026', 2);
   });
 
   it('muestra el mensaje de error que devuelve la API si el código no es válido', async () => {
