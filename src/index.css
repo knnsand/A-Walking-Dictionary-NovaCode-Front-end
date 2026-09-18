@@ -296,6 +296,70 @@ body {
 .tarjeta-pendiente__acciones { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* ============================================================
+   CONFIGURACIÓN DE PERFIL (HU-013) — /estudiante/configuracion-perfil
+   ============================================================ */
+.configurar-perfil { max-width: 1100px; margin: 0 auto; }
+.configurar-perfil__eyebrow {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--color-text-muted); margin: 0 0 4px;
+}
+.configurar-perfil__titulo { margin: 0 0 24px; }
+
+.configurar-perfil__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.configurar-perfil__columna-derecha { display: flex; flex-direction: column; gap: 24px; }
+
+.tarjeta {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.tarjeta--contexto-academico {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border: none;
+}
+.tarjeta--contexto-academico h3,
+.tarjeta--contexto-academico strong { color: var(--color-primary-contrast); }
+.tarjeta--contexto-academico p { color: rgba(255, 255, 255, 0.85); }
+
+@media (max-width: 900px) {
+  .configurar-perfil__grid { grid-template-columns: 1fr; }
+}
+
+.nivel-mcer-fieldset { border: none; margin: 0 0 16px; padding: 0; min-width: 0; }
+.nivel-mcer-fieldset legend.form-label { padding: 0; }
+
+.nivel-mcer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.nivel-mcer-opcion { position: relative; }
+.nivel-mcer-opcion input {
+  position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer;
+}
+.nivel-mcer-opcion label {
+  display: block; padding: 12px; border: 1px solid var(--color-border);
+  border-radius: 8px; cursor: pointer; user-select: none;
+}
+.nivel-mcer-opcion__codigo { display: block; font-weight: 700; font-size: 0.85rem; color: var(--color-text-main); margin-bottom: 4px; }
+.nivel-mcer-opcion__descripcion { display: block; font-size: 0.75rem; color: var(--color-text-muted); }
+.nivel-mcer-opcion input:checked + label { border-color: var(--color-info-border); border-width: 2px; background-color: var(--color-info-bg); }
+.nivel-mcer-opcion input:focus-visible + label { outline: 2px solid var(--color-info-border); outline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .nivel-mcer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
