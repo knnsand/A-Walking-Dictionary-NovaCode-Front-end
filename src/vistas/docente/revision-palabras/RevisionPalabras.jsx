@@ -53,10 +53,6 @@ export function RevisionPalabras() {
     setTarjetaParaAprobar({ ...tarjeta, ...datosEditados });
   }
 
-  // HU-005: se confirma el contexto -> se guardan las ediciones (mientras la tarjeta
-  // sigue pendiente_revision), se aprueba y se aplica el contexto, como una sola acción
-  // del usuario. El orden importa: editarTarjeta() exige 'pendiente_revision', así que debe
-  // ir antes de aprobarTarjeta() (que la mueve a 'revisado_docente').
   async function handleConfirmarAprobacion(contexto) {
     const { id_tarjeta, traduccion, definicion, ejemplo } = tarjetaParaAprobar;
     setGuardandoAprobacion(true);
@@ -76,9 +72,9 @@ export function RevisionPalabras() {
     }
   }
 
-  async function handleAprobarCoautoria(idCoautoria, datosEditados) {
+  async function handleAprobarCoautoria(idAporte, datosEditados) {
     try {
-      await aprobarCoautoria(idCoautoria, datosEditados);
+      await aprobarCoautoria(idAporte, datosEditados);
       setAviso({ tipo: 'exito', mensaje: 'Coautoría aprobada.' });
       setIdCoautoriaEnEdicion(null);
       cargarCoautorias();
@@ -87,9 +83,9 @@ export function RevisionPalabras() {
     }
   }
 
-  async function handleRechazarCoautoria(idCoautoria) {
+  async function handleRechazarCoautoria(idAporte) {
     try {
-      await rechazarCoautoria(idCoautoria);
+      await rechazarCoautoria(idAporte);
       setAviso({ tipo: 'exito', mensaje: 'Coautoría rechazada.' });
       cargarCoautorias();
     } catch (error) {
@@ -155,13 +151,13 @@ export function RevisionPalabras() {
           ) : (
             coautorias.map((coautoria) => (
               <CoautoriaPendienteCard
-                key={coautoria.id_coautoria}
+                key={coautoria.id_aporte}
                 coautoria={coautoria}
-                enEdicion={idCoautoriaEnEdicion === coautoria.id_coautoria}
-                onIniciarEdicion={() => setIdCoautoriaEnEdicion(coautoria.id_coautoria)}
+                enEdicion={idCoautoriaEnEdicion === coautoria.id_aporte}
+                onIniciarEdicion={() => setIdCoautoriaEnEdicion(coautoria.id_aporte)}
                 onCancelarEdicion={() => setIdCoautoriaEnEdicion(null)}
-                onAprobar={(datosEditados) => handleAprobarCoautoria(coautoria.id_coautoria, datosEditados)}
-                onRechazar={() => handleRechazarCoautoria(coautoria.id_coautoria)}
+                onAprobar={(datosEditados) => handleAprobarCoautoria(coautoria.id_aporte, datosEditados)}
+                onRechazar={() => handleRechazarCoautoria(coautoria.id_aporte)}
               />
             ))
           )
