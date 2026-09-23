@@ -34,22 +34,28 @@ const MENU_POR_ROL = {
     },
   ],
   estudiante: [
-    {
-      grupo: null,
-      items: [
-        { to: '/estudiante/diccionario', label: 'Diccionario Global' },
-        { to: '/estudiante/mazos', label: 'Mazos de Estudio' },
-      ],
-    },
-    {
-      grupo: 'Mi Aprendizaje',
-      items: [
-        { to: '/estudiante/estudio', label: 'Modo Estudio' },
-        { to: '/estudiante/quices', label: 'Quices Quincenales' },
-        { to: '/estudiante/progreso', label: 'Progreso & Desempeño' },
-      ],
-    },
-  ],
+  {
+    grupo: null,
+    items: [
+      { to: '/estudiante/diccionario', label: 'Diccionario Global' },
+      { to: '/estudiante/mazos', label: 'Mazos de Estudio' },
+    ],
+  },
+  {
+    grupo: 'Mi Aprendizaje',
+    items: [
+      { to: '/estudiante/estudio', label: 'Modo Estudio' },
+      { to: '/estudiante/quices', label: 'Quices Quincenales' },
+      { to: '/estudiante/progreso', label: 'Progreso & Desempeño' },
+    ],
+  },
+  {
+    grupo: null,
+    items: [
+      { to: '/estudiante/configuracion-perfil', label: 'Configuración & Perfil' },
+    ],
+  },
+],
   invitado: [
     {
       grupo: null,

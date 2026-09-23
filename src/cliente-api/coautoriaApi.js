@@ -2,48 +2,36 @@ import { apiRequest } from './httpClient';
 import { mockListarCoautoriasPendientes, mockAprobarCoautoria, mockRechazarCoautoria } from './mocks/coautoriaMock';
 
 /**
- * Es la capa intermedia entre los componentes de React (CoautoriaPendienteCard,
- * RevisionPalabras) y el origen real de los datos. Cada función revisa
- * USE_MOCK para decidir si responde con datos simulados en memoria
- * (coautoriaMock.js) o si llama al backend real vía apiRequest().
- *
- * Ventaja de este patrón: el día que el backend esté desplegado, se
- * cambia VITE_USE_MOCK=false en el .env y toda la app empieza a usar
- * la API real sin tocar ningún componente visual.
- *
- * NOTA: los endpoints /coauthorships/* son provisionales (no están
- * definidos en las especificaciones técnicas originales de HU-004/
- * HU-005); se nombraron siguiendo la convención REST del resto del
- * backlog (/cards, /decks, etc.).
+ * Capa intermedia entre los componentes de React (CoautoriaPendienteCard,
+ * RevisionPalabras) y el backend real. Endpoints reales:
+ * - GET    /aportes/pending           → listar pendientes
+ * - PATCH  /aportes/:id/approve       → aprobar (con correcciones opcionales)
+ * - DELETE /contributions/:id         → rechazar
+ * Ver AporteController.js, aporteRoutes.js y contributionRoutes.js en el backend.
  */
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
-/** Lista las coautorías en estado pendiente_revision. */
+/** Lista las coautorías/acepciones nuevas pendientes de revisión. */
 export async function listarCoautoriasPendientes() {
   if (USE_MOCK) return Promise.resolve(mockListarCoautoriasPendientes());
-  return apiRequest('/coauthorships?estado=pendiente_revision');
+  return apiRequest('/aportes/pending');
 }
 
 /**
- * Aprueba una coautoría, con correcciones opcionales de la docente
- * (gramática, ortografía, estilo) aplicadas en el mismo paso.
- *
- * @param {number} idCoautoria
+ * Aprueba una coautoría/acepción nueva, con correcciones opcionales de la docente.
+ * @param {number} idCoautoria - id_aporte a aprobar.
  * @param {object} datosEditados - Vacío si se aprobó sin editar.
  */
 export async function aprobarCoautoria(idCoautoria, datosEditados = {}) {
   if (USE_MOCK) return Promise.resolve(mockAprobarCoautoria(idCoautoria, datosEditados));
-  return apiRequest(`/coauthorships/${idCoautoria}/approve`, {
+  return apiRequest(`/aportes/${idCoautoria}/approve`, {
     method: 'PATCH',
     body: JSON.stringify(datosEditados),
   });
 }
 
-/**
- * Rechaza una coautoría porque su contenido no concuerda con la
- * palabra a la que se quería asociar.
- */
+/** Rechaza una coautoría o acepción nueva. */
 export async function rechazarCoautoria(idCoautoria) {
   if (USE_MOCK) return Promise.resolve(mockRechazarCoautoria(idCoautoria));
-  return apiRequest(`/coauthorships/${idCoautoria}/reject`, { method: 'PATCH' });
+  return apiRequest(`/contributions/${idCoautoria}`, { method: 'DELETE' });
 }

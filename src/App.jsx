@@ -9,6 +9,7 @@ import { PanelDocente } from './vistas/docente/PanelDocente';
 import { RevisionPalabras } from './vistas/docente/revision-palabras/RevisionPalabras';
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
 import { CursosEstudiantes } from './vistas/docente/cursos/CursosEstudiantes';
+import { ConfigurarPerfil } from './vistas/estudiante/configurar-perfil/ConfigurarPerfil';
 
 function SelectorDeRolTemporal() {
   const { rol, setRol } = useAuth();
@@ -76,6 +77,11 @@ export default function App() {
             </Route>
 
             <Route path="/" element={<Navigate to="/docente" replace />} />
+
+            <Route path="/estudiante" element={<LayoutPrincipal />}>
+              <Route index element={<PanelEstudiante />} />
+              <Route path="configuracion-perfil" element={<ConfigurarPerfil />} />
+            </Route>
           </Routes>
         </AuthProvider>
       </ThemeProvider>
