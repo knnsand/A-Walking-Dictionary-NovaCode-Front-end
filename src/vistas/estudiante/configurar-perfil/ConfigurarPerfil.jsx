@@ -10,21 +10,31 @@ export function ConfigurarPerfil() {
   const [perfil, setPerfil] = useState(null);
   const [contexto, setContexto] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [errorCarga, setErrorCarga] = useState(null);
 
   useEffect(() => {
     async function cargarDatos() {
-      const [datosPerfil, datosContexto] = await Promise.all([
-        obtenerPerfil(estudianteId),
-        obtenerContextoAcademico(estudianteId),
-      ]);
-      setPerfil(datosPerfil);
-      setContexto(datosContexto);
-      setCargando(false);
+      try {
+        const [datosPerfil, datosContexto] = await Promise.all([
+          obtenerPerfil(estudianteId),
+          obtenerContextoAcademico(estudianteId),
+        ]);
+
+        setPerfil(datosPerfil);
+        setContexto(datosContexto);
+      } catch (error) {
+          console.error('Error al cargar el perfil:', error);
+          setErrorCarga(error.message || 'No se pudo cargar el perfil.');
+        } finally {
+        setCargando(false);
+      }
     }
+
     cargarDatos();
   }, [estudianteId]);
 
   if (cargando) return <p>Cargando perfil...</p>;
+  if (errorCarga) { return <p role="alert">{errorCarga}</p>;}
 
   return (
     <div className="configurar-perfil">

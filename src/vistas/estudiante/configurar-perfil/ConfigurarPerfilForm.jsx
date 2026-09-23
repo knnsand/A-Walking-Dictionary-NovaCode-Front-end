@@ -16,20 +16,14 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
     setForm((anterior) => ({ ...anterior, [name]: value }));
   }
 
-  function handleAvatarChange(evento) {
-    const archivo = evento.target.files?.[0];
-    if (!archivo) return;
-
-    const lector = new FileReader();
-    lector.onload = () => setForm((anterior) => ({ ...anterior, avatar: lector.result }));
-    lector.readAsDataURL(archivo);
-  }
-
   async function handleSubmit(evento) {
     evento.preventDefault();
 
     if (!validarCamposObligatorios(form)) {
-      setAviso({ tipo: 'error', mensaje: 'Selecciona tu nivel MCER e ingresa tu código estudiantil.' });
+      setAviso({
+        tipo: 'error',
+        mensaje: 'Revisa los datos del perfil. Verifica tu nivel MCER, código estudiantil, intereses y avatar.'
+      });
       return;
     }
 
@@ -58,13 +52,30 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
       <Aviso tipo={aviso.tipo} mensaje={aviso.mensaje} />
 
       <div className="form-group">
-        <label className="form-label" htmlFor="avatar">Avatar</label>
-        {form.avatar && (
-          <img src={form.avatar} alt="Vista previa del avatar" className="perfil__avatar-preview" width={80} height={80} />
-        )}
-        <input id="avatar" type="file" accept="image/*" onChange={handleAvatarChange} />
-      </div>
+        <label className="form-label" htmlFor="avatar">
+          URL del avatar
+        </label>
 
+        <input
+          id="avatar"
+          className="form-input"
+          type="url"
+          name="avatar"
+          value={form.avatar}
+          onChange={handleChange}
+          placeholder="https://ejemplo.com/avatar.jpg"
+        />
+
+        {form.avatar && (
+          <img
+            src={form.avatar}
+            alt="Vista previa del avatar"
+            className="perfil__avatar-preview"
+            width={80}
+            height={80}
+          />
+        )}
+      </div>
       <fieldset className="form-group nivel-mcer-fieldset">
         <legend className="form-label">Nivel MCER</legend>
         <div className="nivel-mcer-grid">
@@ -98,6 +109,31 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
           onChange={handleChange}
         />
       </div>
+
+      <div className="form-group">
+      <label className="form-label" htmlFor="intereses">
+        Intereses
+      </label>
+      <textarea
+        id="intereses"
+        className="form-input"
+        name="intereses"
+        value={(form.intereses || []).join(', ')}
+        onChange={(evento) => {
+          const intereses = evento.target.value
+            .split(',')
+            .map((interes) => interes.trim())
+            .filter(Boolean);
+
+          setForm((anterior) => ({
+            ...anterior,
+            intereses,
+          }));
+        }}
+        placeholder="Ejemplo: programación, música, videojuegos"
+        rows={3}
+      />
+    </div>
 
       <button type="submit" className="btn btn-primary" disabled={enviando}>
         {enviando ? 'Guardando...' : 'Guardar Cambios'}

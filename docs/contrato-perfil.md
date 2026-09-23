@@ -1,26 +1,44 @@
 # Contrato: Perfil Académico del Estudiante (HU-013)
 
-**Estado:** Frontend implementado contra mocks (`VITE_USE_MOCK=true`). El backend aún no implementa estos endpoints.
-**CA de referencia:** CA-5.2.1 (Escenarios de Diseño) — alcance acotado a nivel MCER, código estudiantil y avatar. El equipo decidió alinear el MVP estrictamente con el CA-5.2.1, que es el criterio ejecutable.
+**Estado:** Frontend preparado para integración con el backend real.
+El frontend ya no utiliza mocks para HU-013 (`VITE_USE_MOCK=false`).
+
+La implementación del backend de HU-013 existe en su rama de desarrollo y queda pendiente su integración en `develop`.
 
 ## 1. Actualizar perfil
 
 `PATCH /api/v1/users/profile`
 
-**Body enviado por el frontend:**
+### Body enviado por el frontend
+
 ```json
 {
   "estudiante_id": 2,
   "nivel_ingles": "B1",
   "codigo_estudiantil": "20221234",
-  "avatar": "data:image/png;base64,..."
+  "avatar": "https://ejemplo.com/avatar.jpg",
+  "intereses": [
+    "programación",
+    "música",
+    "videojuegos"
+  ]
 }
 ```
 
-- `estudiante_id` viaja en el body (no en la ruta ni en un token) porque todavía no existe autenticación real (HU-015). El frontend lo obtiene de `VITE_ESTUDIANTE_ID_SIMULADO`. Mismo patrón usado en HU-001/002/014.
-- `avatar`: el mock lo trata como string (base64 data URI, producido por `FileReader.readAsDataURL` en el navegador). **Esto es una simplificación del mock, no una implementación real** — ver punto 5.1.
+### Consideraciones
 
-**Respuesta esperada (200) — debe incluir el perfil completo, no solo los campos modificados:**
+* `estudiante_id` viaja actualmente en el body porque la autenticación real todavía no está integrada en el frontend. El valor actual proviene de `VITE_ESTUDIANTE_ID_SIMULADO`.
+* Este uso de `estudiante_id` es temporal. Con la integración de HU-015, el identificador deberá derivarse del usuario autenticado y no depender de una variable simulada.
+* `nivel_ingles` debe pertenecer al conjunto:
+  `A1`, `A2`, `B1`, `B2`, `C1`, `C2`.
+* `codigo_estudiantil` admite máximo 20 caracteres.
+* `avatar` admite máximo 500 caracteres y no puede enviarse como `data:` URI ni como Base64.
+* `intereses` se maneja como un arreglo de cadenas no vacías.
+
+### Respuesta esperada (200)
+
+La respuesta contiene el perfil actualizado:
+
 ```json
 {
   "estudiante_id": 2,
@@ -29,44 +47,118 @@
   "rol": "Estudiante",
   "nivel_ingles": "B1",
   "codigo_estudiantil": "20221234",
-  "avatar": "..."
+  "avatar": "https://ejemplo.com/avatar.jpg",
+  "intereses": [
+    "programación",
+    "música",
+    "videojuegos"
+  ]
 }
 ```
 
-**Errores:** el frontend lee `error.message` asumiendo el formato `{"error": "mensaje"}` en respuestas no-2xx — mismo contrato que usa `httpClient.js` en el resto del proyecto.
+### Errores
 
-## 2. Leer perfil (precarga del formulario)
+El frontend utiliza `error.message` para mostrar los errores de las respuestas no exitosas.
 
-`GET /api/v1/users/:estudiante_id` → mismo shape que la respuesta del PATCH.
-
-`usuarioRoutes.js` ya define `GET /:id` vía `UsuarioController`, pero no está montada en `app.js`. Si al montarla ya devuelve estos campos (una vez existan en la tabla), probablemente no haga falta un endpoint nuevo.
-
-## 3. Contexto académico (solo lectura)
-
-`GET /api/v1/students/:estudiante_id/context`
+`httpClient.js` espera, cuando es posible, un cuerpo con la estructura:
 
 ```json
 {
-  "curso_asignado": "Literatura Anglófona",
-  "semestre_activo": "2026-2",
-  "departamento_universidad": "Universidad del Cauca - Departamento de Sistemas"
+  "error": "Mensaje del error"
 }
 ```
 
-Este endpoint es una invención del frontend para el mock — no corresponde a ninguna ruta ni tabla existente. Antes de implementarlo, vale la pena evaluar:
+## 2. Leer perfil
 
-- `curso_asignado` / `semestre_activo` se derivan de la inscripción del estudiante (HU-014) vía JOIN con `curso` — no deberían requerir columnas nuevas en `usuario`.
+`GET /api/v1/users/:id`
 
-## 4. Brechas de esquema (`usuario`, `init.sql`)
+Este endpoint se utiliza para precargar la información del estudiante en la pantalla de configuración del perfil.
 
-| Columna requerida | ¿Existe hoy? |
-|---|---|
-| `nivel_ingles` | Sí (`VARCHAR(10)`) |
-| `codigo_estudiantil` | **No** |
-| `avatar` | **No** — tipo de dato pendiente (ver 5.1) |
+### Respuesta esperada
 
-## 5. Pendiente de decidir con backend
+```json
+{
+  "estudiante_id": 2,
+  "nombre_completo": "Juan Estudiante",
+  "correo": "juan.estudiante@correo.edu",
+  "rol": "Estudiante",
+  "nivel_ingles": "B1",
+  "codigo_estudiantil": "20221234",
+  "avatar": "https://ejemplo.com/avatar.jpg",
+  "intereses": [
+    "programación",
+    "música"
+  ]
+}
+```
 
-1. **Almacenamiento de `avatar`.** El mock usa base64. Opciones para la implementación real (de menor a mayor complejidad): (a) columna `TEXT` con URL a un servicio de almacenamiento externo, requiere endpoint de subida aparte; (b) columna `TEXT` con base64 directo, más simple pero no escala; (c) archivo en disco/volumen del contenedor + ruta en la columna. No hay recomendación tomada — depende de la infraestructura ya definida en `walking-dictionary-infra`.
-2. **`GET /users/:id` genérico vs. endpoint dedicado de perfil**, simétrico al PATCH.
-3. **Contexto académico:** ¿endpoint dedicado como el propuesto, o ya existe/está planeado algo de "mi inscripción" del que derivar esto sin construir uno nuevo?
+## 3. Contexto académico
+
+`GET /api/v1/students/:id/context`
+
+Este endpoint proporciona información académica derivada de la relación del estudiante con sus cursos e inscripciones.
+
+### Respuesta esperada
+
+```json
+{
+  "estudiante_id": 2,
+  "curso_asignado": "Literatura Anglófona",
+  "semestre_activo": "2026-2",
+  "departamento_universidad": null
+}
+```
+
+### Consideraciones
+
+* `curso_asignado` y `semestre_activo` se obtienen a partir de la información de inscripción del estudiante.
+* `departamento_universidad` actualmente puede retornar `null`, debido a que no existe una fuente de datos implementada para ese valor.
+* El frontend debe mostrar el valor recibido por el backend y no asumir un valor fijo.
+
+## 4. Campos persistidos
+
+El backend de HU-013 incorpora los siguientes campos asociados al perfil del estudiante:
+
+| Campo                | Tipo / restricción                   |
+| -------------------- | ------------------------------------ |
+| `nivel_ingles`       | Valores MCER: A1, A2, B1, B2, C1, C2 |
+| `codigo_estudiantil` | `VARCHAR(20)`                        |
+| `avatar`             | `VARCHAR(500)`                       |
+| `intereses`          | Arreglo de cadenas (`TEXT[]`)        |
+
+## 5. Integración con autenticación
+
+Actualmente HU-013 utiliza temporalmente `estudiante_id` para identificar al estudiante.
+
+Con la integración de HU-015:
+
+* El usuario será identificado mediante autenticación.
+* Las peticiones deberán utilizar el JWT recibido durante el inicio de sesión.
+* El frontend dejará de depender de `VITE_ESTUDIANTE_ID_SIMULADO`.
+* Las rutas que requieran autenticación deberán enviar el token mediante:
+
+```http
+Authorization: Bearer <token>
+```
+
+## 6. Endpoints utilizados por el frontend
+
+| Operación                    | Método | Endpoint                       |
+| ---------------------------- | ------ | ------------------------------ |
+| Consultar perfil             | GET    | `/api/v1/users/:id`            |
+| Actualizar perfil            | PATCH  | `/api/v1/users/profile`        |
+| Consultar contexto académico | GET    | `/api/v1/students/:id/context` |
+
+## 7. Estado de los mocks
+
+HU-013 ya no depende de los mocks para ejecutar las operaciones de perfil.
+
+El archivo:
+
+```text
+src/cliente-api/mocks/perfilMock.js
+```
+
+fue eliminado después de migrar las llamadas a los endpoints reales.
+
+La carpeta `src/cliente-api/mocks/` puede continuar existiendo mientras otras historias de usuario todavía utilicen mocks.
