@@ -1,0 +1,27 @@
+.diccionario-invitado {
+  width: 100%;
+}
+
+.diccionario-invitado__descripcion {
+  margin-bottom: 1.5rem;
+}
+
+.diccionario-invitado__lista {
+  display: grid;
+  gap: 1rem;
+}
+
+.diccionario-invitado__mazo {
+  padding: 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.diccionario-invitado__mazo h2 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.diccionario-invitado__mazo p {
+  margin: 0.4rem 0;
+}
