@@ -1,0 +1,22 @@
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login__content {
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.login__error {
+  margin-bottom: 1rem;
+}
+
+.login__guest-button {
+  margin-top: 1rem;
+}

@@ -14,7 +14,7 @@ import { ModalCrearMazo } from '../../vistas/docente/ModalCrearMazo';
  * importar en qué página esté parado el docente.
  */
 export function LayoutPrincipal({ contadores = {} }) {
-  const { rol } = useAuth();
+  const { rol, usuario } = useAuth();
   const navigate = useNavigate();
   const [sidebarAbierto, setSidebarAbierto] = useState(false);
   const [modalCrearMazoAbierto, setModalCrearMazoAbierto] = useState(false);
@@ -23,8 +23,8 @@ export function LayoutPrincipal({ contadores = {} }) {
     <div className="app-shell">
       <Sidebar
         rol={rol}
-        nombreUsuario={rol === 'docente' ? 'Dra. Eleanor Vance' : rol === 'estudiante' ? 'Mateo Rodríguez' : null}
-        correoUsuario={rol === 'docente' ? 'e.vance@unicauca.edu.co' : rol === 'estudiante' ? 'm.rodriguez@unicauca.edu.co' : null}
+        nombreUsuario={usuario?.nombre_completo}
+        correoUsuario={usuario?.email}
         contadores={contadores}
         abierto={sidebarAbierto}
         onCerrar={() => setSidebarAbierto(false)}

@@ -1,40 +1,37 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexto/AuthProvider';
 import { ThemeProvider } from './contexto/ThemeProvider';
 import { useAuth } from './contexto/useAuth';
-
 import { LayoutPrincipal } from './componentes/comunes/LayoutPrincipal';
+import { LayoutInvitado } from './componentes/comunes/LayoutInvitado';
+
 import { PanelDocente } from './vistas/docente/PanelDocente';
 import { RevisionPalabras } from './vistas/docente/revision-palabras/RevisionPalabras';
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
 import { CursosEstudiantes } from './vistas/docente/cursos/CursosEstudiantes';
 import { ConfigurarPerfil } from './vistas/estudiante/configurar-perfil/ConfigurarPerfil';
+import { Login } from './vistas/autenticacion/Login';
+import { DiccionarioInvitado } from './vistas/invitado/DiccionarioInvitado';
 
-function SelectorDeRolTemporal() {
-  const { rol, setRol } = useAuth();
-  const navigate = useNavigate();
+function RutaProtegida({ children }) {
+  const { autenticado } = useAuth();
 
-  function cambiarRol(nuevoRol) {
-    setRol(nuevoRol);
-    navigate(`/${nuevoRol}`);
+  if (!autenticado) {
+    return <Navigate to="/login" replace />;
   }
 
-  return (
-    <div style={{ padding: '0.5rem', background: '#eee' }}>
-      Rol simulado actual: <strong>{rol}</strong>{' '}
-      <button onClick={() => cambiarRol('docente')}>Ver como Docente</button>
-      <button onClick={() => cambiarRol('estudiante')}>Ver como Estudiante</button>
-      <button onClick={() => cambiarRol('invitado')}>Ver como Invitado</button>
-    </div>
-  );
+  return children;
 }
 
 function RutaSoloDocente({ children }) {
-  const { rol } = useAuth();
+  const { autenticado, rol } = useAuth();
+
+  if (!autenticado) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (rol !== 'docente') {
-    return <p style={{ padding: '1rem' }}>Esta sección está disponible solo para el rol Docente.</p>;
+    return <Navigate to="/estudiante" replace />;
   }
 
   return children;
@@ -45,43 +42,65 @@ export default function App() {
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <SelectorDeRolTemporal />
-
           <Routes>
-            <Route path="/docente" element={<LayoutPrincipal contadores={{ pendientes: 2 }} />}>
+
+            <Route
+              path="/docente"
+              element={
+                <RutaSoloDocente>
+                  <LayoutPrincipal contadores={{ pendientes: 2 }} />
+                </RutaSoloDocente>
+              }
+            >
               <Route index element={<PanelDocente />} />
+
               <Route
                 path="revision-palabras"
-                element={
-                  <RutaSoloDocente>
-                    <RevisionPalabras />
-                  </RutaSoloDocente>
-                }
+                element={<RevisionPalabras />}
               />
+
               <Route
                 path="cursos"
-                element={
-                  <RutaSoloDocente>
-                    <CursosEstudiantes />
-                  </RutaSoloDocente>
-                }
+                element={<CursosEstudiantes />}
               />
             </Route>
 
-            <Route path="/estudiante" element={<LayoutPrincipal />}>
+            <Route
+              path="/estudiante"
+              element={
+                <RutaProtegida>
+                  <LayoutPrincipal />
+                </RutaProtegida>
+              }
+            >
               <Route index element={<PanelEstudiante />} />
+
+              <Route
+                path="configuracion-perfil"
+                element={<ConfigurarPerfil />}
+              />
             </Route>
 
-            <Route path="/invitado" element={<LayoutPrincipal />}>
-              <Route index element={<p>Vista de demostración para invitados (en construcción)</p>} />
+            <Route
+              path="/invitado"
+              element={<LayoutInvitado />}
+            >
+              <Route
+                index
+                element={<DiccionarioInvitado />}
+              />
             </Route>
 
-            <Route path="/" element={<Navigate to="/docente" replace />} />
+            <Route
+              path="/login"
+              element={<Login />}
+            />
 
-            <Route path="/estudiante" element={<LayoutPrincipal />}>
-              <Route index element={<PanelEstudiante />} />
-              <Route path="configuracion-perfil" element={<ConfigurarPerfil />} />
-            </Route>
+            <Route
+              path="/"
+              element={<Navigate to="/login" replace />}
+            />
+
           </Routes>
         </AuthProvider>
       </ThemeProvider>
