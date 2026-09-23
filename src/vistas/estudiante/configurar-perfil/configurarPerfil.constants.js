@@ -11,6 +11,7 @@ export const FORM_INICIAL = {
   nivel_ingles: '',
   codigo_estudiantil: '',
   avatar: '',
+  intereses: [],
 };
 
 export const CAMPOS_OBLIGATORIOS = ['nivel_ingles', 'codigo_estudiantil'];
