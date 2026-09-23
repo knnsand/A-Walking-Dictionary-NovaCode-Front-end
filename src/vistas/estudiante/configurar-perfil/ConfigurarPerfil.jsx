@@ -63,7 +63,7 @@ export function ConfigurarPerfil() {
             <h3>Contexto Académico</h3>
             <p><strong>Curso asignado:</strong> {contexto.curso_asignado}</p>
             <p><strong>Semestre activo:</strong> {contexto.semestre_activo}</p>
-            <p><strong>Departamento y universidad:</strong> {contexto.departamento_universidad}</p>
+            <p><strong>Universidad del Cauca</strong> {contexto.departamento_universidad}</p>
             </section>
         </div>
         </div>

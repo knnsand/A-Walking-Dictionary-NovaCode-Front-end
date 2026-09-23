@@ -8,6 +8,7 @@ import { validarCamposObligatorios } from './configurarPerfil.validation';
 export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
   const { estudianteId } = useAuth();
   const [form, setForm] = useState({ ...FORM_INICIAL, ...datosIniciales });
+  const [interesesTexto, setInteresesTexto] = useState((datosIniciales?.intereses || []).join(', '));
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
   const [enviando, setEnviando] = useState(false);
 
@@ -118,9 +119,13 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
         id="intereses"
         className="form-input"
         name="intereses"
-        value={(form.intereses || []).join(', ')}
+        value={interesesTexto}
         onChange={(evento) => {
-          const intereses = evento.target.value
+          const texto = evento.target.value;
+
+          setInteresesTexto(texto);
+
+          const intereses = texto
             .split(',')
             .map((interes) => interes.trim())
             .filter(Boolean);
