@@ -1,17 +1,15 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../../contexto/useAuth';
 import { obtenerParticipacionMazo } from '../../../cliente-api/analiticasApi';
+import { listarMazos } from '../../../cliente-api/mazosApi';
 import { FilaEstudianteParticipacion } from './FilaEstudianteParticipacion';
 import { TEXTOS, COLUMNAS } from './participacionMazo.constants';
 import './participacion-mazo.css';
 
-// TODO(mazosApi): reemplazar por los mazos reales del curso activo en cuanto
-// se confirme la función/forma de mazosApi.js (p. ej. obtenerMazos()).
-// Se deja este fallback para que la vista funcione de una al conectarla al
-// Sidebar, con los mismos IDs que ya usa analiticasMock.js.
+// Se usa solo si listarMazos() falla o devuelve vacío (p. ej. sin conexión al
+// backend), para que la vista no quede en blanco.
 const MAZOS_FALLBACK = [
-  { mazo_id: 12, nombre: 'Semana 3 · Their Eyes Were Watching God' },
-  { mazo_id: 13, nombre: 'Semana 5 · Beloved' },
+  { mazo_id: 1, nombre: 'Semana 3 · Their Eyes Were Watching God' },
 ];
 
 // Mensajes exactos que devuelve el backend en rutas protegidas
@@ -20,23 +18,58 @@ const ES_SESION_INVALIDA = (msg) =>
   /token de autenticación no proporcionado|token inválido o expirado/i.test(msg ?? '');
 const ES_SIN_PERMISO = (msg) => /no tiene permisos para acceder a este recurso/i.test(msg ?? '');
 
+// listarMazos() pega a GET /decks (docs/contrato-mazo.md) y devuelve las
+// columnas reales de la tabla "mazo" tal cual (id_mazo, semana,
+// nombre_lectura, ...). Nota: ese endpoint no filtra por curso — mientras
+// solo exista un curso en el entorno de desarrollo no es un problema, pero
+// si se agregan varios cursos habría que filtrar aquí por curso_id (o pedirle
+// al backend un query param para eso).
+function mapearMazoApi(m) {
+  return { mazo_id: m.id_mazo, nombre: `Semana ${m.semana} · ${m.nombre_lectura}` };
+}
+
 /**
  * Panel docente de HU-2.3: participación individual por mazo y semana.
  * Requiere sesión con rol docente (el endpoint está protegido, ver contrato
  * de autenticación).
  *
  * @param {Object} [props]
- * @param {Array<{ mazo_id: number, nombre: string }>} [props.mazos] - Si no se
- *   pasa, usa MAZOS_FALLBACK de arriba.
+ * @param {Array<{ mazo_id: number, nombre: string }>} [props.mazos] - Si se
+ *   pasa, se usa tal cual y NO se llama a listarMazos(). Si se omite, la
+ *   vista trae los mazos reales del backend.
  */
-export function ParticipacionMazo({ mazos = MAZOS_FALLBACK }) {
+export function ParticipacionMazo({ mazos: mazosProp }) {
   const { token, logout } = useAuth();
-  const [mazoId, setMazoId] = useState(mazos[0]?.mazo_id ?? '');
+  const [mazosDisponibles, setMazosDisponibles] = useState(mazosProp ?? MAZOS_FALLBACK);
+  const [mazoId, setMazoId] = useState(mazosProp?.[0]?.mazo_id ?? MAZOS_FALLBACK[0].mazo_id);
   const [sinAportes, setSinAportes] = useState(false);
   const [filas, setFilas] = useState([]);
   const [todasLasFilas, setTodasLasFilas] = useState([]); // para las tarjetas de stats, sin el filtro
   const [estado, setEstado] = useState('inactivo'); // inactivo | cargando | listo | error
   const [error, setError] = useState(null);
+
+  // Trae los mazos reales una sola vez, salvo que el padre ya los haya pasado
+  // por props (útil para tests o para cuando algún día PanelDocente ya tenga
+  // esta lista cargada y quiera reusarla en vez de pedirla de nuevo).
+  useEffect(() => {
+    if (mazosProp) return;
+    let cancelado = false;
+
+    listarMazos()
+      .then((datos) => {
+        if (cancelado || !Array.isArray(datos) || datos.length === 0) return;
+        const opciones = datos.map(mapearMazoApi);
+        setMazosDisponibles(opciones);
+        setMazoId((actual) => (opciones.some((o) => String(o.mazo_id) === String(actual)) ? actual : opciones[0].mazo_id));
+      })
+      .catch(() => {
+        // Se conserva MAZOS_FALLBACK ya seteado como estado inicial.
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, [mazosProp]);
 
   const cargar = useCallback(async () => {
     if (!mazoId) return;
@@ -79,13 +112,13 @@ export function ParticipacionMazo({ mazos = MAZOS_FALLBACK }) {
         </div>
         <div className="participacion-mazo__acciones">
           <select value={mazoId} onChange={(e) => setMazoId(e.target.value)}>
-            {mazos.map((m) => (
+            {mazosDisponibles.map((m) => (
               <option key={m.mazo_id} value={m.mazo_id}>
                 {m.nombre}
               </option>
             ))}
           </select>
-          <button type="button" onClick={cargar}>
+          <button type="button" className="btn btn-primary" onClick={cargar}>
             {TEXTOS.botonActualizar}
           </button>
         </div>
