@@ -30,4 +30,5 @@ export const MENSAJE_SIN_INSCRIPCION =
 
 // TODO: reemplazar por la inscripción real del estudiante cuando AuthContext la exponga
 // (hoy el rol es simulado con SelectorDeRolTemporal). Se puede forzar con VITE_INSCRIPCION_ID.
-export const INSCRIPCION_ID_TEMPORAL = Number(import.meta.env.VITE_INSCRIPCION_ID) || 1;
+// estudiarTarjetas.constants.js
+export const INSCRIPCION_ID_TEMPORAL = Number(import.meta.env.VITE_INSCRIPCION_ID_SIMULADA) || 1;

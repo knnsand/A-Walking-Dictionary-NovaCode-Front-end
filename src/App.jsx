@@ -13,6 +13,7 @@ import { ConfigurarPerfil } from './vistas/estudiante/configurar-perfil/Configur
 import { Login } from './vistas/autenticacion/Login';
 import { DiccionarioInvitado } from './vistas/invitado/DiccionarioInvitado';
 import { ParticipacionMazo } from './vistas/docente/participacion/ParticipacionMazo';
+import { PaginaEstudio } from './vistas/estudiante/estudiar-tarjetas/PaginaEstudio';
 
 function RutaProtegida({ children }) {
   const { autenticado } = useAuth();
@@ -83,6 +84,8 @@ export default function App() {
               }
             >
               <Route index element={<PanelEstudiante />} />
+
+              <Route path="estudio" element={<PaginaEstudio />} />
 
               <Route
                 path="configuracion-perfil"
