@@ -1,0 +1,703 @@
+/* vistas/estudiante/estudiar-tarjetas/estudiar-tarjetas.css
+   HU-010. Todas las clases llevan el prefijo "estudiar-" para no chocar con el resto del proyecto.
+   Paleta y proporciones tomadas del diseño (video de referencia). Los colores y las fuentes se
+   cambian en las variables de .estudiar. */
+
+.estudiar {
+  --e-tinta: #192042;
+  --e-navy: #0f1637;
+  --e-burdeos: #8b1b1f;
+  --e-burdeos-oscuro: #7d1217;
+  --e-texto: #2b3040;
+  --e-suave: #6b7080;
+  --e-borde: #dcd8d3;
+  --e-superficie: #ffffff;
+  --e-pista: #e1e0df;
+  --e-fondo-cita: #f4f2f0;
+  --e-fondo-audio: #f6eeee;
+  --e-fondo-audio-hover: #f0dede;
+  --e-chip-neutro: #ebe9e7;
+  --e-chip-etiqueta: #efeae4;
+  --e-chip-semana-fondo: #e4e9f5;
+  --e-chip-semana-texto: #26356b;
+  --e-fonetica: #4a5a8a;
+  --e-foco: #2a5aa0;
+  --e-sombra: 0 22px 44px -18px rgba(15, 22, 55, 0.28), 0 2px 6px rgba(15, 22, 55, 0.06);
+  --e-serif: 'Playfair Display', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --e-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --e-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  box-sizing: border-box;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  color: var(--e-texto);
+  font-family: var(--e-sans);
+  line-height: 1.5;
+}
+
+/* Modo oscuro: selectores provisionales hasta confirmar cómo lo aplica ThemeProvider. */
+:is(.dark, .tema-oscuro, [data-theme='dark'], [data-tema='oscuro']) .estudiar {
+  --e-tinta: #f1eff8;
+  --e-navy: #e8e6f4;
+  --e-burdeos: #e07a80;
+  --e-burdeos-oscuro: #e07a80;
+  --e-texto: #d6d4e2;
+  --e-suave: #9a9db2;
+  --e-borde: #363b57;
+  --e-superficie: #1a1f38;
+  --e-pista: #2e3350;
+  --e-fondo-cita: #232842;
+  --e-fondo-audio: #2b2a45;
+  --e-fondo-audio-hover: #38375a;
+  --e-chip-neutro: #2b3050;
+  --e-chip-etiqueta: #2b3050;
+  --e-chip-semana-fondo: #2a3566;
+  --e-chip-semana-texto: #c9d3f5;
+  --e-fonetica: #9fb0e6;
+  --e-foco: #8fb4f0;
+  --e-sombra: 0 22px 44px -18px rgba(0, 0, 0, 0.6);
+}
+
+.estudiar *,
+.estudiar *::before,
+.estudiar *::after {
+  box-sizing: border-box;
+}
+
+:where(.estudiar) p,
+:where(.estudiar) h2,
+:where(.estudiar) ul {
+  margin: 0;
+}
+
+:where(.estudiar) ul {
+  padding: 0;
+  list-style: none;
+}
+
+.estudiar--centrado {
+  max-width: 36rem;
+  padding-top: 3rem;
+  text-align: center;
+}
+
+/* ---------- Encabezado ---------- */
+
+.estudiar-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--e-borde);
+}
+
+.estudiar-encabezado__izq {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.estudiar-volver {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--e-borde);
+  border-radius: 0.6rem;
+  background: var(--e-superficie);
+  color: var(--e-tinta);
+  cursor: pointer;
+}
+
+.estudiar-volver:hover {
+  background: var(--e-chip-neutro);
+}
+
+.estudiar-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.15rem;
+  font-size: 0.75rem;
+  color: var(--e-suave);
+}
+
+.estudiar-titulo {
+  font-family: var(--e-serif);
+  font-size: clamp(1.4rem, 3.2vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--e-tinta);
+}
+
+.estudiar-progreso {
+  text-align: right;
+}
+
+.estudiar-progreso__etiqueta {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--e-suave);
+}
+
+.estudiar-progreso__fila {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.estudiar-progreso__valor {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--e-tinta);
+  white-space: nowrap;
+}
+
+.estudiar-progreso__pista {
+  width: 6rem;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--e-pista);
+}
+
+.estudiar-progreso__relleno {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--e-burdeos);
+  transition: width 0.3s ease;
+}
+
+/* ---------- Escenario (alineado al ancho de la tarjeta) ---------- */
+
+.estudiar-escenario {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.estudiar-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.estudiar-termino {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--e-suave);
+}
+
+.estudiar-etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.estudiar-chip {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.estudiar-chip--semana {
+  background: var(--e-chip-semana-fondo);
+  color: var(--e-chip-semana-texto);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.estudiar-chip--categoria {
+  background: var(--e-chip-neutro);
+  color: var(--e-tinta);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.estudiar-chip--etiqueta {
+  background: var(--e-chip-etiqueta);
+  color: var(--e-texto);
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.estudiar-chip--repetida {
+  position: absolute;
+  top: 1.1rem;
+  left: 1.25rem;
+  background: var(--e-chip-etiqueta);
+  color: var(--e-burdeos);
+}
+
+/* ---------- Tarjeta 3D ---------- */
+
+.estudiar-tarjeta {
+  position: relative;
+  perspective: 1400px;
+  cursor: pointer;
+}
+
+.estudiar-tarjeta.es-volteada {
+  cursor: default;
+}
+
+.estudiar-tarjeta__interior {
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+
+.estudiar-tarjeta.es-volteada .estudiar-tarjeta__interior {
+  transform: rotateY(180deg);
+}
+
+.estudiar-cara {
+  position: relative;
+  display: flex;
+  grid-area: 1 / 1;
+  align-items: center;
+  min-height: 24rem;
+  border: 1px solid var(--e-borde);
+  border-radius: 14px;
+  background: var(--e-superficie);
+  box-shadow: var(--e-sombra);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.estudiar-cara--dorso {
+  align-items: flex-start;
+  border-top: 3px solid var(--e-burdeos-oscuro);
+  transform: rotateY(180deg);
+}
+
+.estudiar-cara__contenido {
+  width: 100%;
+  padding: 2rem 2rem 3.5rem;
+}
+
+.estudiar-cara__contenido--frente {
+  text-align: center;
+}
+
+.estudiar-cara__contenido--dorso {
+  padding: 1.75rem 2rem 2rem;
+}
+
+.estudiar-etiqueta {
+  margin-bottom: 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--e-suave);
+}
+
+.estudiar-etiqueta--chica {
+  margin-bottom: 0.3rem;
+  font-size: 0.625rem;
+}
+
+/* Botón real de giro (pastilla arriba a la derecha del frente) */
+.estudiar-giro {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--e-borde);
+  border-radius: 999px;
+  background: var(--e-superficie);
+  color: var(--e-suave);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.estudiar-giro:hover {
+  background: var(--e-chip-neutro);
+}
+
+/* En el dorso el diseño no muestra la pastilla: queda accesible por teclado y aparece al enfocarla. */
+.estudiar-giro--dorso {
+  top: auto;
+  bottom: 1rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.estudiar-giro--dorso:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Frente */
+.estudiar-palabra {
+  margin-bottom: 0.9rem;
+  font-family: var(--e-serif);
+  font-size: clamp(2.4rem, 7vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--e-tinta);
+  overflow-wrap: anywhere;
+}
+
+.estudiar-audio {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: 0.9rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--e-fondo-audio);
+  color: var(--e-burdeos);
+  cursor: pointer;
+}
+
+.estudiar-audio:hover {
+  background: var(--e-fondo-audio-hover);
+}
+
+.estudiar-fonetica {
+  font-family: var(--e-mono);
+  font-size: 0.9375rem;
+  font-style: italic;
+  color: var(--e-fonetica);
+}
+
+.estudiar-atajos {
+  position: absolute;
+  right: 0;
+  bottom: 1.1rem;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.15rem 0.6rem;
+  width: fit-content;
+  max-width: calc(100% - 1.5rem);
+  margin: 0 auto;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: var(--e-chip-neutro);
+  color: var(--e-suave);
+  font-size: 0.6875rem;
+}
+
+.estudiar-atajos strong {
+  color: var(--e-tinta);
+}
+
+.estudiar-atajos span + span::before {
+  margin-right: 0.6rem;
+  content: '•';
+  opacity: 0.5;
+}
+
+/* Dorso */
+.estudiar-dorso__cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.estudiar-dorso__palabra {
+  font-family: var(--e-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--e-tinta);
+  overflow-wrap: anywhere;
+}
+
+.estudiar-subrayado {
+  display: block;
+  width: 2rem;
+  height: 3px;
+  margin-top: 0.4rem;
+  border-radius: 2px;
+  background: var(--e-burdeos);
+}
+
+.estudiar-dorso__categoria {
+  font-family: var(--e-serif);
+  font-size: 0.9375rem;
+  font-style: italic;
+  color: var(--e-suave);
+}
+
+.estudiar-traduccion {
+  margin-bottom: 1rem;
+  font-family: var(--e-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--e-tinta);
+}
+
+.estudiar-definicion {
+  max-width: 60ch;
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--e-texto);
+}
+
+.estudiar-cita {
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--e-burdeos);
+  border-radius: 0.5rem;
+  background: var(--e-fondo-cita);
+}
+
+.estudiar-cita__texto {
+  font-size: 0.9375rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--e-texto);
+}
+
+/* ---------- Valoración ---------- */
+
+.estudiar-valoracion {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.9rem, 4vw, 2rem);
+  margin-top: 1.9rem;
+}
+
+.estudiar-valoracion__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 4.25rem;
+}
+
+.estudiar-valoracion__boton {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: 1px solid var(--e-borde);
+  border-radius: 50%;
+  background: var(--e-superficie);
+  color: var(--e-tinta);
+  box-shadow: 0 2px 6px rgba(15, 22, 55, 0.08);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.estudiar-valoracion__boton--buena,
+.estudiar-valoracion__boton--facil {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: var(--e-superficie);
+}
+
+.estudiar-valoracion__boton:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.estudiar-valoracion__boton--repetir:hover:not(:disabled),
+.estudiar-valoracion__boton--dificil:hover:not(:disabled) {
+  background: var(--e-chip-neutro);
+}
+
+.estudiar-valoracion__boton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.estudiar-valoracion__texto {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--e-suave);
+  white-space: nowrap;
+}
+
+.estudiar-estado {
+  min-height: 1.5rem;
+  margin-top: 1.1rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--e-suave);
+}
+
+.estudiar-error {
+  margin-top: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.6rem;
+  background: #f8e5e5;
+  color: #7d2427;
+  font-size: 0.9375rem;
+}
+
+/* ---------- Estados y resumen ---------- */
+
+.estudiar-texto {
+  max-width: 46ch;
+  margin: 0.75rem auto 0;
+  font-size: 1.0625rem;
+  color: var(--e-suave);
+}
+
+.estudiar-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.estudiar-boton {
+  min-height: 2.75rem;
+  padding: 0.55rem 1.4rem;
+  border: 1px solid var(--e-borde);
+  border-radius: 0.7rem;
+  background: var(--e-superficie);
+  color: var(--e-tinta);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.estudiar-boton:hover {
+  background: var(--e-chip-neutro);
+}
+
+.estudiar-boton--primario {
+  border-color: var(--e-navy);
+  background: var(--e-navy);
+  color: var(--e-superficie);
+}
+
+.estudiar-boton--primario:hover {
+  background: var(--e-navy);
+  opacity: 0.9;
+}
+
+.estudiar-distribucion {
+  display: flex;
+  max-width: 24rem;
+  height: 10px;
+  margin: 1.5rem auto 1.25rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--e-pista);
+}
+
+.estudiar-distribucion__tramo {
+  min-width: 6px;
+}
+
+.estudiar-resumen {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 20rem;
+  margin: 0 auto;
+}
+
+.estudiar-resumen li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: left;
+}
+
+.estudiar-resumen__etiqueta {
+  flex: 1;
+}
+
+.estudiar-muestra {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.estudiar-color--repetir {
+  background: #8b1b1f;
+}
+.estudiar-color--dificil {
+  background: #b8862b;
+}
+.estudiar-color--buena {
+  background: #3d5a99;
+}
+.estudiar-color--facil {
+  background: #0f1637;
+}
+
+/* ---------- Accesibilidad y adaptación ---------- */
+
+.estudiar-boton:focus-visible,
+.estudiar-volver:focus-visible,
+.estudiar-giro:focus-visible,
+.estudiar-audio:focus-visible,
+.estudiar-valoracion__boton:focus-visible {
+  outline: 3px solid var(--e-foco);
+  outline-offset: 2px;
+}
+
+@media (max-width: 34rem) {
+  .estudiar-cara {
+    min-height: 22rem;
+  }
+
+  .estudiar-cara__contenido,
+  .estudiar-cara__contenido--dorso {
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .estudiar-progreso {
+    width: 100%;
+    text-align: left;
+  }
+
+  .estudiar-progreso__fila {
+    justify-content: flex-start;
+  }
+
+  .estudiar-valoracion__item {
+    min-width: 3.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .estudiar-tarjeta__interior,
+  .estudiar-progreso__relleno,
+  .estudiar-valoracion__boton,
+  .estudiar-giro {
+    transition: none;
+  }
+}
