@@ -30,6 +30,7 @@ const MENU_POR_ROL = {
         { to: '/docente/revision-palabras', label: 'Revisión de Palabras', badgeKey: 'pendientes' },
         { to: '/docente/cursos', label: 'Cursos & Estudiantes' },
         { to: '/docente/quices', label: 'Quices & Complejidad' },
+        { to: '/docente/participacion', label: 'Analítica de Participación' },
       ],
     },
   ],

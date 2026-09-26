@@ -12,6 +12,7 @@ import { CursosEstudiantes } from './vistas/docente/cursos/CursosEstudiantes';
 import { ConfigurarPerfil } from './vistas/estudiante/configurar-perfil/ConfigurarPerfil';
 import { Login } from './vistas/autenticacion/Login';
 import { DiccionarioInvitado } from './vistas/invitado/DiccionarioInvitado';
+import { ParticipacionMazo } from './vistas/docente/participacion/ParticipacionMazo';
 
 function RutaProtegida({ children }) {
   const { autenticado } = useAuth();
@@ -63,6 +64,14 @@ export default function App() {
                 path="cursos"
                 element={<CursosEstudiantes />}
               />
+              <Route
+  path="participacion"
+  element={
+    <RutaSoloDocente>{/* o el guard real que exista ahora */}
+      <ParticipacionMazo />
+    </RutaSoloDocente>
+  }
+/>
             </Route>
 
             <Route
