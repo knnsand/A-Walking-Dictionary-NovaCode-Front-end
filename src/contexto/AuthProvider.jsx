@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AuthContext } from './AuthContext';
-import { iniciarSesionConGoogle } from '../cliente-api/authApi';
+import {
+  iniciarSesionConGoogle,
+  registrarConGoogle as registrarConGoogleApi,
+} from '../cliente-api/authApi';
+import { obtenerPerfil } from '../cliente-api/perfilApi';
+import { calcularPerfilCompleto } from './perfilCompleto';
 
 const TOKEN_KEY = 'walking_dictionary_token';
 const USER_KEY = 'walking_dictionary_usuario';
@@ -38,37 +43,74 @@ function obtenerSesionGuardada() {
 export function AuthProvider({ children }) {
   const [sesion, setSesion] = useState(obtenerSesionGuardada);
 
+  // HU-012: true/false según los datos en BD; null = aún no se sabe o no
+  // aplica (docente, invitado). Solo `false` bloquea el menú del estudiante.
+  const [perfilCompleto, setPerfilCompleto] = useState(null);
+
   const { token, usuario } = sesion;
-
-  async function loginWithGoogle(idToken) {
-    const respuesta = await iniciarSesionConGoogle(idToken);
-
-    localStorage.setItem(TOKEN_KEY, respuesta.token);
-    localStorage.setItem(USER_KEY, JSON.stringify(respuesta.usuario));
-
-    setSesion({
-      token: respuesta.token,
-      usuario: respuesta.usuario,
-    });
-
-    return respuesta;
-  }
-
-  function logout() {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-
-    setSesion({
-      token: null,
-      usuario: null,
-    });
-  }
 
   const rol = usuario?.rol || null;
   const idUsuario = usuario?.id_usuario || null;
 
   const docenteId = rol === 'docente' ? idUsuario : null;
   const estudianteId = rol === 'estudiante' ? idUsuario : null;
+
+  const refrescarPerfil = useCallback(async () => {
+    if (!estudianteId) {
+      setPerfilCompleto(null);
+      return;
+    }
+
+    try {
+      const perfil = await obtenerPerfil(estudianteId);
+      setPerfilCompleto(calcularPerfilCompleto(perfil));
+    } catch {
+      // Si no se puede consultar, no se bloquea el menú.
+      setPerfilCompleto(null);
+    }
+  }, [estudianteId]);
+
+  // Al montar (sesión restaurada) y cada vez que cambia el estudiante
+  // autenticado (login, registro, logout).
+  useEffect(() => {
+    refrescarPerfil();
+  }, [refrescarPerfil]);
+
+  function guardarSesion(respuesta, { esRegistro = false } = {}) {
+    localStorage.setItem(TOKEN_KEY, respuesta.token);
+    localStorage.setItem(USER_KEY, JSON.stringify(respuesta.usuario));
+    setSesion({ token: respuesta.token, usuario: respuesta.usuario });
+
+    // Recién registrado: el perfil siempre está incompleto, sin esperar red.
+    if (esRegistro && respuesta.usuario?.rol === 'estudiante') {
+      setPerfilCompleto(false);
+    }
+  }
+
+  async function loginWithGoogle(idToken) {
+    const respuesta = await iniciarSesionConGoogle(idToken);
+    guardarSesion(respuesta);
+    return respuesta;
+  }
+
+  /** HU-012: registro autónomo de estudiante con Google. */
+  async function registrarConGoogle(idToken) {
+    const respuesta = await registrarConGoogleApi(idToken);
+    guardarSesion(respuesta, { esRegistro: true });
+    return respuesta;
+  }
+
+  /** Se llama al guardar el perfil (campos obligatorios ya validados). */
+  function completarPerfilInicial() {
+    setPerfilCompleto(true);
+  }
+
+  function logout() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    setSesion({ token: null, usuario: null });
+    setPerfilCompleto(null);
+  }
 
   return (
     <AuthContext.Provider
@@ -81,7 +123,10 @@ export function AuthProvider({ children }) {
         estudianteId,
         inscripcionId: INSCRIPCION_ID_SIMULADA,
         autenticado: Boolean(token && usuario),
+        perfilCompleto,
+        completarPerfilInicial,
         loginWithGoogle,
+        registrarConGoogle,
         logout,
       }}
     >

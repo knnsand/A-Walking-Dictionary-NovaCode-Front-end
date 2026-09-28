@@ -1,0 +1,30 @@
+/* HU-012: estado deshabilitado del menú y aviso amarillo.
+   Los ítems deshabilitados son <a> sin href dentro de .sidebar__nav-item,
+   así heredan el mismo formato (padding, tipografía) que los NavLink. */
+
+.sidebar__nav-item a.sidebar__nav-link--deshabilitado {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.sidebar__nav-item a.sidebar__nav-link--deshabilitado:hover {
+  background: transparent;
+  color: inherit;
+}
+
+.sidebar__aviso-perfil {
+  margin: 1rem 0.75rem;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 0.5rem;
+  color: #78350f;
+}
+
+.sidebar__aviso-perfil a {
+  color: #78350f;
+  font-weight: 700;
+  text-decoration: underline;
+}
