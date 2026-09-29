@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { actualizarPerfil } from '../../../cliente-api/perfilApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
-import { useAuth } from '../../../contexto/useAuth';
 import { NIVELES_MCER, FORM_INICIAL } from './configurarPerfil.constants';
 import { validarCamposObligatorios } from './configurarPerfil.validation';
 
 export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
-  const { estudianteId } = useAuth();
+  
   const [form, setForm] = useState({ ...FORM_INICIAL, ...datosIniciales });
   const [interesesTexto, setInteresesTexto] = useState((datosIniciales?.intereses || []).join(', '));
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
@@ -28,17 +27,18 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
       return;
     }
 
-    if (!estudianteId) {
-      setAviso({
-        tipo: 'error',
-        mensaje: 'No hay un estudiante simulado configurado (VITE_ESTUDIANTE_ID_SIMULADO). Revisa tu archivo .env.local.',
-      });
-      return;
-    }
+    //if (!estudianteId) {
+    //  setAviso({
+    
+    //  tipo: 'error',
+    //  mensaje: 'No hay un estudiante simulado configurado (VITE_ESTUDIANTE_ID_SIMULADO). Revisa tu archivo .env.local.',
+    // });
+    // return;
+    // }
 
     setEnviando(true);
     try {
-      const perfilActualizado = await actualizarPerfil(estudianteId, form);
+      const perfilActualizado = await actualizarPerfil(form);
       setAviso({ tipo: 'exito', mensaje: 'Perfil actualizado correctamente.' });
       onPerfilActualizado?.(perfilActualizado);
     } catch (error) {

@@ -6,11 +6,10 @@ export async function obtenerPerfil(estudianteId) {
   });
 }
 
-export async function actualizarPerfil(estudianteId, datos) {
+export async function actualizarPerfil(datos) {
   return apiRequest('/users/profile', {
     method: 'PATCH',
     body: JSON.stringify({
-      estudiante_id: estudianteId,
       nivel_ingles: datos.nivel_ingles,
       codigo_estudiantil: datos.codigo_estudiantil,
       avatar: datos.avatar,
