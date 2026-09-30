@@ -12,9 +12,13 @@ import { ModalCrearMazo } from '../../vistas/docente/ModalCrearMazo';
  * También es dueño del estado del modal "Crear Mazo de Estudio"
  * (HU-001), para que pueda abrirse desde el botón del Sidebar sin
  * importar en qué página esté parado el docente.
+ *
+ * HU-012: pasa `perfilCompleto` al Sidebar para que deshabilite sus
+ * opciones mientras el estudiante recién registrado no haya completado
+ * su perfil académico (HU-013) y sus datos personales.
  */
 export function LayoutPrincipal({ contadores = {} }) {
-  const { rol, usuario } = useAuth();
+  const { rol, usuario, perfilCompleto } = useAuth();
   const navigate = useNavigate();
   const [sidebarAbierto, setSidebarAbierto] = useState(false);
   const [modalCrearMazoAbierto, setModalCrearMazoAbierto] = useState(false);
@@ -26,6 +30,7 @@ export function LayoutPrincipal({ contadores = {} }) {
         nombreUsuario={usuario?.nombre_completo}
         correoUsuario={usuario?.email}
         contadores={contadores}
+        perfilCompleto={perfilCompleto}
         abierto={sidebarAbierto}
         onCerrar={() => setSidebarAbierto(false)}
         onAbrirCrearMazo={() => setModalCrearMazoAbierto(true)}

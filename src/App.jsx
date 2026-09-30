@@ -11,6 +11,7 @@ import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
 import { CursosEstudiantes } from './vistas/docente/cursos/CursosEstudiantes';
 import { ConfigurarPerfil } from './vistas/estudiante/configurar-perfil/ConfigurarPerfil';
 import { Login } from './vistas/autenticacion/Login';
+import { Registro } from './vistas/autenticacion/registro/Registro';
 import { DiccionarioInvitado } from './vistas/invitado/DiccionarioInvitado';
 import { ParticipacionMazo } from './vistas/docente/participacion/ParticipacionMazo';
 import { PaginaEstudio } from './vistas/estudiante/estudiar-tarjetas/PaginaEstudio';
@@ -106,6 +107,12 @@ export default function App() {
             <Route
               path="/login"
               element={<Login />}
+            />
+
+            {/* HU-012: registro autónomo de estudiante con Google. */}
+            <Route
+              path="/registro"
+              element={<Registro />}
             />
 
             <Route

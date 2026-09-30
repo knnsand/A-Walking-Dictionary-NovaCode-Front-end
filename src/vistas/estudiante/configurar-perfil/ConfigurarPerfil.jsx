@@ -5,7 +5,7 @@ import { obtenerPerfil, obtenerContextoAcademico } from '../../../cliente-api/pe
 import { ConfigurarPerfilForm } from './ConfigurarPerfilForm';
 
 export function ConfigurarPerfil() {
-  const { estudianteId } = useAuth();
+  const { estudianteId, completarPerfilInicial } = useAuth();
   const { tema, alternarTema } = useTheme();
   const [perfil, setPerfil] = useState(null);
   const [contexto, setContexto] = useState(null);
@@ -48,7 +48,15 @@ export function ConfigurarPerfil() {
             <p><strong>Correo institucional:</strong> {perfil.correo}</p>
             <p><strong>Rol institucional:</strong> {perfil.rol}</p>
 
-            <ConfigurarPerfilForm datosIniciales={perfil} onPerfilActualizado={setPerfil} />
+            <ConfigurarPerfilForm
+              datosIniciales={perfil}
+              onPerfilActualizado={(perfilActualizado) => {
+                setPerfil(perfilActualizado);
+                // HU-012: primer guardado del perfil tras el registro →
+                // se desbloquea el menú (y no se vuelve a exigir).
+                completarPerfilInicial();
+              }}
+            />
         </section>
 
         <div className="configurar-perfil__columna-derecha">

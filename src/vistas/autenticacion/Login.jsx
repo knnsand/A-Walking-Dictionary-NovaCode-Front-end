@@ -1,7 +1,9 @@
 import { GoogleLogin } from '@react-oauth/google';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../contexto/useAuth';
+import { obtenerPerfil } from '../../cliente-api/perfilApi';
+import { calcularPerfilCompleto } from '../../contexto/perfilCompleto';
 import './Login.css';
 
 export function Login() {
@@ -25,7 +27,20 @@ export function Login() {
       if (respuesta.usuario.rol === 'docente') {
         navigate('/docente', { replace: true });
       } else if (respuesta.usuario.rol === 'estudiante') {
-        navigate('/estudiante', { replace: true });
+        // Si aún no ha completado su perfil, se le lleva a completarlo.
+        let perfilCompleto = null;
+        try {
+          perfilCompleto = calcularPerfilCompleto(
+            await obtenerPerfil(respuesta.usuario.id_usuario)
+          );
+        } catch {
+          // Sin datos del perfil: se entra al panel normal.
+        }
+
+        navigate(
+          perfilCompleto === false ? '/estudiante/configuracion-perfil' : '/estudiante',
+          { replace: true }
+        );
       } else {
         setError('El rol del usuario no es válido.');
       }
@@ -75,6 +90,12 @@ export function Login() {
             >
               Continuar como invitado
             </button>
+
+            {/* HU-012: entrada al registro autónomo de estudiante. */}
+            <p className="login__enlace">
+              ¿Aún no tienes cuenta?{' '}
+              <Link to="/registro">Regístrate como estudiante</Link>
+            </p>
         </>
         )}
       </section>
