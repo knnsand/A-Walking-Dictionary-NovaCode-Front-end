@@ -24,7 +24,7 @@ export async function actualizarEstadoMazo(idMazo, estado) {
     return mockActualizarEstadoMazo(idMazo, estado);
   }
 
-  return apiRequest(`/decks/${idMazo}`, {
+  return apiRequest(`/decks/${idMazo}/estado`, {
     method: 'PATCH',
     body: JSON.stringify({ estado }),
   });
