@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { useAuth } from '../../contexto/useAuth';
 import { ModalCrearMazo } from '../../vistas/docente/ModalCrearMazo';
+import { ModalRegistrarTarjeta } from '../../vistas/estudiante/registrar-tarjeta/ModalRegistrarTarjeta';
 
 /**
  * Envoltorio de página usado por las 3 vistas de rol. Coloca el
@@ -10,8 +11,9 @@ import { ModalCrearMazo } from '../../vistas/docente/ModalCrearMazo';
  * superior con buscador, y renderiza la ruta hija en <Outlet/>.
  *
  * También es dueño del estado del modal "Crear Mazo de Estudio"
- * (HU-001), para que pueda abrirse desde el botón del Sidebar sin
- * importar en qué página esté parado el docente.
+ * (HU-001) y del modal "Registrar palabra" (HU-002), para que puedan
+ * abrirse desde el botón del Sidebar sin importar en qué página esté
+ * parado el usuario.
  *
  * HU-012: pasa `perfilCompleto` al Sidebar para que deshabilite sus
  * opciones mientras el estudiante recién registrado no haya completado
@@ -22,6 +24,7 @@ export function LayoutPrincipal({ contadores = {} }) {
   const navigate = useNavigate();
   const [sidebarAbierto, setSidebarAbierto] = useState(false);
   const [modalCrearMazoAbierto, setModalCrearMazoAbierto] = useState(false);
+  const [modalRegistrarTarjetaAbierto, setModalRegistrarTarjetaAbierto] = useState(false);
 
   return (
     <div className={`app-shell app-shell--${rol}`}>
@@ -34,6 +37,7 @@ export function LayoutPrincipal({ contadores = {} }) {
         abierto={sidebarAbierto}
         onCerrar={() => setSidebarAbierto(false)}
         onAbrirCrearMazo={() => setModalCrearMazoAbierto(true)}
+        onAbrirRegistrarTarjeta={() => setModalRegistrarTarjetaAbierto(true)}
       />
 
       <div className="app-shell__contenido">
@@ -64,6 +68,10 @@ export function LayoutPrincipal({ contadores = {} }) {
             navigate('/docente');
           }}
         />
+      )}
+
+      {rol === 'estudiante' && modalRegistrarTarjetaAbierto && (
+        <ModalRegistrarTarjeta onCerrar={() => setModalRegistrarTarjetaAbierto(false)} />
       )}
     </div>
   );
