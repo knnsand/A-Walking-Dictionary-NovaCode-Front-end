@@ -359,14 +359,15 @@ export function EstudiarTarjetas({
         </ul>
 
         <div className="estudiar-acciones">
-          <button
-            type="button"
-            className="estudiar-boton estudiar-boton--primario"
-            onClick={recargar}
-          >
-            Buscar más tarjetas
-          </button>
-          {botonSalir}
+                    {onSalir && (
+            <button
+              type="button"
+              className="estudiar-boton estudiar-boton--primario"
+              onClick={onSalir}
+            >
+              Volver a los mazos
+            </button>
+          )}
         </div>
       </section>
     );
