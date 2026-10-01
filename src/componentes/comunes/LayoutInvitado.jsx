@@ -71,13 +71,6 @@ export function LayoutInvitado() {
           <div className="layout-invitado__institucion">
             Anglophone Literature
           </div>
-
-          <input
-            type="search"
-            className="layout-invitado__busqueda"
-            placeholder="Buscar término, fonética, cita o autor..."
-            aria-label="Buscar término, fonética, cita o autor"
-          />
         </header>
 
         <main className="layout-invitado__main">
