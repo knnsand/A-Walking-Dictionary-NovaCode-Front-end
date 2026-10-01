@@ -394,8 +394,7 @@ body {
 .sidebar__usuario-correo { font-size: 0.65rem; color: var(--color-text-muted); margin: 2px 0 0; word-break: break-all; }
 
 .app-shell__contenido { flex: 1; min-width: 0; }
-.topbar { display: flex; align-items: center; gap: 16px; padding: 14px 24px; background-color: var(--color-bg-header); border-bottom: 1px solid var(--color-border); }
-.topbar__buscador { flex: 1; max-width: 480px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--color-border); background-color: var(--color-bg-card); color: var(--color-text-main); font-family: inherit; }
+.topbar { display: none; align-items: center; gap: 16px; padding: 14px 24px; background-color: var(--color-bg-header); border-bottom: 1px solid var(--color-border); }
 .topbar__menu-btn { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--color-text-main); }
 .pagina { padding: 24px; }
 
@@ -539,6 +538,7 @@ body {
     transform: translateX(-100%); z-index: 40; transition: transform 0.2s ease;
   }
   .app-shell__sidebar.app-shell__sidebar--abierto { transform: translateX(0); }
+  .topbar { display: flex; }
   .topbar__menu-btn { display: block; }
 }
 
