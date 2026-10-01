@@ -8,6 +8,7 @@ import {
 import {
   validarCamposObligatorios,
   validarEjemplo,
+  mazoAceptaPalabras,
 } from './registrarTarjeta.validation';
 
 import { listarMazos } from '../../../cliente-api/mazosApi';
@@ -26,7 +27,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
     async function cargarMazos() {
       try {
         const datos = await listarMazos();
-        setMazos(datos);
+        setMazos(datos.filter((mazo) => mazoAceptaPalabras(mazo)));
       } catch (error) {
         console.error(error);
         setError('No fue posible cargar los mazos disponibles.');
