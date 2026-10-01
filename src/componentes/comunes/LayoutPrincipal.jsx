@@ -8,8 +8,7 @@ import { ModalRegistrarTarjeta } from '../../vistas/estudiante/registrar-tarjeta
 /**
  * Envoltorio de página usado por las 3 vistas de rol. Coloca el
  * Sidebar (adaptado al rol activo vía useAuth) más una barra
- * superior con buscador, y renderiza la ruta hija en <Outlet/>.
- *
+ * superior con el botón del menú (solo en móvil), y renderiza la ruta hija en <Outlet/>. *
  * También es dueño del estado del modal "Crear Mazo de Estudio"
  * (HU-001) y del modal "Registrar palabra" (HU-002), para que puedan
  * abrirse desde el botón del Sidebar sin importar en qué página esté
@@ -50,7 +49,6 @@ export function LayoutPrincipal({ contadores = {} }) {
           >
             ☰
           </button>
-          <input className="topbar__buscador" type="search" placeholder="Buscar término, fonética, cita o autor..." />
         </div>
 
         <div className="pagina">
