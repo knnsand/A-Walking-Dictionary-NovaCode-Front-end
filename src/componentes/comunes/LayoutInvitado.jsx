@@ -3,7 +3,7 @@ import './LayoutInvitado.css';
 
 export function LayoutInvitado() {
   return (
-    <div className="layout-invitado">
+    <div className="layout-invitado app-shell--invitado">
       <aside className="layout-invitado__sidebar">
         <div className="layout-invitado__marca">
           <div className="layout-invitado__logo">

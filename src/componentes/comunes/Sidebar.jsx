@@ -95,7 +95,13 @@ export function Sidebar({
   const bloqueadoPorPerfil = rol === 'estudiante' && perfilCompleto === false;
 
   return (
-    <aside className={`app-shell__sidebar ${abierto ? 'app-shell__sidebar--abierto' : ''}`}>
+  <aside
+    className={`app-shell__sidebar app-shell__sidebar--${rol} ${
+      abierto ? 'app-shell__sidebar--abierto' : ''
+    }`}
+  >
+
+
       <div className="sidebar__brand">
         <div className="sidebar__brand-icon" aria-hidden="true" />
         <div>

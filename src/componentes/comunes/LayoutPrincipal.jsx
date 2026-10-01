@@ -24,7 +24,7 @@ export function LayoutPrincipal({ contadores = {} }) {
   const [modalCrearMazoAbierto, setModalCrearMazoAbierto] = useState(false);
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell app-shell--${rol}`}>
       <Sidebar
         rol={rol}
         nombreUsuario={usuario?.nombre_completo}

@@ -5,58 +5,55 @@
 
 .estudiar {
   --e-tinta: #192042;
-  --e-navy: #0f1637;
-  --e-burdeos: #8b1b1f;
-  --e-burdeos-oscuro: #7d1217;
+
+  /* Color correspondiente al rol */
+  --e-rol: var(--color-role, #2F7D5B);
+  --e-rol-hover: var(--color-role-hover, #246447);
+  --e-rol-bg: var(--color-role-bg-soft, #EAF4EE);
+  --e-rol-texto: var(--color-role-text, #1F5A40);
+  --e-rol-borde: var(--color-role-border, #8FBEA5);
+
+  /* Alias para elementos existentes del diseño */
+  --e-navy: var(--e-rol);
+  --e-burdeos: var(--e-rol);
+  --e-burdeos-oscuro: var(--e-rol-hover);
+
   --e-texto: #2b3040;
   --e-suave: #6b7080;
   --e-borde: #dcd8d3;
   --e-superficie: #ffffff;
   --e-pista: #e1e0df;
   --e-fondo-cita: #f4f2f0;
-  --e-fondo-audio: #f6eeee;
-  --e-fondo-audio-hover: #f0dede;
+  --e-fondo-audio: var(--e-rol-bg);
+  --e-fondo-audio-hover: var(--e-rol-borde);
   --e-chip-neutro: #ebe9e7;
   --e-chip-etiqueta: #efeae4;
-  --e-chip-semana-fondo: #e4e9f5;
-  --e-chip-semana-texto: #26356b;
+  --e-chip-semana-fondo: var(--e-rol-bg);
+  --e-chip-semana-texto: var(--e-rol-texto);
   --e-fonetica: #4a5a8a;
-  --e-foco: #2a5aa0;
-  --e-sombra: 0 22px 44px -18px rgba(15, 22, 55, 0.28), 0 2px 6px rgba(15, 22, 55, 0.06);
-  --e-serif: 'Playfair Display', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  --e-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --e-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-
-  box-sizing: border-box;
-  max-width: 52rem;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
-  color: var(--e-texto);
-  font-family: var(--e-sans);
-  line-height: 1.5;
+  --e-foco: var(--e-rol);
+    --e-color-repetir: #B42318;
+  --e-color-dificil: #B54708;
+  --e-color-buena: #2F7D5A;
+  --e-color-facil: #2563A6;
 }
-
 /* Modo oscuro: selectores provisionales hasta confirmar cómo lo aplica ThemeProvider. */
 :is(.dark, .tema-oscuro, [data-theme='dark'], [data-tema='oscuro']) .estudiar {
-  --e-tinta: #f1eff8;
-  --e-navy: #e8e6f4;
-  --e-burdeos: #e07a80;
-  --e-burdeos-oscuro: #e07a80;
-  --e-texto: #d6d4e2;
-  --e-suave: #9a9db2;
-  --e-borde: #363b57;
-  --e-superficie: #1a1f38;
-  --e-pista: #2e3350;
-  --e-fondo-cita: #232842;
-  --e-fondo-audio: #2b2a45;
-  --e-fondo-audio-hover: #38375a;
-  --e-chip-neutro: #2b3050;
-  --e-chip-etiqueta: #2b3050;
-  --e-chip-semana-fondo: #2a3566;
-  --e-chip-semana-texto: #c9d3f5;
-  --e-fonetica: #9fb0e6;
-  --e-foco: #8fb4f0;
-  --e-sombra: 0 22px 44px -18px rgba(0, 0, 0, 0.6);
+ --e-rol: var(--color-role);
+  --e-rol-hover: var(--color-role-hover);
+  --e-rol-bg: var(--color-role-bg-soft);
+  --e-rol-texto: var(--color-role-text);
+  --e-rol-borde: var(--color-role-border);
+
+  --e-navy: var(--e-rol);
+  --e-burdeos: var(--e-rol);
+  --e-burdeos-oscuro: var(--e-rol-hover);
+
+  --e-fondo-audio: var(--e-rol-bg);
+  --e-fondo-audio-hover: var(--e-rol-borde);
+  --e-chip-semana-fondo: var(--e-rol-bg);
+  --e-chip-semana-texto: var(--e-rol-texto);
+  --e-foco: var(--e-rol);
 }
 
 .estudiar *,
@@ -514,20 +511,34 @@
     background 0.15s ease;
 }
 
-.estudiar-valoracion__boton--buena,
-.estudiar-valoracion__boton--facil {
-  border-color: var(--e-navy);
-  background: var(--e-navy);
-  color: var(--e-superficie);
+.estudiar-valoracion__boton--repetir {
+  background: var(--e-color-repetir);
+  color: #FFFFFF;
+  border-color: var(--e-color-repetir);
 }
 
-.estudiar-valoracion__boton:hover:not(:disabled) {
-  transform: translateY(-2px);
+.estudiar-valoracion__boton--dificil {
+  background: var(--e-color-dificil);
+  color: #FFFFFF;
+  border-color: var(--e-color-dificil);
+}
+
+.estudiar-valoracion__boton--buena {
+  background: var(--e-color-buena);
+  color: #FFFFFF;
+  border-color: var(--e-color-buena);
+}
+
+.estudiar-valoracion__boton--facil {
+  background: var(--e-color-facil);
+  color: #FFFFFF;
+  border-color: var(--e-color-facil);
 }
 
 .estudiar-valoracion__boton--repetir:hover:not(:disabled),
 .estudiar-valoracion__boton--dificil:hover:not(:disabled) {
-  background: var(--e-chip-neutro);
+  background: var(--e-rol-bg);
+  border-color: var(--e-rol);
 }
 
 .estudiar-valoracion__boton:disabled {
@@ -645,16 +656,26 @@
 }
 
 .estudiar-color--repetir {
-  background: #8b1b1f;
+  background: var(--e-color-repetir);
 }
+
 .estudiar-color--dificil {
-  background: #b8862b;
+  background: var(--e-color-dificil);
 }
+
 .estudiar-color--buena {
-  background: #3d5a99;
+  background: var(--e-color-buena);
 }
+
 .estudiar-color--facil {
-  background: #0f1637;
+  background: var(--e-color-facil);
+}
+
+[data-theme='oscuro'] {
+  --color-repetir: #F87171;
+  --color-dificil: #F59E0B;
+  --color-buena: #4ADE80;
+  --color-facil: #60A5FA;
 }
 
 /* ---------- Accesibilidad y adaptación ---------- */

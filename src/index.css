@@ -9,6 +9,20 @@
   --color-text-muted: #64748B;
   --color-primary: #1E2A4A;
   --color-primary-contrast: #FFFFFF;
+
+ /* ============================================================
+   IDENTIDAD VISUAL POR ROL
+   ============================================================ */
+
+  --color-role: #001282;
+  --color-role-hover: #000D5C;
+  --color-role-bg: #E8EBF7;
+  --color-role-bg-soft: #F3F4FA;
+  --color-role-text: #00105F;
+  --color-role-border: #7C8CC4;
+
+
+
   --color-info-bg: #EAF3FC;
   --color-info-border: #3B82F6;
   --color-info-text: #1E40AF;
@@ -19,6 +33,84 @@
   --color-error-text: #611A15;
   --color-error-border: #611A15;
 }
+
+
+/* ============================================================
+   COLORES POR ROL
+   ============================================================ */
+
+/* ============================================================
+   ESTUDIANTE
+   ============================================================ */
+
+.app-shell--estudiante {
+  --color-role: #2E6B4A;
+  --color-role-hover: #24563B;
+  --color-role-bg: #E8F1EB;
+  --color-role-bg-soft: #F3F7F4;
+  --color-role-text: #234F38;
+  --color-role-border: #86B69A;
+}
+
+/* ============================================================
+   DOCENTE
+   ============================================================ */
+
+.app-shell--docente {
+  --color-role: #001282;
+  --color-role-hover: #000D5C;
+  --color-role-bg: #E8EBF7;
+  --color-role-bg-soft: #F3F4FA;
+  --color-role-text: #00105F;
+  --color-role-border: #7C8CC4;
+}
+
+/* ============================================================
+   INVITADO
+   ============================================================ */
+
+.app-shell--invitado {
+  --color-role: #64748B;
+  --color-role-hover: #475569;
+  --color-role-bg: #EEF1F5;
+  --color-role-bg-soft: #F6F8FA;
+  --color-role-text: #334155;
+  --color-role-border: #CBD5E1;
+}
+
+/* ============================================================
+   COLORES POR ROL - MODO OSCURO
+   ============================================================ */
+
+[data-theme='oscuro'] .app-shell--estudiante {
+  --color-role: #6FAF8C;
+  --color-role-hover: #8BC2A4;
+  --color-role-bg: #183528;
+  --color-role-bg-soft: #1C4030;
+  --color-role-text: #B9E0C8;
+  --color-role-border: #6FAF8C;
+}
+
+[data-theme='oscuro'] .app-shell--docente {
+  --color-role: #6E80D4;
+  --color-role-hover: #8797E0;
+  --color-role-bg: #182044;
+  --color-role-bg-soft: #202951;
+  --color-role-text: #C5CDEF;
+  --color-role-border: #6E80D4;
+}
+
+[data-theme='oscuro'] .app-shell--invitado {
+  --color-role: #94A3B8;
+  --color-role-hover: #CBD5E1;
+  --color-role-bg: #293342;
+  --color-role-bg-soft: #222B39;
+  --color-role-text: #E2E8F0;
+  --color-role-border: #64748B;
+}
+
+
+
 
 body {
   font-family: var(--font-sans);
@@ -140,7 +232,19 @@ body {
    BOTONES GLOBALES
    ============================================================ */
 .btn { padding: 10px 18px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
-.btn-primary { background-color: var(--color-primary); color: var(--color-primary-contrast); }
+
+.app-shell .btn-primary {
+  background-color: var(--color-role);
+  border-color: var(--color-role);
+  color: #FFFFFF;
+}
+
+.app-shell .btn-primary:hover {
+  background-color: var(--color-role-hover);
+  border-color: var(--color-role-hover);
+}
+
+
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 .btn-secondary { background-color: #FFFFFF; color: var(--color-text-main); border-color: var(--color-border); }
 .btn-rechazar { background-color: var(--color-error-bg); color: var(--color-error-text); border-color: var(--color-error-border); }
@@ -230,9 +334,23 @@ body {
 .sidebar__brand-subtitle { font-size: 0.65rem; color: var(--color-text-muted); margin: 2px 0 0; }
 
 .sidebar__crear-btn {
-  margin: 0 20px 16px; padding: 10px 14px; border-radius: 6px; background: var(--color-primary);
-  color: var(--color-primary-contrast); border: none; font-weight: 600; cursor: pointer; text-align: left; font-size: 0.85rem;
+  margin: 0 20px 16px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: var(--color-role);
+  color: var(--color-primary-contrast);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.85rem;
 }
+
+.sidebar__crear-btn:hover:not(:disabled) {
+  background: var(--color-role-hover);
+}
+
+
 .sidebar__crear-btn--estudiante { opacity: 0.55; cursor: not-allowed; }
 
 .sidebar__seccion-titulo { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-muted); padding: 0 20px; margin: 16px 0 8px; }
@@ -242,9 +360,25 @@ body {
   background: none; border: none; text-align: left; font-size: 0.88rem; color: var(--color-text-main);
   cursor: pointer; text-decoration: none; font-family: inherit;
 }
-.sidebar__nav-item a.activo, .sidebar__nav-item a[aria-current='page'] {
-  background-color: var(--color-info-bg); color: var(--color-info-text); font-weight: 600; border-left: 3px solid var(--color-info-border);
+
+.sidebar__nav-item a.activo,
+.sidebar__nav-item a[aria-current='page'] {
+  font-weight: 600;
+  border-left: 3px solid var(--color-role);
+  background-color: var(--color-role-bg);
+  color: var(--color-role-text);
 }
+
+
+
+.app-shell input:focus,
+.app-shell textarea:focus,
+.app-shell select:focus {
+  outline: none;
+  border-color: var(--color-role);
+  box-shadow: 0 0 0 3px var(--color-role-bg);
+}
+
 .sidebar__badge { background-color: #DC2626; color: #fff; font-size: 0.65rem; padding: 1px 7px; border-radius: 999px; }
 
 .sidebar__footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--color-border); }
@@ -322,13 +456,15 @@ body {
 }
 
 .tarjeta--contexto-academico {
-  background-color: var(--color-primary);
-  color: var(--color-primary-contrast);
-  border: none;
+  background: var(--color-role);
+  color: #FFFFFF;
+  border-color: var(--color-role);
 }
+
 .tarjeta--contexto-academico h3,
-.tarjeta--contexto-academico strong { color: var(--color-primary-contrast); }
-.tarjeta--contexto-academico p { color: rgba(255, 255, 255, 0.85); }
+.tarjeta--contexto-academico strong {
+  color: #FFFFFF;
+}
 
 @media (max-width: 900px) {
   .configurar-perfil__grid { grid-template-columns: 1fr; }
@@ -346,13 +482,48 @@ body {
 .nivel-mcer-opcion input {
   position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer;
 }
+
+
 .nivel-mcer-opcion label {
-  display: block; padding: 12px; border: 1px solid var(--color-border);
-  border-radius: 8px; cursor: pointer; user-select: none;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
+
+
 .nivel-mcer-opcion__codigo { display: block; font-weight: 700; font-size: 0.85rem; color: var(--color-text-main); margin-bottom: 4px; }
 .nivel-mcer-opcion__descripcion { display: block; font-size: 0.75rem; color: var(--color-text-muted); }
-.nivel-mcer-opcion input:checked + label { border-color: var(--color-info-border); border-width: 2px; background-color: var(--color-info-bg); }
+.nivel-mcer-opcion input:checked + label {
+  border-color: var(--color-role);
+  background: var(--color-role-bg-soft);
+  color: var(--color-role-text);
+  box-shadow: 0 0 0 1px var(--color-role);
+}
+
+.nivel-mcer-opcion label:hover {
+  border-color: var(--color-role);
+}
+.app-shell input[type='radio']:checked {
+  accent-color: var(--color-role);
+}
+
+.app-shell input:focus,
+.app-shell textarea:focus,
+.app-shell select:focus {
+  outline: none;
+  border-color: var(--color-role);
+  box-shadow: 0 0 0 3px var(--color-role-bg);
+}
+
 .nivel-mcer-opcion input:focus-visible + label { outline: 2px solid var(--color-info-border); outline-offset: 2px; }
 
 @media (max-width: 600px) {
