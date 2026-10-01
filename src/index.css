@@ -344,14 +344,14 @@ body {
   cursor: pointer;
   text-align: left;
   font-size: 0.85rem;
+  font-family: inherit;
 }
 
 .sidebar__crear-btn:hover:not(:disabled) {
   background: var(--color-role-hover);
 }
-
-
-.sidebar__crear-btn--estudiante { opacity: 0.55; cursor: not-allowed; }
+/* Estado deshabilitado (p. ej. estudiante con perfil incompleto, HU-012) */
+.sidebar__crear-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .sidebar__seccion-titulo { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-muted); padding: 0 20px; margin: 16px 0 8px; }
 .sidebar__nav { list-style: none; margin: 0; padding: 0; }

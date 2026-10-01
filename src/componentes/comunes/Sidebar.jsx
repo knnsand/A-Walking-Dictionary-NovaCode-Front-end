@@ -17,8 +17,9 @@ import { useTheme } from '../../contexto/useTheme';
  *   guarde su perfil académico (HU-013).
  * - abierto / onCerrar: control del sidebar en móvil (responsive)
  * - onAbrirCrearMazo: callback del botón de acción del Docente (HU-001).
- *   El botón de Estudiante ("+ Añadir Palabra al Mazo") queda visible
- *   sin conectar: corresponde a HU-002, fuera del alcance actual.
+ * - onAbrirRegistrarTarjeta: callback del botón de acción del Estudiante
+ *   ("+ Añadir Palabra al Mazo", HU-002). Abre el modal de registro de
+ *   palabra. El botón se deshabilita mientras el perfil esté incompleto.
  */
 const MENU_POR_ROL = {
   docente: [
@@ -85,6 +86,7 @@ export function Sidebar({
   abierto,
   onCerrar,
   onAbrirCrearMazo,
+  onAbrirRegistrarTarjeta,
 }) {
   const { tema, alternarTema } = useTheme();
   const secciones = MENU_POR_ROL[rol] ?? [];
@@ -93,6 +95,13 @@ export function Sidebar({
   // (HU-013) y sus datos personales, el resto de opciones del menú
   // quedan visibles pero deshabilitadas.
   const bloqueadoPorPerfil = rol === 'estudiante' && perfilCompleto === false;
+
+  // Abre el modal de registro y, en móvil, cierra el menú lateral para que
+  // el modal no quede tapado por el sidebar.
+  const manejarAnadirPalabra = () => {
+    onAbrirRegistrarTarjeta?.();
+    onCerrar?.();
+  };
 
   return (
   <aside
@@ -116,9 +125,19 @@ export function Sidebar({
         </button>
       )}
 
-      {/* HU-002: fuera de alcance actual. Botón visible sin conectar. */}
+      {/* HU-002: registro de palabra. Se deshabilita solo si el perfil está incompleto (HU-012). */}
       {rol === 'estudiante' && (
-        <button className="sidebar__crear-btn sidebar__crear-btn--estudiante" type="button" disabled>
+        <button
+          className="sidebar__crear-btn sidebar__crear-btn--estudiante"
+          type="button"
+          onClick={manejarAnadirPalabra}
+          disabled={bloqueadoPorPerfil}
+          title={
+            bloqueadoPorPerfil
+              ? 'Completa tu perfil en Configuración & Perfil para habilitar esta opción'
+              : undefined
+          }
+        >
           + Añadir Palabra al Mazo
         </button>
       )}
