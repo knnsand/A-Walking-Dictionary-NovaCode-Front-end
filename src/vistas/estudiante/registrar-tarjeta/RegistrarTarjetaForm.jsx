@@ -21,13 +21,16 @@ export function RegistrarTarjetaForm({ onCerrar }) {
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
   const [mazos, setMazos] = useState([]);
+  const [mazosCargados, setMazosCargados] = useState(false);
   const [confirmacion, setConfirmacion] = useState(null);
 
   useEffect(() => {
     async function cargarMazos() {
       try {
+        // Con sesión de estudiante, GET /decks ya trae solo los mazos de sus cursos (CA-1.2.1).
         const datos = await listarMazos();
         setMazos(datos.filter((mazo) => mazoAceptaPalabras(mazo)));
+        setMazosCargados(true);
       } catch (error) {
         console.error(error);
         setError('No fue posible cargar los mazos disponibles.');
@@ -75,13 +78,6 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       return;
     }
 
-    if (!inscripcionId) {
-      setError(
-        'No hay una inscripción simulada configurada (VITE_INSCRIPCION_ID_SIMULADA). Revisa tu archivo .env.local.'
-      );
-      return;
-    }
-
     try {
       const chequeo = await verificarDuplicado(
         Number(form.mazo_id),
@@ -109,6 +105,8 @@ export function RegistrarTarjetaForm({ onCerrar }) {
         traduccion: form.traduccion.trim(),
         definicion: form.definicion.trim(),
         ejemplo: form.ejemplo.trim(),
+        // El backend toma la inscripción del estudiante que inició sesión (CA-1.2.1); este
+        // valor simulado solo se usa cuando el backend corre con DISABLE_AUTH=true.
         inscripcion_id: inscripcionId,
       });
 
@@ -305,6 +303,13 @@ export function RegistrarTarjetaForm({ onCerrar }) {
               </option>
             ))}
           </select>
+
+          {mazosCargados && mazos.length === 0 && (
+            <p className="form-tarjeta__helper" role="status">
+              No hay mazos abiertos en tus cursos. Si todavía no estás inscrito, únete a un
+              curso con el código de acceso que te dé tu docente.
+            </p>
+          )}
         </div>
       </section>
 

@@ -16,11 +16,15 @@ import { DiccionarioInvitado } from './vistas/invitado/DiccionarioInvitado';
 import { ParticipacionMazo } from './vistas/docente/participacion/ParticipacionMazo';
 import { PaginaEstudio } from './vistas/estudiante/estudiar-tarjetas/PaginaEstudio';
 
-function RutaProtegida({ children }) {
-  const { autenticado } = useAuth();
+function RutaSoloEstudiante({ children }) {
+  const { autenticado, rol } = useAuth();
 
   if (!autenticado) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (rol !== 'estudiante') {
+    return <Navigate to="/docente" replace />;
   }
 
   return children;
@@ -79,9 +83,9 @@ export default function App() {
             <Route
               path="/estudiante"
               element={
-                <RutaProtegida>
+                <RutaSoloEstudiante>
                   <LayoutPrincipal />
-                </RutaProtegida>
+                </RutaSoloEstudiante>
               }
             >
               <Route index element={<PanelEstudiante />} />
