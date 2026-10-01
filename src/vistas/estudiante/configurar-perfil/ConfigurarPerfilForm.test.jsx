@@ -38,7 +38,7 @@ describe('ConfigurarPerfilForm', () => {
     fireEvent.change(screen.getByLabelText(/código estudiantil/i), { target: { value: '20221234' } });
     fireEvent.click(screen.getByRole('button', { name: /guardar cambios/i }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/perfil actualizado correctamente/i);
-    expect(actualizarPerfil).toHaveBeenCalledWith(2, expect.objectContaining({
+    expect(actualizarPerfil).toHaveBeenCalledWith(expect.objectContaining({
       nivel_ingles: 'B1',
       codigo_estudiantil: '20221234',
     }));
@@ -86,7 +86,6 @@ describe('ConfigurarPerfilForm', () => {
     );
 
     expect(actualizarPerfil).toHaveBeenCalledWith(
-      2,
       expect.objectContaining({
         nivel_ingles: 'B1',
         codigo_estudiantil: '20221234',
