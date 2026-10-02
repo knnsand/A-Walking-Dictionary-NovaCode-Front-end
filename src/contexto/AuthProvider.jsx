@@ -4,7 +4,7 @@ import {
   iniciarSesionConGoogle,
   registrarConGoogle as registrarConGoogleApi,
 } from '../cliente-api/authApi';
-import { obtenerPerfil } from '../cliente-api/perfilApi';
+import { obtenerContextoAcademico, obtenerPerfil } from '../cliente-api/perfilApi';
 import { calcularPerfilCompleto } from './perfilCompleto';
 
 const TOKEN_KEY = 'walking_dictionary_token';
@@ -76,6 +76,33 @@ export function AuthProvider({ children }) {
     refrescarPerfil();
   }, [refrescarPerfil]);
 
+  // Inscripción real del estudiante (id_inscripcion de GET /students/:id/context).
+  // VITE_INSCRIPCION_ID_SIMULADA solo se usa como respaldo si no se puede consultar.
+  // Se guarda junto al estudiante consultado para saber si corresponde al actual.
+  const [inscripcion, setInscripcion] = useState({ estudianteId: null, id: null });
+
+  useEffect(() => {
+    if (!estudianteId) return undefined;
+
+    let cancelado = false;
+
+    obtenerContextoAcademico(estudianteId)
+      .then((contexto) => {
+        if (!cancelado) setInscripcion({ estudianteId, id: contexto?.id_inscripcion ?? null });
+      })
+      .catch(() => {
+        if (!cancelado) setInscripcion({ estudianteId, id: INSCRIPCION_ID_SIMULADA });
+      });
+
+    return () => {
+      cancelado = true;
+    };
+  }, [estudianteId]);
+
+  const inscripcionCargando = Boolean(estudianteId) && inscripcion.estudianteId !== estudianteId;
+  const inscripcionId =
+    estudianteId && inscripcion.estudianteId === estudianteId ? inscripcion.id : null;
+
   function guardarSesion(respuesta, { esRegistro = false } = {}) {
     localStorage.setItem(TOKEN_KEY, respuesta.token);
     localStorage.setItem(USER_KEY, JSON.stringify(respuesta.usuario));
@@ -121,7 +148,8 @@ export function AuthProvider({ children }) {
         idUsuario,
         docenteId,
         estudianteId,
-        inscripcionId: INSCRIPCION_ID_SIMULADA,
+        inscripcionId,
+        inscripcionCargando,
         autenticado: Boolean(token && usuario),
         perfilCompleto,
         completarPerfilInicial,

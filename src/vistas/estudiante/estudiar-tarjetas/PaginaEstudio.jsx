@@ -6,14 +6,19 @@
 
 import { useNavigate } from 'react-router-dom';
 import { EstudiarTarjetas } from './EstudiarTarjetas';
-import { INSCRIPCION_ID_TEMPORAL } from './estudiarTarjetas.constants';
+import { useAuth } from '../../../contexto/useAuth';
 
 export function PaginaEstudio() {
   const navigate = useNavigate();
+  const { inscripcionId, inscripcionCargando } = useAuth();
+
+  // Mientras se consulta la inscripción no se monta la vista, para no mostrar el
+  // error de "sin inscripción" antes de tiempo.
+  if (inscripcionCargando) return null;
 
   return (
     <EstudiarTarjetas
-      inscripcionId={INSCRIPCION_ID_TEMPORAL}
+      inscripcionId={inscripcionId}
       onSalir={() => navigate('/estudiante')}
     />
   );
