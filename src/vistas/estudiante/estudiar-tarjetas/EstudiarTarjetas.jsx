@@ -4,8 +4,9 @@
 // CA-4.1.1  Frente / dorso: la palabra en inglés; al girar se ven traducción, definición y ejemplo.
 // CA-4.1.2  Valoración Repetir / Difícil / Buena / Fácil -> el back recalcula SM-2 y programa
 //           el próximo repaso.
-// CA-4.1.3  "Repetir" reintroduce la tarjeta al final del bloque; al terminar se muestra un
-//           resumen de la sesión.
+// CA-4.1.3  "Repetir" reintroduce la tarjeta al final del bloque; las tarjetas no se acaban
+//           (al terminar la vuelta el mazo reinicia) y el resumen de la sesión se muestra
+//           cuando el estudiante pulsa "Terminar sesión de repaso".
 //
 // Uso (por ejemplo desde PanelEstudiante.jsx):
 //   <EstudiarTarjetas inscripcionId={inscripcionId} onSalir={volverAlPanel} />
@@ -33,6 +34,8 @@ const estadoInicial = {
   error: null,
   total: 0,
   cola: [],
+  todas: [], // mazo completo, para reiniciar la vuelta cuando se acaban las tarjetas
+  valoradas: [], // ids únicos de tarjetas valoradas (para el resumen)
   completadas: 0,
   volteada: false, // cara visible
   vista: false, // la respuesta ya se vio al menos una vez (habilita la valoración)
@@ -58,6 +61,7 @@ function reductor(estado, accion) {
         fase: 'estudiando',
         total: accion.tarjetas.length,
         cola: accion.tarjetas,
+        todas: accion.tarjetas,
         inicio: Date.now(),
       };
     }
@@ -79,9 +83,13 @@ function reductor(estado, accion) {
       const repetir = accion.valoracion === VALORACIONES.REPETIR;
 
       // CA-4.1.3: una tarjeta que se marca "Repetir" vuelve al final del bloque.
-      const cola = repetir ? [...resto, actual] : resto;
+      const colaTrasValorar = repetir ? [...resto, actual] : resto;
 
-      const siguiente = {
+      // Las tarjetas no se acaban: al terminar la vuelta, el mazo vuelve a empezar.
+      const reiniciaVuelta = colaTrasValorar.length === 0;
+      const cola = reiniciaVuelta ? [...estado.todas] : colaTrasValorar;
+
+      return {
         ...estado,
         cola,
         guardando: false,
@@ -90,7 +98,7 @@ function reductor(estado, accion) {
         vista: false,
         turno: estado.turno + 1,
         mensaje: accion.mensaje,
-        completadas: estado.completadas + (repetir ? 0 : 1),
+        completadas: reiniciaVuelta ? 0 : estado.completadas + (repetir ? 0 : 1),
         conteos: {
           ...estado.conteos,
           [accion.valoracion]: estado.conteos[accion.valoracion] + 1,
@@ -99,10 +107,15 @@ function reductor(estado, accion) {
           repetir && !estado.repetidas.includes(actual.id_tarjeta)
             ? [...estado.repetidas, actual.id_tarjeta]
             : estado.repetidas,
+        valoradas: estado.valoradas.includes(actual.id_tarjeta)
+          ? estado.valoradas
+          : [...estado.valoradas, actual.id_tarjeta],
       };
-
-      return cola.length === 0 ? { ...siguiente, fase: 'terminada', fin: Date.now() } : siguiente;
     }
+
+    // El estudiante decide terminar: ahora sí se muestra el resumen.
+    case 'TERMINAR':
+      return { ...estado, fase: 'terminada', fin: Date.now() };
 
     default:
       return estado;
@@ -192,6 +205,8 @@ export function EstudiarTarjetas({
   }, [servicio, inscripcionId, recarga]);
 
   const voltear = useCallback(() => dispatch({ tipo: 'VOLTEAR' }), []);
+
+  const terminar = useCallback(() => dispatch({ tipo: 'TERMINAR' }), []);
 
   // ---------- Valoración (CA-4.1.2) ----------
   const valorar = useCallback(
@@ -329,7 +344,7 @@ export function EstudiarTarjetas({
           Sesión completada
         </h2>
         <p className="estudiar-texto">
-          Repasaste {pluralizar(estado.total, 'tarjeta', 'tarjetas')} en{' '}
+          Repasaste {pluralizar(estado.valoradas.length, 'tarjeta', 'tarjetas')} en{' '}
           {formatearDuracion(estado.fin - estado.inicio)}.
         </p>
 
@@ -477,6 +492,17 @@ export function EstudiarTarjetas({
             intentarlo de nuevo.
           </p>
         )}
+
+        <div className="estudiar-acciones">
+          <button
+            type="button"
+            className="estudiar-boton"
+            onClick={terminar}
+            disabled={estado.guardando}
+          >
+            Terminar sesión de repaso
+          </button>
+        </div>
       </div>
     </section>
   );

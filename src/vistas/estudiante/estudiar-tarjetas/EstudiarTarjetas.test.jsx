@@ -44,6 +44,8 @@ function crearServicio(tarjetas, { fallosAlGuardar = 0, fallosAlCargar = 0 } = {
 
 const girar = () => fireEvent.click(screen.getByRole('button', { name: 'Girar tarjeta' }));
 const pulsarTecla = (key) => fireEvent.keyDown(document.body, { key });
+const terminarSesion = () =>
+  fireEvent.click(screen.getByRole('button', { name: 'Terminar sesión de repaso' }));
 
 describe('EstudiarTarjetas', () => {
   it('muestra la palabra al frente y deshabilita la valoración hasta girar la tarjeta', async () => {
@@ -59,7 +61,7 @@ describe('EstudiarTarjetas', () => {
     expect(screen.getByText('def-anachronism')).toBeInTheDocument();
   });
 
-  it('CA-4.1.3: "Repetir" reintroduce la tarjeta al final y luego muestra el resumen', async () => {
+  it('CA-4.1.3: "Repetir" reintroduce la tarjeta al final y el resumen sale al terminar la sesión', async () => {
     const servicio = crearServicio([tarjeta(1, 'uno'), tarjeta(2, 'dos')]);
     render(<EstudiarTarjetas inscripcionId={7} servicio={servicio} />);
 
@@ -81,6 +83,12 @@ describe('EstudiarTarjetas', () => {
     // Tarjeta 1 de nuevo: Fácil (con teclado)
     pulsarTecla(' ');
     pulsarTecla('4');
+
+    // Las tarjetas no se acaban: el mazo reinicia hasta que el estudiante termine.
+    expect(await screen.findByText('Tarjeta 1 de 2')).toBeInTheDocument();
+    expect(screen.queryByText('Sesión completada')).not.toBeInTheDocument();
+
+    terminarSesion();
     expect(await screen.findByText('Sesión completada')).toBeInTheDocument();
     expect(screen.getByText(/Repasaste 2 tarjetas/)).toBeInTheDocument();
 
@@ -90,6 +98,24 @@ describe('EstudiarTarjetas', () => {
       [7, 2, 'Buena'],
       [7, 1, 'Fácil'],
     ]);
+  });
+
+  it('las tarjetas no se acaban: el mazo reinicia y el resumen solo sale al pulsar terminar', async () => {
+    const servicio = crearServicio([tarjeta(1, 'uno')]);
+    render(<EstudiarTarjetas inscripcionId={1} servicio={servicio} />);
+
+    await screen.findByText('Tarjeta 1 de 1');
+    girar();
+    fireEvent.click(screen.getByRole('button', { name: /Buena/ }));
+    expect(await screen.findByText(/Próximo repaso en 6 días/)).toBeInTheDocument();
+
+    // Sigue habiendo tarjeta y todavía no hay resumen
+    expect(screen.getByText('Tarjeta 1 de 1')).toBeInTheDocument();
+    expect(screen.queryByText('Sesión completada')).not.toBeInTheDocument();
+
+    terminarSesion();
+    expect(await screen.findByText('Sesión completada')).toBeInTheDocument();
+    expect(screen.getByText(/Repasaste 1 tarjeta/)).toBeInTheDocument();
   });
 
   it('no valora con las teclas 1-4 si la respuesta todavía no se ha visto', async () => {
@@ -152,6 +178,9 @@ describe('EstudiarTarjetas', () => {
     expect(screen.getByText('Tarjeta 1 de 1')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /Buena/ }));
+    expect(await screen.findByText(/Próximo repaso en 6 días/)).toBeInTheDocument();
+
+    terminarSesion();
     expect(await screen.findByText('Sesión completada')).toBeInTheDocument();
   });
 
