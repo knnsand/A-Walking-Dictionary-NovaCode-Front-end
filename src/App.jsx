@@ -55,11 +55,14 @@ export default function App() {
               path="/docente"
               element={
                 <RutaSoloDocente>
-                  <LayoutPrincipal contadores={{ pendientes: 2 }} />
+                  <LayoutPrincipal />
                 </RutaSoloDocente>
               }
             >
-              <Route index element={<PanelDocente />} />
+              {/* /docente redirige a la lista de mazos creados */}
+              <Route index element={<Navigate to="mazoscreados" replace />} />
+
+              <Route path="mazoscreados" element={<PanelDocente />} />
 
               <Route
                 path="revision-palabras"
@@ -71,13 +74,13 @@ export default function App() {
                 element={<CursosEstudiantes />}
               />
               <Route
-  path="participacion"
-  element={
-    <RutaSoloDocente>{/* o el guard real que exista ahora */}
-      <ParticipacionMazo />
-    </RutaSoloDocente>
-  }
-/>
+                path="participacion"
+                element={
+                  <RutaSoloDocente>{/* o el guard real que exista ahora */}
+                    <ParticipacionMazo />
+                  </RutaSoloDocente>
+                }
+              />
             </Route>
 
             <Route
