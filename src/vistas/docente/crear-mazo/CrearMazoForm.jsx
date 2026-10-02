@@ -13,7 +13,6 @@ import {
 
 import {
   VARIANTES_REGIONALES,
-  ESTADOS,
   FORM_INICIAL,
 } from './crearMazo.constants';
 
@@ -76,47 +75,46 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
     <form className="card-mazo" onSubmit={handleSubmit}>
       <div className="card-mazo__header">
         <div className="card-mazo__icon" aria-hidden="true">
-  <svg
-    viewBox="0 0 24 24"
-    width="22"
-    height="22"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M5 4.5C5 3.67 5.67 3 6.5 3H19V18H6.5C5.67 18 5 18.67 5 19.5V4.5Z"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M5 19.5C5 18.67 5.67 18 6.5 18H19V21H6.5C5.67 21 5 20.33 5 19.5Z"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M9 7H15M9 10H15"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-    />
-  </svg>
-</div>
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 4.5C5 3.67 5.67 3 6.5 3H19V18H6.5C5.67 18 5 18.67 5 19.5V4.5Z"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M5 19.5C5 18.67 5.67 18 6.5 18H19V21H6.5C5.67 21 5 20.33 5 19.5Z"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M9 7H15M9 10H15"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
         <div>
           <h2 className="card-mazo__title">Crear Nuevo Mazo de Estudio</h2>
           <p className="card-mazo__subtitle">Herramienta exclusiva de creación para el Docente</p>
         </div>
 
-          <button
-            type="button"
-            className="card-mazo__close"
-            onClick={onCerrar}
-            aria-label="Cerrar"
-          >
-            ×
-          </button>      
-        
+        <button
+          type="button"
+          className="card-mazo__close"
+          onClick={onCerrar}
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
       </div>
 
       <div className="card-mazo__body">
@@ -174,25 +172,6 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
                   onChange={handleChange}
                 />
                 <label htmlFor={`variante-${variante}`}>{variante}</label>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="form-group">
-          <span className="form-label">Estado inicial</span>
-          <div className="chip-group" role="radiogroup" aria-label="Estado inicial">
-            {ESTADOS.map((opcion) => (
-              <div className="chip-option" key={opcion.value}>
-                <input
-                  type="radio"
-                  id={`estado-${opcion.value}`}
-                  name="estado"
-                  value={opcion.value}
-                  checked={form.estado === opcion.value}
-                  onChange={handleChange}
-                />
-                <label htmlFor={`estado-${opcion.value}`}>{opcion.label}</label>
               </div>
             ))}
           </div>

@@ -4,7 +4,7 @@ import { ListaMazosCreados } from './ListaMazosCreados';
 
 export function PanelDocente() {
   const [refrescarTrigger, setRefrescarTrigger] = useState(0);
-  const [mostrarFormularioMazo, setMostrarFormularioMazo] = useState(true);
+  const [mostrarFormularioMazo, setMostrarFormularioMazo] = useState(false);
 
   function manejarMazoCreado() {
     setRefrescarTrigger((valor) => valor + 1);
