@@ -2,6 +2,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../contexto/useAuth';
+import { useTheme } from '../../contexto/useTheme';
 import { obtenerPerfil } from '../../cliente-api/perfilApi';
 import { calcularPerfilCompleto } from '../../contexto/perfilCompleto';
 import './Login.css';
@@ -9,6 +10,7 @@ import './Login.css';
 export function Login() {
   const navigate = useNavigate();
   const { loginWithGoogle, logout } = useAuth();
+  const { tema, alternarTema } = useTheme();
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
 
@@ -56,29 +58,40 @@ export function Login() {
 
   return (
     <main className="login">
-      <section className="login__content">
-        <h1>A Walking Dictionary</h1>
+      <button type="button" className="login__tema" onClick={alternarTema}>
+        {tema === 'claro' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
+      </button>
 
-        <p>
+      <section className="login__content">
+        <div className="login__marca" aria-hidden="true" />
+
+        <h1>A Walking Dictionary</h1>
+        <p className="login__subtitulo">Literatura Anglófona · Unicauca</p>
+
+        <p className="login__texto">
           Inicia sesión con tu cuenta de Google para continuar.
         </p>
 
         {error && (
-          <p role="alert" className="login__error">
+          <p role="alert" className="aviso aviso--error login__error">
             {error}
           </p>
         )}
 
         {cargando ? (
-        <p>Iniciando sesión...</p>
+          <p>Iniciando sesión...</p>
         ) : (
-        <>
-            <GoogleLogin
-            onSuccess={manejarLoginGoogle}
-            onError={() => {
-                setError('No se pudo iniciar sesión con Google.');
-            }}
-            />
+          <>
+            <div className="login__google">
+              <GoogleLogin
+                theme={tema === 'oscuro' ? 'filled_black' : 'outline'}
+                width="300"
+                onSuccess={manejarLoginGoogle}
+                onError={() => {
+                  setError('No se pudo iniciar sesión con Google.');
+                }}
+              />
+            </div>
 
             <button
               type="button"
@@ -96,7 +109,7 @@ export function Login() {
               ¿Aún no tienes cuenta?{' '}
               <Link to="/registro">Regístrate como estudiante</Link>
             </p>
-        </>
+          </>
         )}
       </section>
     </main>

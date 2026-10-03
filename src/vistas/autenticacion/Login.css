@@ -1,4 +1,5 @@
 .login {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -6,17 +7,103 @@
   padding: 2rem;
 }
 
+/* Botón para cambiar entre modo claro y oscuro (esquina superior derecha) */
+.login__tema {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-card);
+  color: var(--color-text-main);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.login__tema:hover {
+  background: var(--color-bg-header);
+}
+
+/* Tarjeta central: usa los tokens globales, así cambia sola con el tema */
 .login__content {
   width: 100%;
   max-width: 420px;
-  padding: 2rem;
+  padding: 2.25rem 2rem;
   text-align: center;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: 0 24px 60px -24px rgba(15, 23, 42, 0.35);
+}
+
+.login__marca {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 1rem;
+  border-radius: 10px;
+  background: var(--color-primary);
+}
+
+.login__content h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.6rem;
+  color: var(--color-text-main);
+}
+
+.login__subtitulo {
+  margin: 0 0 1.25rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.login__texto {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  color: var(--color-text-main);
 }
 
 .login__error {
   margin-bottom: 1rem;
+  text-align: left;
+}
+
+.login__google {
+  display: flex;
+  justify-content: center;
 }
 
 .login__guest-button {
-  margin-top: 1rem;
+  display: block;
+  width: 300px;
+  max-width: 100%;
+  margin: 1rem auto 0;
+}
+
+.login__enlace {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.login__enlace a {
+  color: var(--color-info-text);
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .login {
+    padding: 4rem 1rem 1rem;
+  }
+
+  .login__tema {
+    top: 12px;
+    right: 12px;
+  }
 }

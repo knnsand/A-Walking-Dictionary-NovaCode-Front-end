@@ -54,7 +54,7 @@ export function TarjetaPendienteCard({
   }
 
   return (
-    <div className="tarjeta-pendiente">
+    <div className="tarjeta-pendiente mazo-pila__cara">
       <div className="tarjeta-pendiente__encabezado">
         <span className="badge badge-abierto">Pendiente</span>
         <h3 className="tarjeta-pendiente__palabra">{tarjeta.palabra}</h3>

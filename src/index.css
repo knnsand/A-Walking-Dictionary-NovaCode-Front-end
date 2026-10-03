@@ -44,12 +44,12 @@
    ============================================================ */
 
 .app-shell--estudiante {
-  --color-role: #2E6B4A;
-  --color-role-hover: #24563B;
-  --color-role-bg: #E8F1EB;
-  --color-role-bg-soft: #F3F7F4;
-  --color-role-text: #234F38;
-  --color-role-border: #86B69A;
+  --color-role: #A61C2D;
+  --color-role-hover: #86121F;
+  --color-role-bg: #F8E8EA;
+  --color-role-bg-soft: #FCF3F4;
+  --color-role-text: #7A1522;
+  --color-role-border: #D9A1A8;
 }
 
 /* ============================================================
@@ -70,12 +70,12 @@
    ============================================================ */
 
 .app-shell--invitado {
-  --color-role: #64748B;
-  --color-role-hover: #475569;
-  --color-role-bg: #EEF1F5;
-  --color-role-bg-soft: #F6F8FA;
-  --color-role-text: #334155;
-  --color-role-border: #CBD5E1;
+  --color-role: #2E6B4A;
+  --color-role-hover: #24563B;
+  --color-role-bg: #E8F1EB;
+  --color-role-bg-soft: #F3F7F4;
+  --color-role-text: #234F38;
+  --color-role-border: #86B69A;
 }
 
 /* ============================================================
@@ -83,12 +83,12 @@
    ============================================================ */
 
 [data-theme='oscuro'] .app-shell--estudiante {
-  --color-role: #6FAF8C;
-  --color-role-hover: #8BC2A4;
-  --color-role-bg: #183528;
-  --color-role-bg-soft: #1C4030;
-  --color-role-text: #B9E0C8;
-  --color-role-border: #6FAF8C;
+  --color-role: #D4636F;
+  --color-role-hover: #E07F89;
+  --color-role-bg: #3A1218;
+  --color-role-bg-soft: #46181F;
+  --color-role-text: #F3C6CB;
+  --color-role-border: #D4636F;
 }
 
 [data-theme='oscuro'] .app-shell--docente {
@@ -101,12 +101,12 @@
 }
 
 [data-theme='oscuro'] .app-shell--invitado {
-  --color-role: #94A3B8;
-  --color-role-hover: #CBD5E1;
-  --color-role-bg: #293342;
-  --color-role-bg-soft: #222B39;
-  --color-role-text: #E2E8F0;
-  --color-role-border: #64748B;
+  --color-role: #6FAF8C;
+  --color-role-hover: #8BC2A4;
+  --color-role-bg: #183528;
+  --color-role-bg-soft: #1C4030;
+  --color-role-text: #B9E0C8;
+  --color-role-border: #6FAF8C;
 }
 
 
@@ -206,7 +206,7 @@ body {
 }
 .form-input, .form-select, .form-textarea {
   width: 100%; min-height: 42px; padding: 10px 12px; border-radius: 6px;
-  border: 1px solid var(--color-border); font-size: 0.9rem; background-color: #FFFFFF;
+  border: 1px solid var(--color-border); font-size: 0.9rem; background-color: var(--color-bg-card);
   font-family: var(--font-sans); box-sizing: border-box; outline: none;
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus {
@@ -642,4 +642,162 @@ body {
   margin: 0 0 12px;
   font-size: 0.8rem;
   color: var(--color-text-muted);
+}
+
+/* ============================================================
+   ALIAS DE TOKENS
+   Algunos CSS usan nombres distintos a los de este archivo; sin alias
+   caían a su color de respaldo (blanco) también en modo oscuro.
+   ============================================================ */
+:root {
+  --color-superficie: var(--color-bg-card);
+  --color-borde: var(--color-border);
+  --color-texto-secundario: var(--color-text-muted);
+  --color-surface: var(--color-bg-card);
+  --color-text: var(--color-text-main);
+}
+
+/* ============================================================
+   MODO OSCURO - ajustes
+   ============================================================ */
+[data-theme='oscuro'] { color-scheme: dark; } /* listas desplegables, checkbox y scroll nativos */
+
+/* La pestaña activa usaba --color-primary, casi invisible en oscuro */
+.app-shell .tabs__item--activo {
+  color: var(--color-role);
+  border-bottom-color: var(--color-role);
+}
+
+[data-theme='oscuro'] .tarjeta-pendiente__acepciones { border-top-color: var(--color-border); }
+[data-theme='oscuro'] .tarjeta-pendiente__acepcion { background: var(--color-bg-header); }
+
+[data-theme='oscuro'] .participacion-mazo__aviso { background: #3A2E0B; color: #FDE68A; border-color: #7A5F12; }
+[data-theme='oscuro'] .participacion-mazo__avatar { background: var(--color-role-bg); color: var(--color-role-text); }
+[data-theme='oscuro'] .participacion-mazo__badge.is-alerta { background: var(--color-error-bg); color: var(--color-error-text); }
+[data-theme='oscuro'] .participacion-mazo__badge.is-ok { background: var(--color-info-bg); color: var(--color-info-text); }
+
+/* ============================================================
+   SELECT con el mismo diseño de la app (flecha propia)
+   ============================================================ */
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2364748B' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+/* ============================================================
+   LAYOUT MÁS ANCHO
+   .pagina ocupa todo el espacio disponible (con tope en pantallas enormes).
+   .card-mazo--ancho: para paneles de página completa (no modales).
+   ============================================================ */
+.pagina { width: 100%; max-width: 1480px; margin-inline: auto; box-sizing: border-box; }
+
+.card-mazo--ancho { max-width: none; margin: 0; }
+
+.mazo-list__item { flex-wrap: wrap; gap: 12px 24px; }
+
+/* ============================================================
+   TARJETA SOLA (sin pila)
+   Para tarjetas individuales (una palabra, una coautoría) que NO son un
+   mazo: conservan la elevación y el brillo al pasar el mouse, pero sin
+   las tarjetas asomadas detrás.
+   Uso: <div class="mazo-pila mazo-pila--sola"> <div class="mazo-pila__cara"> ...
+   ============================================================ */
+.mazo-pila--sola { --pila-profundidad: 0px; }
+.mazo-pila--sola::before,
+.mazo-pila--sola::after { display: none; }
+
+/* ============================================================
+   MODO ESTUDIO (estudiar-tarjetas.css) - modo oscuro
+   Esa hoja define sus colores neutros en .estudiar con valores fijos
+   (tinta #192042, superficie #fff, etc.). Aquí se redefinen con los
+   tokens globales cuando el tema es oscuro; la mayor especificidad
+   hace que gane sin tocar el archivo original.
+   ============================================================ */
+[data-theme='oscuro'] .estudiar {
+  --e-tinta: var(--color-text-main);
+  --e-texto: var(--color-text-main);
+  --e-suave: var(--color-text-muted);
+  --e-borde: var(--color-border);
+  --e-superficie: var(--color-bg-card);
+  --e-pista: var(--color-border);
+  --e-fondo-cita: var(--color-bg-header);
+  --e-chip-neutro: #2B3A52;
+  --e-chip-etiqueta: #2B3A52;
+  --e-fonetica: #A5B4FC;
+  --e-sombra: 0 18px 40px -18px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme='oscuro'] .estudiar-error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+/* ============================================================
+   SIDEBAR FIJO
+   El sidebar mide siempre el alto de la ventana y se queda quieto cuando
+   la página crece; solo el contenido (layout) hace scroll. Así el bloque
+   de tema / cerrar sesión / usuario siempre queda al fondo de la pantalla.
+   Solo en escritorio: en móvil el sidebar ya es un panel fijo deslizable.
+   ============================================================ */
+@media (min-width: 901px) {
+  .app-shell__sidebar {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+}
+
+/* ---- Botón de cerrar sesión (sutil; resalta en rojo al pasar el mouse) ---- */
+.sidebar__logout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar__logout:hover,
+.sidebar__logout:focus-visible {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+/* ============================================================
+   IDENTIDAD DEL ROL EN EL SIDEBAR (sutil)
+   Los colores salen de --color-role (docente azul, estudiante verde,
+   invitado gris pizarra; definidos arriba, también en modo oscuro).
+   - Franja fina arriba del sidebar
+   - Logo y avatar con el color del rol
+   - El rol del usuario como pastilla
+   ============================================================ */
+.app-shell__sidebar { border-top: 3px solid var(--color-role); }
+.sidebar__brand-icon,
+.sidebar__avatar { background-color: var(--color-role); }
+
+.sidebar__usuario-rol {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background-color: var(--color-role-bg);
+  color: var(--color-role-text);
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
