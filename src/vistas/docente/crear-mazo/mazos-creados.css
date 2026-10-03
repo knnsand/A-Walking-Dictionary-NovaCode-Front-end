@@ -1,0 +1,154 @@
+/* Vista "Mazos creados": tarjetas por semana.
+   Usa los tokens de index.css, así que respeta el modo oscuro y el color del rol. */
+
+.mazos-creados {
+  padding: 8px 28px 40px;
+  overflow-x: clip;
+}
+
+.mazos-creados__encabezado {
+  margin-bottom: 20px;
+}
+
+.mazos-creados__titulo {
+  margin: 0 0 4px;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--color-text-main);
+}
+
+.mazos-creados__subtitulo {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.mazos-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px 32px;
+}
+
+.mazo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 22px;
+  background-color: var(--color-bg-card);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--mazo-color, var(--color-role));
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* El color de la franja superior rota según la semana. */
+.mazo-card--color-0 { --mazo-color: var(--color-role); }
+.mazo-card--color-1 { --mazo-color: #B3362D; }
+.mazo-card--color-2 { --mazo-color: #5B6FA8; }
+.mazo-card--color-3 { --mazo-color: #64748B; }
+.mazo-card--color-4 { --mazo-color: #2F6F6A; }
+
+.mazo-card--cerrado {
+  opacity: 0.8;
+}
+
+.mazo-card__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mazo-card__semana {
+  padding: 3px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-bg-header);
+  color: var(--color-text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mazo-card__titulo {
+  margin: 4px 0 0;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  line-height: 1.25;
+  color: var(--color-text-main);
+}
+
+.mazo-card__autor {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.mazo-card__etiquetas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mazo-card__etiqueta {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background-color: var(--color-role-bg);
+  color: var(--color-role-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.mazo-card__pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.mazo-card__estado-texto {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.mazo-card__error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-error-text);
+}
+
+/* Entrada: las tarjetas se reparten una tras otra. */
+@keyframes mazo-repartir {
+  from { opacity: 0; transform: translateY(28px) rotate(-4deg) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+.mazos-grid > .mazo-pila {
+  animation: mazo-repartir 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mazos-grid > .mazo-pila:nth-child(2)  { animation-delay: 60ms; }
+.mazos-grid > .mazo-pila:nth-child(3)  { animation-delay: 120ms; }
+.mazos-grid > .mazo-pila:nth-child(4)  { animation-delay: 180ms; }
+.mazos-grid > .mazo-pila:nth-child(5)  { animation-delay: 240ms; }
+.mazos-grid > .mazo-pila:nth-child(6)  { animation-delay: 300ms; }
+.mazos-grid > .mazo-pila:nth-child(7)  { animation-delay: 360ms; }
+.mazos-grid > .mazo-pila:nth-child(8)  { animation-delay: 420ms; }
+.mazos-grid > .mazo-pila:nth-child(9)  { animation-delay: 480ms; }
+.mazos-grid > .mazo-pila:nth-child(10) { animation-delay: 540ms; }
+.mazos-grid > .mazo-pila:nth-child(n + 11) { animation-delay: 600ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mazos-grid > .mazo-pila { animation: none; }
+}

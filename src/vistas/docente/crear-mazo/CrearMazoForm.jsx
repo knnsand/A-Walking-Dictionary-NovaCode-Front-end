@@ -13,6 +13,7 @@ import {
 
 import {
   VARIANTES_REGIONALES,
+  SEMANAS_SEMESTRE,
   FORM_INICIAL,
 } from './crearMazo.constants';
 
@@ -122,11 +123,16 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
 
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label" htmlFor="semana">Semana/periodo</label>
-            <input id="semana" className="form-input" type="text" name="semana" value={form.semana} onChange={handleChange} />
+            <label className="form-label form-label--obligatorio" htmlFor="semana">Semana/periodo</label>
+            <select id="semana" className="form-select" name="semana" value={form.semana} onChange={handleChange}>
+              <option value="">Selecciona una semana</option>
+              {SEMANAS_SEMESTRE.map((semana) => (
+                <option key={semana.value} value={semana.value}>{semana.label}</option>
+              ))}
+            </select>
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="curso_id">Curso/grupo</label>
+            <label className="form-label form-label--obligatorio" htmlFor="curso_id">Curso/grupo</label>
             <select id="curso_id" className="form-select" name="curso_id" value={form.curso_id} onChange={handleChange}>
               <option value="">Selecciona un curso</option>
               {cursos.map((curso) => (
@@ -138,28 +144,28 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
 
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label" htmlFor="nombre_lectura">Obra literaria / lectura asignada</label>
+            <label className="form-label form-label--obligatorio" htmlFor="nombre_lectura">Obra literaria / lectura asignada</label>
             <input id="nombre_lectura" className="form-input" type="text" name="nombre_lectura" value={form.nombre_lectura} onChange={handleChange} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="autor">Autor</label>
+            <label className="form-label form-label--obligatorio" htmlFor="autor">Autor</label>
             <input id="autor" className="form-input" type="text" name="autor" value={form.autor} onChange={handleChange} />
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label" htmlFor="fecha_apertura">Fecha de apertura </label>
+            <label className="form-label form-label--obligatorio" htmlFor="fecha_apertura">Fecha de apertura </label>
             <input id="fecha_apertura" className="form-input" type="date" name="fecha_apertura" value={form.fecha_apertura} onChange={handleChange} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="fecha_cierre">Fecha de cierre </label>
+            <label className="form-label form-label--obligatorio" htmlFor="fecha_cierre">Fecha de cierre </label>
             <input id="fecha_cierre" className="form-input" type="date" name="fecha_cierre" value={form.fecha_cierre} onChange={handleChange} />
           </div>
         </div>
 
         <div className="form-group">
-          <span className="form-label">Variante regional predeterminada</span>
+          <span className="form-label form-label--obligatorio">Variante regional predeterminada</span>
           <div className="chip-group" role="radiogroup" aria-label="Variante regional predeterminada">
             {VARIANTES_REGIONALES.map((variante) => (
               <div className="chip-option" key={variante}>
@@ -176,6 +182,8 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
             ))}
           </div>
         </div>
+
+        <p className="form-leyenda-obligatorio">Los campos marcados con * son obligatorios.</p>
 
         <div className="info-box">
           Una vez creado el mazo, los estudiantes del curso podrán aportar palabras y ejemplos para tu revisión.
