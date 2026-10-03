@@ -25,7 +25,11 @@ const ES_SIN_PERMISO = (msg) => /no tiene permisos para acceder a este recurso/i
 // si se agregan varios cursos habría que filtrar aquí por curso_id (o pedirle
 // al backend un query param para eso).
 function mapearMazoApi(m) {
-  return { mazo_id: m.id_mazo, nombre: `Semana ${m.semana} · ${m.nombre_lectura}` };
+  return {
+    mazo_id: m.id_mazo,
+    semana: Number(m.semana),
+    nombre: `Semana ${m.semana} · ${m.nombre_lectura}`,
+  };
 }
 
 /**
@@ -58,7 +62,9 @@ export function ParticipacionMazo({ mazos: mazosProp }) {
     listarMazos()
       .then((datos) => {
         if (cancelado || !Array.isArray(datos) || datos.length === 0) return;
-        const opciones = datos.map(mapearMazoApi);
+        const opciones = datos
+          .map(mapearMazoApi)
+          .sort((a, b) => (a.semana - b.semana) || (a.mazo_id - b.mazo_id));
         setMazosDisponibles(opciones);
         setMazoId((actual) => (opciones.some((o) => String(o.mazo_id) === String(actual)) ? actual : opciones[0].mazo_id));
       })
@@ -111,7 +117,12 @@ export function ParticipacionMazo({ mazos: mazosProp }) {
           <p>{TEXTOS.descripcion}</p>
         </div>
         <div className="participacion-mazo__acciones">
-          <select value={mazoId} onChange={(e) => setMazoId(e.target.value)}>
+          <select
+            className="form-select"
+            aria-label="Mazo"
+            value={mazoId}
+            onChange={(e) => setMazoId(e.target.value)}
+          >
             {mazosDisponibles.map((m) => (
               <option key={m.mazo_id} value={m.mazo_id}>
                 {m.nombre}

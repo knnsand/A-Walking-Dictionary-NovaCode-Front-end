@@ -13,7 +13,7 @@ export function CursosEstudiantes() {
   }, []);
 
   return (
-    <div className="card-mazo">
+    <div className="card-mazo card-mazo--ancho">
       <div className="card-mazo__header">
         <div className="card-mazo__icon" aria-hidden="true" />
         <div>

@@ -1,6 +1,6 @@
 /* Estilos EXCLUSIVOS de la pantalla Revisión de Palabras: el
    sistema de pestañas (Nuevos Términos / Coautoría / Historial)
-   y la grilla de tarjetas aprobadas.
+   y la cuadrícula de tarjetas.
 
    Todo lo que comparten esta pantalla y la de Coautoría
    (.tarjeta-pendiente, .btn, .badge, .tag-contexto, .modal-overlay)
@@ -38,29 +38,46 @@
 }
 
 /* Estado activo: se aplica dinámicamente vía className en
-   RevisionPalabras.jsx según cuál pestaña esté seleccionada. */
+   RevisionPalabras.jsx según cuál pestaña esté seleccionada.
+   (El color por rol, legible en modo oscuro, se fuerza en index.css.) */
 .tabs__item--activo {
   color: var(--color-primary);
   border-bottom-color: var(--color-primary);
 }
 
-/* Grilla responsiva para "Historial Aprobadas": tantas columnas
-   como quepan de mínimo 220px cada una, ajustándose solas al ancho
-   de pantalla disponible (sin necesidad de media queries manuales). */
-.grid-aprobadas {
+/* Cuadrícula de tarjetas (nuevos términos, coautoría e historial):
+   tantas columnas como quepan de mínimo 300px, se ajusta sola al ancho
+   disponible (1 columna en móvil, sin media queries manuales). */
+.revision-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px 24px;
+  padding: 8px 4px 4px;
 }
 
-/* Tarjeta individual dentro de la grilla de aprobadas. Es más
-   compacta que .tarjeta-pendiente porque aquí solo se muestra
-   información de solo lectura (no hay acciones ni edición). */
+/* Color de cada tipo de mazo (--mazo-color lo usa .mazo-pila en index.css) */
+.pila--pendiente { --mazo-color: var(--color-role); }
+.pila--coautoria { --mazo-color: #5B6FA8; }
+.pila--aprobada  { --mazo-color: var(--color-success-border); }
+
+/* Al editar, la tarjeta ocupa toda la fila para que el formulario respire */
+.pila--editando { grid-column: 1 / -1; }
+
+.revision-grid .tarjeta-pendiente,
+.revision-grid .card-aprobada {
+  margin-bottom: 0;
+  border-top: 4px solid var(--mazo-color);
+}
+
+/* Tarjeta individual de aprobadas: solo lectura, más compacta que
+   .tarjeta-pendiente (no hay acciones ni edición). */
 .card-aprobada {
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 14px;
 }
+
+.revision-grid .card-aprobada { padding: 16px; }
 
 .card-aprobada__encabezado {
   display: flex;

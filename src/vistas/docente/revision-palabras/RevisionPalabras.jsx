@@ -94,7 +94,7 @@ export function RevisionPalabras() {
   }
 
   return (
-    <div className="card-mazo">
+    <div className="card-mazo card-mazo--ancho">
       <div className="card-mazo__header">
         <div className="card-mazo__icon" aria-hidden="true" />
         <div>
@@ -132,16 +132,22 @@ export function RevisionPalabras() {
           pendientes.length === 0 ? (
             <p className="empty-state">No hay palabras pendientes de revisión.</p>
           ) : (
-            pendientes.map((tarjeta) => (
-              <TarjetaPendienteCard
-                key={tarjeta.id_tarjeta}
-                tarjeta={tarjeta}
-                enEdicion={idEnEdicion === tarjeta.id_tarjeta}
-                onIniciarEdicion={() => setIdEnEdicion(tarjeta.id_tarjeta)}
-                onCancelarEdicion={() => setIdEnEdicion(null)}
-                onAprobar={(datosEditados) => handleSolicitarAprobacion(tarjeta, datosEditados)}
-              />
-            ))
+            <div className="revision-grid">
+              {pendientes.map((tarjeta) => (
+                <div
+                  key={tarjeta.id_tarjeta}
+                  className={`mazo-pila mazo-pila--sola pila--pendiente${idEnEdicion === tarjeta.id_tarjeta ? ' pila--editando' : ''}`}
+                >
+                  <TarjetaPendienteCard
+                    tarjeta={tarjeta}
+                    enEdicion={idEnEdicion === tarjeta.id_tarjeta}
+                    onIniciarEdicion={() => setIdEnEdicion(tarjeta.id_tarjeta)}
+                    onCancelarEdicion={() => setIdEnEdicion(null)}
+                    onAprobar={(datosEditados) => handleSolicitarAprobacion(tarjeta, datosEditados)}
+                  />
+                </div>
+              ))}
+            </div>
           )
         )}
 
@@ -149,17 +155,23 @@ export function RevisionPalabras() {
           coautorias.length === 0 ? (
             <p className="empty-state">No hay coautorías pendientes de revisión.</p>
           ) : (
-            coautorias.map((coautoria) => (
-              <CoautoriaPendienteCard
-                key={coautoria.id_aporte}
-                coautoria={coautoria}
-                enEdicion={idCoautoriaEnEdicion === coautoria.id_aporte}
-                onIniciarEdicion={() => setIdCoautoriaEnEdicion(coautoria.id_aporte)}
-                onCancelarEdicion={() => setIdCoautoriaEnEdicion(null)}
-                onAprobar={(datosEditados) => handleAprobarCoautoria(coautoria.id_aporte, datosEditados)}
-                onRechazar={() => handleRechazarCoautoria(coautoria.id_aporte)}
-              />
-            ))
+            <div className="revision-grid">
+              {coautorias.map((coautoria) => (
+                <div
+                  key={coautoria.id_aporte}
+                  className={`mazo-pila mazo-pila--sola pila--coautoria${idCoautoriaEnEdicion === coautoria.id_aporte ? ' pila--editando' : ''}`}
+                >
+                  <CoautoriaPendienteCard
+                    coautoria={coautoria}
+                    enEdicion={idCoautoriaEnEdicion === coautoria.id_aporte}
+                    onIniciarEdicion={() => setIdCoautoriaEnEdicion(coautoria.id_aporte)}
+                    onCancelarEdicion={() => setIdCoautoriaEnEdicion(null)}
+                    onAprobar={(datosEditados) => handleAprobarCoautoria(coautoria.id_aporte, datosEditados)}
+                    onRechazar={() => handleRechazarCoautoria(coautoria.id_aporte)}
+                  />
+                </div>
+              ))}
+            </div>
           )
         )}
 
@@ -167,17 +179,19 @@ export function RevisionPalabras() {
           aprobadas.length === 0 ? (
             <p className="empty-state">Todavía no hay tarjetas aprobadas.</p>
           ) : (
-            <div className="grid-aprobadas">
+            <div className="revision-grid">
               {aprobadas.map((tarjeta) => (
-                <div className="card-aprobada" key={tarjeta.id_tarjeta}>
-                  <div className="card-aprobada__encabezado">
-                    <strong>{tarjeta.palabra}</strong>
-                    <span className="badge badge-abierto">Publicada</span>
+                <div className="mazo-pila mazo-pila--sola pila--aprobada" key={tarjeta.id_tarjeta}>
+                  <div className="card-aprobada mazo-pila__cara">
+                    <div className="card-aprobada__encabezado">
+                      <strong>{tarjeta.palabra}</strong>
+                      <span className="badge badge-abierto">Publicada</span>
+                    </div>
+                    <p className="card-aprobada__definicion">{tarjeta.definicion}</p>
+                    {tarjeta.registro && <span className="tag-contexto">{tarjeta.registro}</span>}
+                    {tarjeta.variante_regional && <span className="tag-contexto">{tarjeta.variante_regional}</span>}
+                    <p className="card-aprobada__autor">Aporte: {tarjeta.estudiante}</p>
                   </div>
-                  <p className="card-aprobada__definicion">{tarjeta.definicion}</p>
-                  {tarjeta.registro && <span className="tag-contexto">{tarjeta.registro}</span>}
-                  {tarjeta.variante_regional && <span className="tag-contexto">{tarjeta.variante_regional}</span>}
-                  <p className="card-aprobada__autor">Aporte: {tarjeta.estudiante}</p>
                 </div>
               ))}
             </div>

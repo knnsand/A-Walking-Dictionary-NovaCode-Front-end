@@ -19,9 +19,16 @@
   flex-wrap: wrap;
 }
 
+/* Lista de mazos con el mismo diseño que los demás selectores de la app */
+.participacion-mazo__acciones .form-select {
+  width: auto;
+  min-width: 260px;
+  max-width: 100%;
+}
+
 .participacion-mazo__stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
   margin: 18px 0;
 }
@@ -50,7 +57,7 @@
   background: var(--color-superficie, #fff);
   border: 1px solid var(--color-borde, #e6e2da);
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto; /* la tabla hace scroll en móvil en vez de cortarse */
 }
 
 .participacion-mazo__panel-toolbar {
