@@ -1,7 +1,6 @@
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar-perfil-pendiente.css';
 import { useTheme } from '../../contexto/useTheme';
-import { LogOut } from "lucide-react";
 
 /**
  * Menú lateral. Es EL MISMO componente para Docente, Estudiante e
@@ -34,7 +33,7 @@ const MENU_POR_ROL = {
       ],
     },
     {
-      grupo: 'Gestión Docente',
+      grupo: 'Gestión Docente Letras',
       items: [
         { to: '/docente/revision-palabras', label: 'Revisión de Palabras', badgeKey: 'pendientes' },
         { to: '/docente/cursos', label: 'Cursos & Estudiantes' },
@@ -199,14 +198,23 @@ export function Sidebar({
         </button>
 
         {rol !== 'invitado' && (
-          <button
-            className="sidebar__tema-btn"
-            type="button"
-            onClick={onCerrarSesion}
-            aria-label="Cerrar sesión"
-            title="Cerrar sesión"
-          >
-            <LogOut size={20} />
+          <button className="sidebar__logout" type="button" onClick={onCerrarSesion}>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Cerrar sesión
           </button>
         )}
 
