@@ -3,6 +3,15 @@ import { useEffect, useState, useCallback } from 'react';
 import { listarMazos } from '../../cliente-api/mazosApi';
 import { MazoItem } from './crear-mazo/MazoItem';
 import './crear-mazo/crear-mazo.css';
+import './crear-mazo/mazos-creados.css';
+
+// Ordena por semana (soporta números y textos como "2-3") y, a igual semana, por id.
+function compararPorSemana(a, b) {
+  return (
+    String(a.semana).localeCompare(String(b.semana), 'es', { numeric: true }) ||
+    a.id_mazo - b.id_mazo
+  );
+}
 
 export function ListaMazosCreados({ refrescarTrigger }) {
   const [mazos, setMazos] = useState([]);
@@ -25,36 +34,30 @@ export function ListaMazosCreados({ refrescarTrigger }) {
     );
   }
 
+  const mazosOrdenados = [...mazos].sort(compararPorSemana);
+
   return (
-    <div className="card-mazo">
-      <div className="card-mazo__header">
-        <div className="card-mazo__icon" aria-hidden="true" />
+    <section className="mazos-creados" aria-labelledby="mazos-creados-titulo">
+      <header className="mazos-creados__encabezado">
+        <h2 className="mazos-creados__titulo" id="mazos-creados-titulo">
+          Mazos creados
+        </h2>
+        <p className="mazos-creados__subtitulo">Organizados por semana</p>
+      </header>
 
-        <div>
-          <h2 className="card-mazo__title">Mazos creados</h2>
-          <p className="card-mazo__subtitle">
-            Mazos registrados en esta sesión
-          </p>
-        </div>
-      </div>
-
-      <div className="card-mazo__body card-mazo__body--flush">
-        {mazos.length === 0 ? (
-          <p className="empty-state">
-            Todavía no se han creado mazos.
-          </p>
-        ) : (
-          <ul className="mazo-list">
-            {mazos.map((mazo) => (
-              <MazoItem
-                key={mazo.id_mazo}
-                mazo={mazo}
-                onEstadoActualizado={actualizarMazoEnLista}
-              />
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
+      {mazosOrdenados.length === 0 ? (
+        <p className="empty-state">Todavía no se han creado mazos.</p>
+      ) : (
+        <ul className="mazos-grid">
+          {mazosOrdenados.map((mazo) => (
+            <MazoItem
+              key={mazo.id_mazo}
+              mazo={mazo}
+              onEstadoActualizado={actualizarMazoEnLista}
+            />
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }

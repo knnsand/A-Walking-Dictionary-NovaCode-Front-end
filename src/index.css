@@ -558,3 +558,88 @@ body {
   align-items: center;
   gap: 12px;
 } 
+
+/* ============================================================
+   MAZO EN PILA (reutilizable)
+   Uso:
+     <li class="mazo-pila mazo-card--color-0">
+       <div class="mazo-pila__cara"> ...contenido... </div>
+     </li>
+   Dibuja 2 tarjetas asomadas detrás de la cara principal. Al pasar el
+   mouse (o enfocar con teclado) la cara se eleva y se rodea del color
+   del mazo (variable --mazo-color, opcional). Variables opcionales:
+   --pila-radio y --pila-profundidad.
+   ============================================================ */
+.mazo-pila {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--pila-profundidad, 26px);
+}
+
+.mazo-pila__cara {
+  flex: 1;
+  background-color: var(--color-bg-card);
+  border-radius: var(--pila-radio, 16px);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+
+.mazo-pila::before,
+.mazo-pila::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--color-bg-card);
+  border: 1px solid color-mix(in srgb, var(--mazo-color, var(--color-border)) 30%, var(--color-border));
+  border-radius: var(--pila-radio, 16px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* En reposo: dos tarjetas apenas giradas, asomando por debajo. */
+.mazo-pila::before { transform: translate(3px, 16px) rotate(1.5deg); }   /* la más lejana */
+.mazo-pila::after  { transform: translate(-3px, 8px) rotate(-1.2deg); }  /* la más cercana */
+
+/* Hover / teclado: la cara se eleva y se rodea del color del mazo. */
+.mazo-pila:hover .mazo-pila__cara,
+.mazo-pila:focus-within .mazo-pila__cara {
+  transform: translateY(-6px);
+  box-shadow:
+    0 0 0 1px var(--mazo-color, var(--color-border)),
+    0 14px 28px -6px color-mix(in srgb, var(--mazo-color, transparent) 45%, transparent),
+    0 8px 16px -8px rgba(0, 0, 0, 0.18);
+}
+
+.mazo-pila:hover::before,
+.mazo-pila:focus-within::before { transform: translate(6px, 14px) rotate(3deg); }
+
+.mazo-pila:hover::after,
+.mazo-pila:focus-within::after { transform: translate(-6px, 7px) rotate(-2.5deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mazo-pila__cara,
+  .mazo-pila::before,
+  .mazo-pila::after { transition: none; }
+}
+
+/* ============================================================
+   CAMPOS OBLIGATORIOS (asterisco rojo)
+   Uso: <label class="form-label form-label--obligatorio">
+   ============================================================ */
+:root { --color-required: #DC2626; }
+[data-theme='oscuro'] { --color-required: #F87171; }
+
+.form-label--obligatorio::after {
+  content: ' *';
+  content: ' *' / '';
+  color: var(--color-required);
+  font-weight: 700;
+}
+
+.form-leyenda-obligatorio {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}

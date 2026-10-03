@@ -20,8 +20,6 @@ import { useTheme } from '../../contexto/useTheme';
  * - onAbrirRegistrarTarjeta: callback del botón de acción del Estudiante
  *   ("+ Añadir Palabra al Mazo", HU-002). Abre el modal de registro de
  *   palabra. El botón se deshabilita mientras el perfil esté incompleto.
- * - onCerrarSesion: callback del botón "Cerrar sesión" (docente y
- *   estudiante; el invitado no tiene sesión).
  */
 const MENU_POR_ROL = {
   docente: [
@@ -39,33 +37,32 @@ const MENU_POR_ROL = {
         { to: '/docente/cursos', label: 'Cursos & Estudiantes' },
         { to: '/docente/quices', label: 'Quices & Complejidad' },
         { to: '/docente/participacion', label: 'Analítica de Participación' },
-        { to: '/docente/mazoscreados', label: 'Mazos Creados' },
       ],
     },
   ],
   estudiante: [
-    {
-      grupo: null,
-      items: [
-        { to: '/estudiante/diccionario', label: 'Diccionario Global' },
-        { to: '/estudiante/mazos', label: 'Mazos de Estudio' },
-      ],
-    },
-    {
-      grupo: 'Mi Aprendizaje',
-      items: [
-        { to: '/estudiante/estudio', label: 'Modo Estudio' },
-        { to: '/estudiante/quices', label: 'Quices Quincenales' },
-        { to: '/estudiante/progreso', label: 'Progreso & Desempeño' },
-      ],
-    },
-    {
-      grupo: null,
-      items: [
-        { to: '/estudiante/configuracion-perfil', label: 'Configuración & Perfil' },
-      ],
-    },
-  ],
+  {
+    grupo: null,
+    items: [
+      { to: '/estudiante/diccionario', label: 'Diccionario Global' },
+      { to: '/estudiante/mazos', label: 'Mazos de Estudio' },
+    ],
+  },
+  {
+    grupo: 'Mi Aprendizaje',
+    items: [
+      { to: '/estudiante/estudio', label: 'Modo Estudio' },
+      { to: '/estudiante/quices', label: 'Quices Quincenales' },
+      { to: '/estudiante/progreso', label: 'Progreso & Desempeño' },
+    ],
+  },
+  {
+    grupo: null,
+    items: [
+      { to: '/estudiante/configuracion-perfil', label: 'Configuración & Perfil' },
+    ],
+  },
+],
   invitado: [
     {
       grupo: null,
@@ -90,7 +87,6 @@ export function Sidebar({
   onCerrar,
   onAbrirCrearMazo,
   onAbrirRegistrarTarjeta,
-  onCerrarSesion,
 }) {
   const { tema, alternarTema } = useTheme();
   const secciones = MENU_POR_ROL[rol] ?? [];
@@ -108,11 +104,11 @@ export function Sidebar({
   };
 
   return (
-    <aside
-      className={`app-shell__sidebar app-shell__sidebar--${rol} ${
-        abierto ? 'app-shell__sidebar--abierto' : ''
-      }`}
-    >
+  <aside
+    className={`app-shell__sidebar app-shell__sidebar--${rol} ${
+      abierto ? 'app-shell__sidebar--abierto' : ''
+    }`}
+  >
       <div className="sidebar__brand">
         <div className="sidebar__brand-icon" aria-hidden="true" />
         <div>
@@ -196,13 +192,6 @@ export function Sidebar({
         <button className="sidebar__tema-btn" type="button" onClick={alternarTema}>
           {tema === 'claro' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
         </button>
-
-        {rol !== 'invitado' && (
-          <button className="sidebar__tema-btn" type="button" onClick={onCerrarSesion}>
-            ⎋ Cerrar sesión
-          </button>
-        )}
-
         <div className="sidebar__usuario">
           <div className="sidebar__avatar" aria-hidden="true" />
           <div>

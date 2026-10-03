@@ -8,8 +8,7 @@ import { ModalRegistrarTarjeta } from '../../vistas/estudiante/registrar-tarjeta
 /**
  * Envoltorio de página usado por las 3 vistas de rol. Coloca el
  * Sidebar (adaptado al rol activo vía useAuth) más una barra
- * superior con buscador, y renderiza la ruta hija en <Outlet/>.
- *
+ * superior con el botón del menú (solo en móvil), y renderiza la ruta hija en <Outlet/>. *
  * También es dueño del estado del modal "Crear Mazo de Estudio"
  * (HU-001) y del modal "Registrar palabra" (HU-002), para que puedan
  * abrirse desde el botón del Sidebar sin importar en qué página esté
@@ -20,16 +19,11 @@ import { ModalRegistrarTarjeta } from '../../vistas/estudiante/registrar-tarjeta
  * su perfil académico (HU-013) y sus datos personales.
  */
 export function LayoutPrincipal({ contadores = {} }) {
-  const { rol, usuario, perfilCompleto, logout } = useAuth();
+  const { rol, usuario, perfilCompleto } = useAuth();
   const navigate = useNavigate();
   const [sidebarAbierto, setSidebarAbierto] = useState(false);
   const [modalCrearMazoAbierto, setModalCrearMazoAbierto] = useState(false);
   const [modalRegistrarTarjetaAbierto, setModalRegistrarTarjetaAbierto] = useState(false);
-
-  function manejarCerrarSesion() {
-    logout();
-    navigate('/login', { replace: true });
-  }
 
   return (
     <div className={`app-shell app-shell--${rol}`}>
@@ -43,7 +37,6 @@ export function LayoutPrincipal({ contadores = {} }) {
         onCerrar={() => setSidebarAbierto(false)}
         onAbrirCrearMazo={() => setModalCrearMazoAbierto(true)}
         onAbrirRegistrarTarjeta={() => setModalRegistrarTarjetaAbierto(true)}
-        onCerrarSesion={manejarCerrarSesion}
       />
 
       <div className="app-shell__contenido">
@@ -70,7 +63,7 @@ export function LayoutPrincipal({ contadores = {} }) {
             // Al crear el mazo desde cualquier pantalla, lleva al
             // docente a su panel para que vea el mazo recién creado
             // en ListaMazosCreados.
-            navigate('/docente/mazoscreados');
+            navigate('/docente/mazoscreados', {state : { refrescar: Date.now()}});
           }}
         />
       )}

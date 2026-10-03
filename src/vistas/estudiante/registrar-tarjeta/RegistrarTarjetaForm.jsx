@@ -136,9 +136,6 @@ export function RegistrarTarjetaForm({ onCerrar }) {
     <form className="form-tarjeta" onSubmit={handleSubmit}>
       <div className="form-tarjeta__header">
         <div>
-          <span className="form-tarjeta__eyebrow">
-            LEXICON SCHOLASTIC · APORTE ESTUDIANTIL
-          </span>
           <h2>Añadir Nueva Palabra al Mazo</h2>
         </div>
 
@@ -165,6 +162,10 @@ export function RegistrarTarjetaForm({ onCerrar }) {
           {exito}
         </p>
       )}
+
+      <p className="form-leyenda-obligatorio">
+        Los campos marcados con * son obligatorios.
+      </p>
 
       {confirmacion && (
         <div className="form-tarjeta__notice" role="alert">
@@ -213,8 +214,8 @@ export function RegistrarTarjetaForm({ onCerrar }) {
 
         <div className="form-tarjeta__grid">
           <div className="form-field">
-            <label htmlFor="palabra">
-              Palabra *
+            <label htmlFor="palabra" className="form-label--obligatorio">
+              Palabra
             </label>
             <input
               id="palabra"
@@ -227,8 +228,8 @@ export function RegistrarTarjetaForm({ onCerrar }) {
           </div>
 
           <div className="form-field">
-            <label htmlFor="traduccion">
-              Traducción *
+            <label htmlFor="traduccion" className="form-label--obligatorio">
+              Traducción
             </label>
             <input
               id="traduccion"
@@ -242,8 +243,8 @@ export function RegistrarTarjetaForm({ onCerrar }) {
         </div>
 
         <div className="form-field">
-          <label htmlFor="definicion">
-            Definición *
+          <label htmlFor="traduccion" className="form-label--obligatorio">
+            Traducción
           </label>
           <textarea
             id="definicion"
@@ -286,8 +287,8 @@ export function RegistrarTarjetaForm({ onCerrar }) {
         </p>
 
         <div className="form-field">
-          <label htmlFor="mazo_id">
-            Mazo de lectura *
+          <label htmlFor="mazo_id"className="form-label--obligatorio">
+            Mazo de lectura 
           </label>
           <select
             id="mazo_id"
