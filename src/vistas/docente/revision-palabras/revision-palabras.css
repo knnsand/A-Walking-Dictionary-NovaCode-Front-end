@@ -8,6 +8,43 @@
    aquí para no duplicar código, siguiendo la misma convención que
    crear-mazo/crear-mazo.css. */
 
+/* Fila de actualización manual: hora de la última actualización a la
+   izquierda y botón "Actualizar" a la derecha. Va entre la cabecera y las
+   pestañas. En pantallas angostas el texto y el botón pasan a dos líneas
+   (flex-wrap). */
+.revision-actualizar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.revision-actualizar__hora {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Botón más compacto que el .btn estándar para no competir con las pestañas;
+   .btn-secondary no define estilo para :disabled, así que se agrega aquí. */
+.revision-actualizar .btn {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.revision-actualizar .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mismo margen lateral que la cabecera y el cuerpo en pantallas angostas
+   (index.css los reduce a 18px por debajo de 700px). */
+@media (max-width: 700px) {
+  .revision-actualizar { padding-left: 18px; padding-right: 18px; }
+}
+
 /* Barra de pestañas: fila horizontal con scroll si no caben todas
    en pantallas angostas (overflow-x: auto). */
 .tabs {
