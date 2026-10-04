@@ -3,8 +3,7 @@ import {
   listarTarjetasPendientes, 
   listarTarjetasAprobadas, 
   editarTarjeta, 
-  aprobarTarjeta, 
-  rechazarTarjeta, 
+  aprobarTarjeta,
   actualizarContextoTarjeta 
 } from '../../../cliente-api/tarjetasApi';
 import { 
@@ -20,6 +19,13 @@ import { TABS } from './revisionPalabras.constants';
 
 import './revision-palabras.css';
 
+// Nombre de cada lista tal como se mostrará en el aviso si su actualización falla.
+const NOMBRES_LISTAS = {
+  pendientes: 'nuevos términos',
+  aprobadas: 'historial',
+  coautorias: 'coautorías',
+};
+
 export function RevisionPalabras() {
   const [tabActivo, setTabActivo] = useState('nuevos');
   const [pendientes, setPendientes] = useState([]);
@@ -30,6 +36,12 @@ export function RevisionPalabras() {
   const [tarjetaParaAprobar, setTarjetaParaAprobar] = useState(null);
   const [guardandoAprobacion, setGuardandoAprobacion] = useState(false);
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
+
+  // Actualización manual (botón "Actualizar") del panel de revisión.
+  // "actualizando" empieza en true porque la carga inicial se dispara al montar.
+  const [actualizando, setActualizando] = useState(true);
+  const [ultimaActualizacion, setUltimaActualizacion] = useState(null);
+  const [listasConError, setListasConError] = useState([]);
 
   const cargarPendientes = useCallback(() => {
     listarTarjetasPendientes().then(setPendientes);
@@ -43,11 +55,51 @@ export function RevisionPalabras() {
     listarCoautoriasPendientes().then(setCoautorias);
   }, []);
 
+  // Consulta las tres listas en paralelo. Promise.allSettled espera a que todas
+  // terminen y entrega el resultado de cada una por separado: si una falla
+  // (p. ej. coautorías), las demás se actualizan igual y la que falló conserva
+  // en pantalla sus datos anteriores.
+  const consultarListas = useCallback(async () => {
+    try {
+      const [rPendientes, rAprobadas, rCoautorias] = await Promise.allSettled([
+        listarTarjetasPendientes(),
+        listarTarjetasAprobadas(),
+        listarCoautoriasPendientes(),
+      ]);
+
+      const fallidas = [];
+
+      function aplicar(resultado, guardar, nombre) {
+        if (resultado.status === 'fulfilled') {
+          guardar(resultado.value);
+          return;
+        }
+        console.error(`Error al actualizar ${nombre}:`, resultado.reason);
+        fallidas.push(nombre);
+      }
+
+      aplicar(rPendientes, setPendientes, NOMBRES_LISTAS.pendientes);
+      aplicar(rAprobadas, setAprobadas, NOMBRES_LISTAS.aprobadas);
+      aplicar(rCoautorias, setCoautorias, NOMBRES_LISTAS.coautorias);
+
+      setListasConError(fallidas);
+
+      // La hora solo avanza si al menos una lista se actualizó de verdad.
+      if (fallidas.length < 3) setUltimaActualizacion(new Date());
+    } finally {
+      setActualizando(false);
+    }
+  }, []);
+
   useEffect(() => {
-    cargarPendientes();
-    cargarAprobadas();
-    cargarCoautorias();
-  }, [cargarPendientes, cargarAprobadas, cargarCoautorias]);
+    consultarListas();
+  }, [consultarListas]);
+
+  function handleActualizar() {
+    if (actualizando) return; // evita dobles clics mientras hay una consulta en curso
+    setActualizando(true);
+    consultarListas();
+  }
 
   function handleSolicitarAprobacion(tarjeta, datosEditados) {
     setTarjetaParaAprobar({ ...tarjeta, ...datosEditados });
@@ -93,6 +145,14 @@ export function RevisionPalabras() {
     }
   }
 
+  const horaActualizacion = ultimaActualizacion
+    ? ultimaActualizacion.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
+    : null;
+
+  const mensajeErrorActualizacion = listasConError.length > 0
+    ? `No se pudo actualizar: ${listasConError.join(', ')}. Se muestran los datos anteriores.`
+    : null;
+
   return (
     <div className="card-mazo card-mazo--ancho">
       <div className="card-mazo__header">
@@ -103,6 +163,20 @@ export function RevisionPalabras() {
             Valida las propuestas de términos y coautorías sometidas por los estudiantes del curso.
           </p>
         </div>
+      </div>
+
+      <div className="revision-actualizar">
+        <span className="revision-actualizar__hora" aria-live="polite">
+          Última actualización: {horaActualizacion ?? '—'}
+        </span>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleActualizar}
+          disabled={actualizando}
+        >
+          {actualizando ? 'Actualizando…' : 'Actualizar'}
+        </button>
       </div>
 
       <div className="tabs" role="tablist" aria-label="Secciones de revisión">
@@ -126,6 +200,7 @@ export function RevisionPalabras() {
       </div>
 
       <div className="card-mazo__body">
+        <Aviso tipo="error" mensaje={mensajeErrorActualizacion} />
         <Aviso tipo={aviso.tipo} mensaje={aviso.mensaje} />
 
         {tabActivo === 'nuevos' && (
