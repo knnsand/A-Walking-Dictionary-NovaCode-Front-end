@@ -17,7 +17,7 @@ export function CursosEstudiantes() {
 
   // El título de la página lo pinta el layout (barra superior).
   useEncabezadoPagina(
-    'Cursos Académicos y Cohortes',
+    'Cursos Académicos y Estudiantes',
     'Administra tus cursos y estudiantes inscritos.'
   );
 
