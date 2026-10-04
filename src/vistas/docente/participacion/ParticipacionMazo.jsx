@@ -4,6 +4,7 @@ import { obtenerParticipacionMazo } from '../../../cliente-api/analiticasApi';
 import { listarMazos } from '../../../cliente-api/mazosApi';
 import { FilaEstudianteParticipacion } from './FilaEstudianteParticipacion';
 import { TEXTOS, COLUMNAS } from './participacionMazo.constants';
+import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import './participacion-mazo.css';
 
 // Se usa solo si listarMazos() falla o devuelve vacío (p. ej. sin conexión al
@@ -44,6 +45,8 @@ function mapearMazoApi(m) {
  */
 export function ParticipacionMazo({ mazos: mazosProp }) {
   const { token, logout } = useAuth();
+  // El título de la página lo pinta el layout (barra superior).
+  useEncabezadoPagina(TEXTOS.titulo, TEXTOS.descripcion);
   const [mazosDisponibles, setMazosDisponibles] = useState(mazosProp ?? MAZOS_FALLBACK);
   const [mazoId, setMazoId] = useState(mazosProp?.[0]?.mazo_id ?? MAZOS_FALLBACK[0].mazo_id);
   const [sinAportes, setSinAportes] = useState(false);
@@ -110,29 +113,23 @@ export function ParticipacionMazo({ mazos: mazosProp }) {
   const totalPalabras = todasLasFilas.reduce((acc, f) => acc + f.palabras_aportadas, 0);
 
   return (
-    <section>
-      <div className="participacion-mazo__header">
-        <div>
-          <h1>{TEXTOS.titulo}</h1>
-          <p>{TEXTOS.descripcion}</p>
-        </div>
-        <div className="participacion-mazo__acciones">
-          <select
-            className="form-select"
-            aria-label="Mazo"
-            value={mazoId}
-            onChange={(e) => setMazoId(e.target.value)}
-          >
-            {mazosDisponibles.map((m) => (
-              <option key={m.mazo_id} value={m.mazo_id}>
-                {m.nombre}
-              </option>
-            ))}
-          </select>
-          <button type="button" className="btn btn-primary" onClick={cargar}>
-            {TEXTOS.botonActualizar}
-          </button>
-        </div>
+    <section className="participacion-mazo">
+      <div className="participacion-mazo__acciones">
+        <select
+          className="form-select"
+          aria-label="Mazo"
+          value={mazoId}
+          onChange={(e) => setMazoId(e.target.value)}
+        >
+          {mazosDisponibles.map((m) => (
+            <option key={m.mazo_id} value={m.mazo_id}>
+              {m.nombre}
+            </option>
+          ))}
+        </select>
+        <button type="button" className="btn btn-primary" onClick={cargar}>
+          {TEXTOS.botonActualizar}
+        </button>
       </div>
 
       {estado === 'listo' && (

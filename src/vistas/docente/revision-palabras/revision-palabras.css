@@ -42,7 +42,17 @@
 /* Mismo margen lateral que la cabecera y el cuerpo en pantallas angostas
    (index.css los reduce a 18px por debajo de 700px). */
 @media (max-width: 700px) {
-  .revision-actualizar { padding-left: 18px; padding-right: 18px; }
+  .revision-actualizar {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
+
+/* Contenedor de la pantalla: el título lo pinta el layout, así que el
+   contenido (pestañas + tarjetas) va directo sobre el fondo de la página. */
+.revision-palabras .tabs {
+  padding: 0;
+  margin-bottom: 22px;
 }
 
 /* Barra de pestañas: fila horizontal con scroll si no caben todas
@@ -69,8 +79,8 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px; /* separa el texto del badge de contador, si lo hay */
-  white-space: nowrap; /* evita que el texto de la pestaña se parta en dos líneas */
+  gap: 6px;
+  white-space: nowrap;
   font-family: inherit;
 }
 
@@ -93,12 +103,22 @@
 }
 
 /* Color de cada tipo de mazo (--mazo-color lo usa .mazo-pila en index.css) */
-.pila--pendiente { --mazo-color: var(--color-role); }
-.pila--coautoria { --mazo-color: #5B6FA8; }
-.pila--aprobada  { --mazo-color: var(--color-success-border); }
+.pila--pendiente {
+  --mazo-color: var(--color-role);
+}
+
+.pila--coautoria {
+  --mazo-color: #5B6FA8;
+}
+
+.pila--aprobada {
+  --mazo-color: var(--color-success-border);
+}
 
 /* Al editar, la tarjeta ocupa toda la fila para que el formulario respire */
-.pila--editando { grid-column: 1 / -1; }
+.pila--editando {
+  grid-column: 1 / -1;
+}
 
 .revision-grid .tarjeta-pendiente,
 .revision-grid .card-aprobada {
@@ -114,7 +134,9 @@
   padding: 14px;
 }
 
-.revision-grid .card-aprobada { padding: 16px; }
+.revision-grid .card-aprobada {
+  padding: 16px;
+}
 
 .card-aprobada__encabezado {
   display: flex;

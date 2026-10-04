@@ -21,6 +21,7 @@ import {
   VALORACIONES,
   VALORACIONES_UI,
 } from './estudiarTarjetas.constants';
+import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import { TarjetaFlashcard } from './TarjetaFlashcard';
 import { BotonesValoracion } from './BotonesValoracion';
 
@@ -179,6 +180,14 @@ export function EstudiarTarjetas({
   const botonGiroRef = useRef(null);
 
   const actual = estado.cola[0];
+
+  // El título de la página lo pinta el layout (barra superior): nombre del mazo
+  // de la tarjeta actual (o el título por defecto) y la semana junto al modo.
+  const mazoActual = actual ? mazosPorId?.[actual.mazo_id] : undefined;
+  useEncabezadoPagina(
+    mazoActual?.nombre ?? TITULO_POR_DEFECTO,
+    mazoActual?.semana ? `Semana ${mazoActual.semana} · ${TEXTO_MODO}` : TEXTO_MODO
+  );
 
   // ---------- Carga de la sesión ----------
   useEffect(() => {
@@ -392,7 +401,6 @@ export function EstudiarTarjetas({
 
   const posicion = Math.min(estado.completadas + 1, estado.total);
   const porcentaje = Math.round((posicion / estado.total) * 100);
-  const mazo = mazosPorId?.[actual.mazo_id];
   const etiquetas = Array.isArray(actual.etiquetas) ? actual.etiquetas : [];
   const repetida = estado.repetidas.includes(actual.id_tarjeta);
 
@@ -410,15 +418,6 @@ export function EstudiarTarjetas({
               <IconoVolver />
             </button>
           )}
-          <div>
-            <p className="estudiar-meta">
-              {mazo?.semana && (
-                <span className="estudiar-chip estudiar-chip--semana">Semana {mazo.semana}</span>
-              )}
-              <span>{TEXTO_MODO}</span>
-            </p>
-            <h2 className="estudiar-titulo">{mazo?.nombre ?? TITULO_POR_DEFECTO}</h2>
-          </div>
         </div>
 
         <div className="estudiar-progreso">

@@ -1,36 +1,33 @@
 import { useState } from 'react';
 import { ModalRegistrarTarjeta } from './registrar-tarjeta/ModalRegistrarTarjeta';
 import { ModalUnirseCurso } from './unirse-curso/ModalUnirseCurso';
+import { useEncabezadoPagina } from '../../contexto/useEncabezadoPagina';
 
 export function PanelEstudiante() {
   const [mostrarFormularioTarjeta, setMostrarFormularioTarjeta] = useState(false);
   const [mostrarFormularioUnirse, setMostrarFormularioUnirse] = useState(false);
 
+  // El título de la página lo pinta el layout (barra superior).
+  useEncabezadoPagina('Mis aportes', 'Registra nuevas palabras en los mazos disponibles.');
+
   return (
     <div className="panel-estudiante">
-      <div className="panel-estudiante__header">
-        <div>
-          <h1>Mis aportes</h1>
-          <p>Registra nuevas palabras en los mazos disponibles.</p>
-        </div>
+      <div className="panel-estudiante__acciones">
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => setMostrarFormularioTarjeta(true)}
+        >
+          Registrar palabra
+        </button>
 
-        <div className="panel-estudiante__acciones">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => setMostrarFormularioTarjeta(true)}
-          >
-            Registrar palabra
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => setMostrarFormularioUnirse(true)}
-          >
-            Unirme a un curso
-          </button>
-        </div>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={() => setMostrarFormularioUnirse(true)}
+        >
+          Unirme a un curso
+        </button>
       </div>
 
       {mostrarFormularioTarjeta && (
