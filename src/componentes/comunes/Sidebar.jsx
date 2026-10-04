@@ -20,6 +20,8 @@ import { useTheme } from '../../contexto/useTheme';
  * - onAbrirRegistrarTarjeta: callback del botón de acción del Estudiante
  *   ("+ Añadir Palabra al Mazo", HU-002). Abre el modal de registro de
  *   palabra. El botón se deshabilita mientras el perfil esté incompleto.
+ * - onAbrirUnirseCurso: callback del botón "Unirme a un curso" del Estudiante
+ *   (abre el modal de inscripción por código de acceso).
  * - onCerrarSesion: callback del botón "Cerrar sesión" (docente y
  *   estudiante; el invitado no tiene sesión).
  */
@@ -90,6 +92,7 @@ export function Sidebar({
   onCerrar,
   onAbrirCrearMazo,
   onAbrirRegistrarTarjeta,
+  onAbrirUnirseCurso,
   onCerrarSesion,
 }) {
   const { tema, alternarTema } = useTheme();
@@ -104,6 +107,12 @@ export function Sidebar({
   // el modal no quede tapado por el sidebar.
   const manejarAnadirPalabra = () => {
     onAbrirRegistrarTarjeta?.();
+    onCerrar?.();
+  };
+
+  // Abre el modal de inscripción a un curso y, en móvil, cierra el menú lateral.
+  const manejarUnirseCurso = () => {
+    onAbrirUnirseCurso?.();
     onCerrar?.();
   };
 
@@ -141,6 +150,17 @@ export function Sidebar({
           }
         >
           + Añadir Palabra al Mazo
+        </button>
+      )}
+
+      {/* Inscripción a un curso con el código de acceso que da el docente. */}
+      {rol === 'estudiante' && (
+        <button
+          className="sidebar__secundario-btn"
+          type="button"
+          onClick={manejarUnirseCurso}
+        >
+          Unirme a un curso
         </button>
       )}
 
@@ -197,6 +217,15 @@ export function Sidebar({
           {tema === 'claro' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
         </button>
 
+        <div className="sidebar__usuario">
+          <div className="sidebar__avatar" aria-hidden="true" />
+          <div>
+            <p className="sidebar__usuario-nombre">{nombreUsuario ?? 'Invitado'}</p>
+            <p className="sidebar__usuario-rol">{rol}</p>
+            {correoUsuario && <p className="sidebar__usuario-correo">{correoUsuario}</p>}
+          </div>
+        </div>
+
         {rol !== 'invitado' && (
           <button className="sidebar__logout" type="button" onClick={onCerrarSesion}>
             <svg
@@ -216,16 +245,7 @@ export function Sidebar({
             </svg>
             Cerrar sesión
           </button>
-        )}
-
-        <div className="sidebar__usuario">
-          <div className="sidebar__avatar" aria-hidden="true" />
-          <div>
-            <p className="sidebar__usuario-nombre">{nombreUsuario ?? 'Invitado'}</p>
-            <p className="sidebar__usuario-rol">{rol}</p>
-            {correoUsuario && <p className="sidebar__usuario-correo">{correoUsuario}</p>}
-          </div>
-        </div>
+        )}      
       </div>
     </aside>
   );

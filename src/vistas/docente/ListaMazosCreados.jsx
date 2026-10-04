@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { listarMazos } from '../../cliente-api/mazosApi';
 import { MazoItem } from './crear-mazo/MazoItem';
 import './crear-mazo/crear-mazo.css';
+import { useEncabezadoPagina } from '../../contexto/useEncabezadoPagina';
 import './crear-mazo/mazos-creados.css';
 
 // Ordena por semana (soporta números y textos como "2-3") y, a igual semana, por id.
@@ -15,6 +16,9 @@ function compararPorSemana(a, b) {
 
 export function ListaMazosCreados({ refrescarTrigger }) {
   const [mazos, setMazos] = useState([]);
+
+  // El título de la página lo pinta el layout (barra superior).
+  useEncabezadoPagina('Mazos creados', 'Organizados por semana');
 
   const cargarMazos = useCallback(() => {
     listarMazos().then(setMazos);
@@ -37,14 +41,7 @@ export function ListaMazosCreados({ refrescarTrigger }) {
   const mazosOrdenados = [...mazos].sort(compararPorSemana);
 
   return (
-    <section className="mazos-creados" aria-labelledby="mazos-creados-titulo">
-      <header className="mazos-creados__encabezado">
-        <h2 className="mazos-creados__titulo" id="mazos-creados-titulo">
-          Mazos creados
-        </h2>
-        <p className="mazos-creados__subtitulo">Organizados por semana</p>
-      </header>
-
+    <section className="mazos-creados">
       {mazosOrdenados.length === 0 ? (
         <p className="empty-state">Todavía no se han creado mazos.</p>
       ) : (

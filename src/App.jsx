@@ -9,6 +9,7 @@ import { PanelDocente } from './vistas/docente/PanelDocente';
 import { RevisionPalabras } from './vistas/docente/revision-palabras/RevisionPalabras';
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
 import { CursosEstudiantes } from './vistas/docente/cursos/CursosEstudiantes';
+import { DetalleCurso } from './vistas/docente/cursos/DetalleCurso';
 import { ConfigurarPerfil } from './vistas/estudiante/configurar-perfil/ConfigurarPerfil';
 import { Login } from './vistas/autenticacion/Login';
 import { Registro } from './vistas/autenticacion/registro/Registro';
@@ -72,6 +73,10 @@ export default function App() {
               <Route
                 path="cursos"
                 element={<CursosEstudiantes />}
+              />
+              <Route
+                path="cursos/:id"
+                element={<DetalleCurso />}
               />
               <Route
                 path="participacion"

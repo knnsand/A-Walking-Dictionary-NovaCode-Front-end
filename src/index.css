@@ -801,3 +801,79 @@ body {
   font-weight: 700;
   letter-spacing: 0.04em;
 }
+
+/* ============================================================
+   ENCABEZADO DE PÁGINA (barra superior del layout)
+   El título y subtítulo los declara cada pantalla con
+   useEncabezadoPagina() y los pinta EncabezadoPagina aquí arriba, en los
+   tres roles. El contenido de la pantalla va debajo, directo sobre el
+   fondo de la página (sin tarjeta contenedora).
+   ============================================================ */
+.topbar--con-titulo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 76px;
+  padding: 14px 28px;
+  box-sizing: border-box;
+  background-color: var(--color-bg-header);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.encabezado-pagina { min-width: 0; }
+
+.encabezado-pagina__titulo {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  color: var(--color-text-main);
+}
+
+.encabezado-pagina__subtitulo {
+  margin: 4px 0 0;
+  max-width: 75ch;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 600px) {
+  .topbar--con-titulo { padding: 12px 14px; gap: 10px; min-height: 64px; }
+  .encabezado-pagina__titulo { font-size: 1.15rem; }
+  .encabezado-pagina__subtitulo { font-size: 0.78rem; }
+}
+
+/* Lista de cursos como tarjetas sueltas (sin contenedor) */
+.mazo-list--tarjetas { display: flex; flex-direction: column; gap: 12px; }
+.mazo-list--tarjetas .mazo-list__item,
+.mazo-list--tarjetas .mazo-list__item:last-child {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.18);
+}
+
+/* Mazos creados: el espacio lateral ya lo da .pagina */
+.pagina .mazos-creados { padding: 8px 4px 40px; }
+
+/* Botón secundario del sidebar (p. ej. "Unirme a un curso" del estudiante) */
+.sidebar__secundario-btn {
+  margin: -6px 20px 16px;
+  padding: 9px 14px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-role-text);
+  border: 1px solid var(--color-role-border);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.sidebar__secundario-btn:hover {
+  background: var(--color-role-bg);
+}

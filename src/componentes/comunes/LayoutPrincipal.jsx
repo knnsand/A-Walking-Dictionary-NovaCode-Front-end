@@ -1,17 +1,25 @@
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
+import { EncabezadoPagina } from './EncabezadoPagina';
+import { EncabezadoProvider } from '../../contexto/EncabezadoProvider';
 import { useAuth } from '../../contexto/useAuth';
 import { ModalCrearMazo } from '../../vistas/docente/ModalCrearMazo';
 import { ModalRegistrarTarjeta } from '../../vistas/estudiante/registrar-tarjeta/ModalRegistrarTarjeta';
+import { ModalUnirseCurso } from '../../vistas/estudiante/unirse-curso/ModalUnirseCurso';
 
 /**
  * Envoltorio de página usado por las 3 vistas de rol. Coloca el
  * Sidebar (adaptado al rol activo vía useAuth) más una barra
- * superior con buscador, y renderiza la ruta hija en <Outlet/>.
+ * superior con el título de la pantalla activa, y renderiza la ruta
+ * hija en <Outlet/>.
+ *
+ * El título lo declara cada pantalla con useEncabezadoPagina(); el
+ * EncabezadoProvider lo comparte con la barra superior (EncabezadoPagina).
  *
  * También es dueño del estado del modal "Crear Mazo de Estudio"
- * (HU-001) y del modal "Registrar palabra" (HU-002), para que puedan
+ * (HU-001), del modal "Registrar palabra" (HU-002) y del modal
+ * "Unirme a un curso", para que puedan
  * abrirse desde el botón del Sidebar sin importar en qué página esté
  * parado el usuario.
  *
@@ -25,6 +33,7 @@ export function LayoutPrincipal({ contadores = {} }) {
   const [sidebarAbierto, setSidebarAbierto] = useState(false);
   const [modalCrearMazoAbierto, setModalCrearMazoAbierto] = useState(false);
   const [modalRegistrarTarjetaAbierto, setModalRegistrarTarjetaAbierto] = useState(false);
+  const [modalUnirseCursoAbierto, setModalUnirseCursoAbierto] = useState(false);
 
   function manejarCerrarSesion() {
     logout();
@@ -32,52 +41,50 @@ export function LayoutPrincipal({ contadores = {} }) {
   }
 
   return (
-    <div className={`app-shell app-shell--${rol}`}>
-      <Sidebar
-        rol={rol}
-        nombreUsuario={usuario?.nombre_completo}
-        correoUsuario={usuario?.email}
-        contadores={contadores}
-        perfilCompleto={perfilCompleto}
-        abierto={sidebarAbierto}
-        onCerrar={() => setSidebarAbierto(false)}
-        onAbrirCrearMazo={() => setModalCrearMazoAbierto(true)}
-        onAbrirRegistrarTarjeta={() => setModalRegistrarTarjetaAbierto(true)}
-        onCerrarSesion={manejarCerrarSesion}
-      />
-
-      <div className="app-shell__contenido">
-        <div className="topbar">
-          <button
-            className="topbar__menu-btn"
-            type="button"
-            aria-label="Abrir menú"
-            onClick={() => setSidebarAbierto((valor) => !valor)}
-          >
-            ☰
-          </button>
-        </div>
-
-        <div className="pagina">
-          <Outlet />
-        </div>
-      </div>
-
-      {modalCrearMazoAbierto && (
-        <ModalCrearMazo
-          onCerrar={() => setModalCrearMazoAbierto(false)}
-          onMazoCreado={() => {
-            // Al crear el mazo desde cualquier pantalla, lleva al
-            // docente a su panel para que vea el mazo recién creado
-            // en ListaMazosCreados.
-            navigate('/docente/mazoscreados');
-          }}
+    <EncabezadoProvider>
+      <div className={`app-shell app-shell--${rol}`}>
+        <Sidebar
+          rol={rol}
+          nombreUsuario={usuario?.nombre_completo}
+          correoUsuario={usuario?.email}
+          contadores={contadores}
+          perfilCompleto={perfilCompleto}
+          abierto={sidebarAbierto}
+          onCerrar={() => setSidebarAbierto(false)}
+          onAbrirCrearMazo={() => setModalCrearMazoAbierto(true)}
+          onAbrirRegistrarTarjeta={() => setModalRegistrarTarjetaAbierto(true)}
+          onAbrirUnirseCurso={() => setModalUnirseCursoAbierto(true)}
+          onCerrarSesion={manejarCerrarSesion}
         />
-      )}
 
-      {rol === 'estudiante' && modalRegistrarTarjetaAbierto && (
-        <ModalRegistrarTarjeta onCerrar={() => setModalRegistrarTarjetaAbierto(false)} />
-      )}
-    </div>
+        <div className="app-shell__contenido">
+          <EncabezadoPagina onAbrirMenu={() => setSidebarAbierto((valor) => !valor)} />
+
+          <div className="pagina">
+            <Outlet />
+          </div>
+        </div>
+
+        {modalCrearMazoAbierto && (
+          <ModalCrearMazo
+            onCerrar={() => setModalCrearMazoAbierto(false)}
+            onMazoCreado={() => {
+              // Al crear el mazo desde cualquier pantalla, lleva al
+              // docente a su panel para que vea el mazo recién creado
+              // en ListaMazosCreados (la marca de estado fuerza la recarga).
+              navigate('/docente/mazoscreados', { state: { refrescar: Date.now() } });
+            }}
+          />
+        )}
+
+        {rol === 'estudiante' && modalRegistrarTarjetaAbierto && (
+          <ModalRegistrarTarjeta onCerrar={() => setModalRegistrarTarjetaAbierto(false)} />
+        )}
+
+        {rol === 'estudiante' && modalUnirseCursoAbierto && (
+          <ModalUnirseCurso onCerrar={() => setModalUnirseCursoAbierto(false)} />
+        )}
+      </div>
+    </EncabezadoProvider>
   );
 }
