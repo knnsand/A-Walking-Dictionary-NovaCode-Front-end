@@ -123,10 +123,11 @@ export function Sidebar({
       }`}
     >
       <div className="sidebar__brand">
-        <div className="sidebar__brand-icon" aria-hidden="true" />
+        <img src="/logo-unicauca.svg" alt="Escudo de la Universidad del Cauca" className="sidebar__brand-logo" />
         <div>
           <p className="sidebar__brand-title">A Walking Dictionary</p>
-          <p className="sidebar__brand-subtitle">Literatura Anglófona · Unicauca</p>
+          <p className="sidebar__brand-subtitle">Literatura Anglófona</p>
+          <p className="sidebar__brand-subtitle">Universidad del Cauca</p>
         </div>
       </div>
 
