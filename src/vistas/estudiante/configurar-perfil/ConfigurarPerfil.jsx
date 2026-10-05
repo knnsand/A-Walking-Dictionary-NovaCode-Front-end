@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../contexto/useAuth';
 import { useTheme } from '../../../contexto/useTheme';
+import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import { obtenerPerfil, obtenerContextoAcademico } from '../../../cliente-api/perfilApi';
 import { ConfigurarPerfilForm } from './ConfigurarPerfilForm';
 
@@ -11,6 +12,13 @@ export function ConfigurarPerfil() {
   const [contexto, setContexto] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(null);
+
+  // El título de la página lo pinta el layout (barra superior). Debe ir antes
+  // de los return anticipados de abajo para respetar las reglas de los hooks.
+  useEncabezadoPagina(
+    'Configuración de la Cuenta',
+    'Preferencias e identidad académica'
+  );
 
   useEffect(() => {
     async function cargarDatos() {
@@ -38,9 +46,6 @@ export function ConfigurarPerfil() {
 
   return (
     <div className="configurar-perfil">
-        <p className="configurar-perfil__eyebrow">Preferencias & Identidad Académica</p>
-        <h1 className="configurar-perfil__titulo">Configuración de la Cuenta</h1>
-
         <div className="configurar-perfil__grid">
         <section className="tarjeta">
             <h3>Información del Perfil</h3>
