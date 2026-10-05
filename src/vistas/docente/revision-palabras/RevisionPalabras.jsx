@@ -4,13 +4,11 @@ import {
   listarTarjetasAprobadas, 
   editarTarjeta, 
   aprobarTarjeta, 
-  rechazarTarjeta, 
   actualizarContextoTarjeta 
 } from '../../../cliente-api/tarjetasApi';
 import { 
   listarCoautoriasPendientes, 
-  aprobarCoautoria, 
-  rechazarCoautoria 
+  aprobarCoautoria 
 } from '../../../cliente-api/coautoriaApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
 import { TarjetaPendienteCard } from './TarjetaPendienteCard';
@@ -83,16 +81,6 @@ export function RevisionPalabras() {
     }
   }
 
-  async function handleRechazarCoautoria(idAporte) {
-    try {
-      await rechazarCoautoria(idAporte);
-      setAviso({ tipo: 'exito', mensaje: 'Coautoría rechazada.' });
-      cargarCoautorias();
-    } catch (error) {
-      setAviso({ tipo: 'error', mensaje: `No se pudo rechazar la coautoría: ${error.message}` });
-    }
-  }
-
   return (
     <div className="card-mazo">
       <div className="card-mazo__header">
@@ -157,7 +145,6 @@ export function RevisionPalabras() {
                 onIniciarEdicion={() => setIdCoautoriaEnEdicion(coautoria.id_aporte)}
                 onCancelarEdicion={() => setIdCoautoriaEnEdicion(null)}
                 onAprobar={(datosEditados) => handleAprobarCoautoria(coautoria.id_aporte, datosEditados)}
-                onRechazar={() => handleRechazarCoautoria(coautoria.id_aporte)}
               />
             ))
           )
