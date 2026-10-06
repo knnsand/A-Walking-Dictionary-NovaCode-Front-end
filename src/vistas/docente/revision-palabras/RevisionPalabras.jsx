@@ -1,15 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
-import {
-  listarTarjetasPendientes,
-  listarTarjetasAprobadas,
-  editarTarjeta,
-  aprobarTarjeta,
-  actualizarContextoTarjeta
+import { 
+  listarTarjetasPendientes, 
+  listarTarjetasAprobadas, 
+  editarTarjeta, 
+  aprobarTarjeta, 
+  actualizarContextoTarjeta 
 } from '../../../cliente-api/tarjetasApi';
-import {
-  listarCoautoriasPendientes,
-  aprobarCoautoria,
-  rechazarCoautoria
+import { 
+  listarCoautoriasPendientes, 
+  aprobarCoautoria 
 } from '../../../cliente-api/coautoriaApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
 import { TarjetaPendienteCard } from './TarjetaPendienteCard';
@@ -364,6 +363,23 @@ export function RevisionPalabras() {
             {coautorias.map((coautoria) => (
               <div
                 key={coautoria.id_aporte}
+                coautoria={coautoria}
+                enEdicion={idCoautoriaEnEdicion === coautoria.id_aporte}
+                onIniciarEdicion={() => setIdCoautoriaEnEdicion(coautoria.id_aporte)}
+                onCancelarEdicion={() => setIdCoautoriaEnEdicion(null)}
+                onAprobar={(datosEditados) => handleAprobarCoautoria(coautoria.id_aporte, datosEditados)}
+              />
+            ))
+          )
+        )}
+
+        {tabActivo === 'historial' && (
+          aprobadas.length === 0 ? (
+            <p className="empty-state">Todavía no hay tarjetas aprobadas.</p>
+          ) : (
+            <div className="grid-aprobadas">
+              {aprobadas.map((tarjeta) => (
+                <div className="card-aprobada" key={tarjeta.id_tarjeta}>
                 className={`mazo-pila mazo-pila--sola pila--coautoria${
                   idCoautoriaEnEdicion ===
                   coautoria.id_aporte
