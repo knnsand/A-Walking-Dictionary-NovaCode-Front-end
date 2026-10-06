@@ -3,7 +3,6 @@ import { AuthProvider } from './contexto/AuthProvider';
 import { ThemeProvider } from './contexto/ThemeProvider';
 import { useAuth } from './contexto/useAuth';
 import { LayoutPrincipal } from './componentes/comunes/LayoutPrincipal';
-import { LayoutInvitado } from './componentes/comunes/LayoutInvitado';
 
 import { PanelDocente } from './vistas/docente/PanelDocente';
 import { RevisionPalabras } from './vistas/docente/revision-palabras/RevisionPalabras';
@@ -16,6 +15,7 @@ import { Registro } from './vistas/autenticacion/registro/Registro';
 import { DiccionarioInvitado } from './vistas/invitado/DiccionarioInvitado';
 import { ParticipacionMazo } from './vistas/docente/participacion/ParticipacionMazo';
 import { PaginaEstudio } from './vistas/estudiante/estudiar-tarjetas/PaginaEstudio';
+import { MazosEstudio } from './vistas/mazos-estudio/MazosEstudio';
 
 function RutaSoloEstudiante({ children }) {
   const { autenticado, rol } = useAuth();
@@ -60,10 +60,13 @@ export default function App() {
                 </RutaSoloDocente>
               }
             >
-              {/* /docente redirige a la lista de mazos creados */}
-              <Route index element={<Navigate to="mazoscreados" replace />} />
+              {/* /docente redirige a Mazos de estudio */}
+              <Route index element={<Navigate to="mazos" replace />} />
 
-              <Route path="mazoscreados" element={<PanelDocente />} />
+              {/* PanelDocente renderiza la vista compartida MazosEstudio con rol docente */}
+              <Route path="mazos" element={<PanelDocente />} />
+              {/* Ruta anterior, se conserva por si hay enlaces guardados */}
+              <Route path="mazoscreados" element={<Navigate to="/docente/mazos" replace />} />
 
               <Route
                 path="revision-palabras"
@@ -80,11 +83,7 @@ export default function App() {
               />
               <Route
                 path="participacion"
-                element={
-                  <RutaSoloDocente>{/* o el guard real que exista ahora */}
-                    <ParticipacionMazo />
-                  </RutaSoloDocente>
-                }
+                element={<ParticipacionMazo />}
               />
             </Route>
 
@@ -98,6 +97,10 @@ export default function App() {
             >
               <Route index element={<PanelEstudiante />} />
 
+              <Route path="mazos" element={<MazosEstudio rol="estudiante" />} />
+              {/* Estudiar las palabras de un mazo concreto */}
+              <Route path="mazos/:idMazo/estudio" element={<PaginaEstudio />} />
+
               <Route path="estudio" element={<PaginaEstudio />} />
 
               <Route
@@ -108,12 +111,11 @@ export default function App() {
 
             <Route
               path="/invitado"
-              element={<LayoutInvitado />}
+              element={<LayoutPrincipal rolFijo="invitado" />}
             >
-              <Route
-                index
-                element={<DiccionarioInvitado />}
-              />
+              <Route index element={<Navigate to="mazos" replace />} />
+              <Route path="mazos" element={<MazosEstudio rol="invitado" />} />
+              <Route path="diccionario" element={<DiccionarioInvitado />} />
             </Route>
 
             <Route

@@ -28,3 +28,30 @@
   font-weight: 700;
   text-decoration: underline;
 }
+
+/* Sin barra deslizante horizontal en el sidebar. El scroll vertical
+   se conserva por si el menú no cabe en pantallas bajas. */
+.app-shell__sidebar {
+  overflow-x: hidden;
+}
+
+/* Permite que el título de la cabecera se ajuste al ancho disponible
+   en vez de empujar el sidebar y generar el scroll horizontal. */
+.sidebar__brand > div {
+  min-width: 0;
+}
+
+/* Logo de la Universidad del Cauca en la cabecera del sidebar.
+   Reemplaza al recuadro azul (.sidebar__brand-icon). */
+.sidebar__brand-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Modo oscuro: el escudo es azul oscuro, así que lo ponemos sobre un
+   fondo claro para que se vea. El tema se marca con data-theme en <html>. */
+[data-theme="oscuro"] .sidebar__brand-logo {
+  filter: brightness(0) invert(1);
+}

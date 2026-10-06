@@ -877,3 +877,20 @@ body {
 .sidebar__secundario-btn:hover {
   background: var(--color-role-bg);
 }
+
+/* Barra superior con título: tinte sutil del color del rol en toda la franja */
+.topbar--con-titulo {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--color-role) 7%, transparent),
+    color-mix(in srgb, var(--color-role) 7%, transparent)
+  );
+  border-bottom: 1px solid color-mix(in srgb, var(--color-role) 28%, transparent);
+}
+
+[data-theme='oscuro'] .topbar--con-titulo {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--color-role) 14%, transparent),
+    color-mix(in srgb, var(--color-role) 14%, transparent)
+  );
+  border-bottom-color: color-mix(in srgb, var(--color-role) 40%, transparent);
+}

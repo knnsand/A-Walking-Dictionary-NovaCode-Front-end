@@ -1,5 +1,6 @@
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar-perfil-pendiente.css';
+import './LayoutInvitado.css';
 import { useTheme } from '../../contexto/useTheme';
 
 /**
@@ -41,7 +42,6 @@ const MENU_POR_ROL = {
         { to: '/docente/cursos', label: 'Cursos & Estudiantes' },
         { to: '/docente/quices', label: 'Quices & Complejidad' },
         { to: '/docente/participacion', label: 'Analítica de Participación' },
-        { to: '/docente/mazoscreados', label: 'Mazos Creados' },
       ],
     },
   ],
@@ -73,7 +73,7 @@ const MENU_POR_ROL = {
       grupo: null,
       items: [
         { to: '/invitado/diccionario', label: 'Diccionario Global' },
-        { to: '/invitado/mazos', label: 'Mazos de Estudio (demo)' },
+        { to: '/invitado/mazos', label: 'Mazos de Estudio' },
       ],
     },
   ],
@@ -81,6 +81,22 @@ const MENU_POR_ROL = {
 
 // HU-012: única ruta que sigue habilitada mientras el perfil está incompleto.
 const RUTA_PERFIL_ESTUDIANTE = '/estudiante/configuracion-perfil';
+
+// Secciones que aún no están implementadas.
+const RUTAS_DESHABILITADAS_POR_ROL = {
+  docente: [
+    '/docente/diccionario',
+    '/docente/quices',
+  ],
+  estudiante: [
+    '/estudiante/diccionario',
+    '/estudiante/quices',
+    '/estudiante/progreso',
+  ],
+  invitado: [
+    '/invitado/diccionario',
+  ],
+};
 
 export function Sidebar({
   rol,
@@ -103,6 +119,8 @@ export function Sidebar({
   // quedan visibles pero deshabilitadas.
   const bloqueadoPorPerfil = rol === 'estudiante' && perfilCompleto === false;
 
+  const rutasDeshabilitadas = RUTAS_DESHABILITADAS_POR_ROL[rol] ?? [];
+
   // Abre el modal de registro y, en móvil, cierra el menú lateral para que
   // el modal no quede tapado por el sidebar.
   const manejarAnadirPalabra = () => {
@@ -123,15 +141,24 @@ export function Sidebar({
       }`}
     >
       <div className="sidebar__brand">
-        <div className="sidebar__brand-icon" aria-hidden="true" />
+        <img
+          src="/logo-unicauca.svg"
+          alt="Escudo de la Universidad del Cauca"
+          className="sidebar__brand-logo"
+        />
         <div>
           <p className="sidebar__brand-title">A Walking Dictionary</p>
-          <p className="sidebar__brand-subtitle">Literatura Anglófona · Unicauca</p>
+          <p className="sidebar__brand-subtitle">Literatura Anglófona</p>
+          <p className="sidebar__brand-subtitle">Universidad del Cauca</p>
         </div>
       </div>
 
       {rol === 'docente' && (
-        <button className="sidebar__crear-btn" type="button" onClick={onAbrirCrearMazo}>
+        <button
+          className="sidebar__crear-btn"
+          type="button"
+          onClick={onAbrirCrearMazo}
+        >
           + Crear Mazo de Estudio
         </button>
       )}
@@ -164,12 +191,29 @@ export function Sidebar({
         </button>
       )}
 
+      {rol === 'invitado' && (
+        <div className="sidebar__demo" role="note">
+          Modo Consulta Pública
+          <small>(Demo)</small>
+        </div>
+      )}
+
       {secciones.map((seccion, indice) => (
         <div key={seccion.grupo ?? `seccion-${indice}`}>
-          {seccion.grupo && <p className="sidebar__seccion-titulo">{seccion.grupo}</p>}
+          {seccion.grupo && (
+            <p className="sidebar__seccion-titulo">{seccion.grupo}</p>
+          )}
+
           <ul className="sidebar__nav">
             {seccion.items.map((item) => {
-              const deshabilitado = bloqueadoPorPerfil && item.to !== RUTA_PERFIL_ESTUDIANTE;
+              const deshabilitadoPorPerfil =
+                bloqueadoPorPerfil && item.to !== RUTA_PERFIL_ESTUDIANTE;
+
+              const deshabilitadoPorImplementacion =
+                rutasDeshabilitadas.includes(item.to);
+
+              const deshabilitado =
+                deshabilitadoPorPerfil || deshabilitadoPorImplementacion;
 
               if (deshabilitado) {
                 return (
@@ -178,7 +222,11 @@ export function Sidebar({
                       className="sidebar__nav-link--deshabilitado"
                       aria-disabled="true"
                       tabIndex={-1}
-                      title="Completa tu perfil en Configuración & Perfil para habilitar esta opción"
+                      title={
+                        deshabilitadoPorPerfil
+                          ? 'Completa tu perfil en Configuración & Perfil para habilitar esta opción'
+                          : 'Esta sección aún no está disponible'
+                      }
                     >
                       <span>{item.label}</span>
                     </a>
@@ -195,7 +243,9 @@ export function Sidebar({
                   >
                     <span>{item.label}</span>
                     {item.badgeKey && contadores[item.badgeKey] > 0 && (
-                      <span className="sidebar__badge">{contadores[item.badgeKey]}</span>
+                      <span className="sidebar__badge">
+                        {contadores[item.badgeKey]}
+                      </span>
                     )}
                   </NavLink>
                 </li>
@@ -207,27 +257,48 @@ export function Sidebar({
 
       {bloqueadoPorPerfil && (
         <p className="sidebar__aviso-perfil" role="status">
-          Ingresa a <Link to={RUTA_PERFIL_ESTUDIANTE}>Configuración &amp; Perfil</Link> y
-          completa tu perfil académico para desbloquear estas opciones.
+          Ingresa a{' '}
+          <Link to={RUTA_PERFIL_ESTUDIANTE}>
+            Configuración &amp; Perfil
+          </Link>{' '}
+          y completa tu perfil académico para desbloquear estas opciones.
         </p>
       )}
 
       <div className="sidebar__footer">
-        <button className="sidebar__tema-btn" type="button" onClick={alternarTema}>
+        {rol === 'invitado' && (
+          <Link to="/login" className="sidebar__iniciar">
+            Iniciar sesión
+          </Link>
+        )}
+
+        <button
+          className="sidebar__tema-btn"
+          type="button"
+          onClick={alternarTema}
+        >
           {tema === 'claro' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
         </button>
 
         <div className="sidebar__usuario">
           <div className="sidebar__avatar" aria-hidden="true" />
           <div>
-            <p className="sidebar__usuario-nombre">{nombreUsuario ?? 'Invitado'}</p>
+            <p className="sidebar__usuario-nombre">
+              {nombreUsuario ?? 'Invitado'}
+            </p>
             <p className="sidebar__usuario-rol">{rol}</p>
-            {correoUsuario && <p className="sidebar__usuario-correo">{correoUsuario}</p>}
+            {correoUsuario && (
+              <p className="sidebar__usuario-correo">{correoUsuario}</p>
+            )}
           </div>
         </div>
 
         {rol !== 'invitado' && (
-          <button className="sidebar__logout" type="button" onClick={onCerrarSesion}>
+          <button
+            className="sidebar__logout"
+            type="button"
+            onClick={onCerrarSesion}
+          >
             <svg
               width="16"
               height="16"
@@ -245,7 +316,7 @@ export function Sidebar({
             </svg>
             Cerrar sesión
           </button>
-        )}      
+        )}
       </div>
     </aside>
   );

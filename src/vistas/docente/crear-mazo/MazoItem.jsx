@@ -1,9 +1,17 @@
 import { useState } from 'react';
+// import { Link } from 'react-router-dom';
 import { actualizarEstadoMazo } from '../../../cliente-api/mazosApi';
 
 const CANTIDAD_COLORES = 5;
 
-export function MazoItem({ mazo, onEstadoActualizado }) {
+/**
+ * Tarjeta de un mazo. Todos los roles ven la información del mazo;
+ * las acciones dependen del rol:
+ * - docente: abrir / cerrar el mazo.
+ * - estudiante: ir a estudiar las palabras del mazo.
+ * - invitado: solo lectura (sin acciones).
+ */
+export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState(null);
 
@@ -54,15 +62,28 @@ export function MazoItem({ mazo, onEstadoActualizado }) {
             {abierto ? 'Mazo abierto para aportes' : 'Mazo cerrado'}
           </span>
 
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={handleCambiarEstado}
-            disabled={guardando}
-            aria-label={`${abierto ? 'Cerrar' : 'Abrir'} el mazo ${mazo.nombre_lectura}`}
-          >
-            {guardando ? 'Guardando...' : abierto ? 'Cerrar mazo' : 'Abrir mazo'}
-          </button>
+          {rol === 'docente' && (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleCambiarEstado}
+              disabled={guardando}
+              aria-label={`${abierto ? 'Cerrar' : 'Abrir'} el mazo ${mazo.nombre_lectura}`}
+            >
+              {guardando ? 'Guardando...' : abierto ? 'Cerrar mazo' : 'Abrir mazo'}
+            </button>
+          )}
+
+          {rol === 'estudiante' && (
+            <button
+              className="btn btn-secondary"
+              type="button"
+              disabled
+              aria-label={`Estudiar las palabras del mazo ${mazo.nombre_lectura}`}
+            >
+              Ver palabras del mazo
+            </button>
+          )}
         </div>
 
         {error && (
