@@ -8,8 +8,7 @@ import {
 } from '../../../cliente-api/tarjetasApi';
 import {
   listarCoautoriasPendientes,
-  aprobarCoautoria,
-  rechazarCoautoria
+  aprobarCoautoria
 } from '../../../cliente-api/coautoriaApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
 import { TarjetaPendienteCard } from './TarjetaPendienteCard';
@@ -205,25 +204,6 @@ export function RevisionPalabras() {
     }
   }
 
-  async function handleRechazarCoautoria(idAporte) {
-    try {
-      await rechazarCoautoria(idAporte);
-
-      setAviso({
-        tipo: 'exito',
-        mensaje: 'Coautoría rechazada.'
-      });
-
-      cargarCoautorias();
-    } catch (error) {
-      setAviso({
-        tipo: 'error',
-        mensaje:
-          `No se pudo rechazar la coautoría: ${error.message}`
-      });
-    }
-  }
-
   const horaActualizacion = ultimaActualizacion
     ? ultimaActualizacion.toLocaleTimeString('es-CO', {
         hour: '2-digit',
@@ -389,11 +369,6 @@ export function RevisionPalabras() {
                     handleAprobarCoautoria(
                       coautoria.id_aporte,
                       datosEditados
-                    )
-                  }
-                  onRechazar={() =>
-                    handleRechazarCoautoria(
-                      coautoria.id_aporte
                     )
                   }
                 />
