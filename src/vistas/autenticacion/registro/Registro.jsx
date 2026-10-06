@@ -2,7 +2,10 @@ import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../../contexto/useAuth';
-import './registro.css';
+import { useTheme } from '../../../contexto/useTheme';
+// Registro comparte el diseño del Login (tarjeta central, botón de tema,
+// botón de Google acorde al tema), por eso reutiliza sus estilos.
+import '../Login.css';
 
 /**
  * HU-012 (HU-5.1): registro autónomo de estudiante.
@@ -20,6 +23,7 @@ import './registro.css';
 export function Registro() {
   const navigate = useNavigate();
   const { registrarConGoogle } = useAuth();
+  const { tema, alternarTema } = useTheme();
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
 
@@ -55,17 +59,24 @@ export function Registro() {
   }
 
   return (
-    <main className="registro">
-      <section className="registro__content">
-        <h1>Crear cuenta de estudiante</h1>
+    <main className="login">
+      <button type="button" className="login__tema" onClick={alternarTema}>
+        {tema === 'claro' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
+      </button>
 
-        <p>
+      <section className="login__content">
+        <div className="login__marca" aria-hidden="true" />
+
+        <h1>Crear cuenta de estudiante</h1>
+        <p className="login__subtitulo">Literatura Anglófona · Unicauca</p>
+
+        <p className="login__texto">
           Regístrate con tu cuenta de Google institucional para empezar a
           usar A Walking Dictionary.
         </p>
 
         {error && (
-          <p role="alert" className="registro__error">
+          <p role="alert" className="aviso aviso--error login__error">
             {error}
           </p>
         )}
@@ -73,13 +84,18 @@ export function Registro() {
         {cargando ? (
           <p>Creando tu cuenta...</p>
         ) : (
-          <GoogleLogin
-            onSuccess={manejarRegistroGoogle}
-            onError={() => setError('No se pudo completar el registro con Google.')}
-          />
+          <div className="login__google">
+            <GoogleLogin
+              theme={tema === 'oscuro' ? 'filled_black' : 'outline'}
+              width="300"
+              text="signup_with"
+              onSuccess={manejarRegistroGoogle}
+              onError={() => setError('No se pudo completar el registro con Google.')}
+            />
+          </div>
         )}
 
-        <p className="registro__enlace">
+        <p className="login__enlace">
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
         </p>
       </section>

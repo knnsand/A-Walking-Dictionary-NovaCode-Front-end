@@ -1,0 +1,39 @@
+.detalle-curso__volver {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-role, inherit);
+}
+
+.detalle-curso__tabla-contenedor {
+  overflow-x: auto;
+}
+
+.detalle-curso__tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.detalle-curso__tabla th,
+.detalle-curso__tabla td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.detalle-curso__tabla th {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.75;
+}
+
+.mazo-list__item--clicable {
+  cursor: pointer;
+}
+
+.mazo-list__item--clicable:hover,
+.mazo-list__item--clicable:focus-visible {
+  transform: translateY(-2px);
+}

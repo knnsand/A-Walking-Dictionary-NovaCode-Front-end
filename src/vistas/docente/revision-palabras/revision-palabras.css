@@ -1,12 +1,59 @@
 /* Estilos EXCLUSIVOS de la pantalla Revisión de Palabras: el
    sistema de pestañas (Nuevos Términos / Coautoría / Historial)
-   y la grilla de tarjetas aprobadas.
+   y la cuadrícula de tarjetas.
 
    Todo lo que comparten esta pantalla y la de Coautoría
    (.tarjeta-pendiente, .btn, .badge, .tag-contexto, .modal-overlay)
    vive en index.css como librería visual global -- no se repite
    aquí para no duplicar código, siguiendo la misma convención que
    crear-mazo/crear-mazo.css. */
+
+/* Fila de actualización manual: hora de la última actualización a la
+   izquierda y botón "Actualizar" a la derecha. Va entre la cabecera y las
+   pestañas. En pantallas angostas el texto y el botón pasan a dos líneas
+   (flex-wrap). */
+.revision-actualizar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.revision-actualizar__hora {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Botón más compacto que el .btn estándar para no competir con las pestañas;
+   .btn-secondary no define estilo para :disabled, así que se agrega aquí. */
+.revision-actualizar .btn {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.revision-actualizar .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mismo margen lateral que la cabecera y el cuerpo en pantallas angostas
+   (index.css los reduce a 18px por debajo de 700px). */
+@media (max-width: 700px) {
+  .revision-actualizar {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
+
+/* Contenedor de la pantalla: el título lo pinta el layout, así que el
+   contenido (pestañas + tarjetas) va directo sobre el fondo de la página. */
+.revision-palabras .tabs {
+  padding: 0;
+  margin-bottom: 22px;
+}
 
 /* Barra de pestañas: fila horizontal con scroll si no caben todas
    en pantallas angostas (overflow-x: auto). */
@@ -32,34 +79,63 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px; /* separa el texto del badge de contador, si lo hay */
-  white-space: nowrap; /* evita que el texto de la pestaña se parta en dos líneas */
+  gap: 6px;
+  white-space: nowrap;
   font-family: inherit;
 }
 
 /* Estado activo: se aplica dinámicamente vía className en
-   RevisionPalabras.jsx según cuál pestaña esté seleccionada. */
+   RevisionPalabras.jsx según cuál pestaña esté seleccionada.
+   (El color por rol, legible en modo oscuro, se fuerza en index.css.) */
 .tabs__item--activo {
   color: var(--color-primary);
   border-bottom-color: var(--color-primary);
 }
 
-/* Grilla responsiva para "Historial Aprobadas": tantas columnas
-   como quepan de mínimo 220px cada una, ajustándose solas al ancho
-   de pantalla disponible (sin necesidad de media queries manuales). */
-.grid-aprobadas {
+/* Cuadrícula de tarjetas (nuevos términos, coautoría e historial):
+   tantas columnas como quepan de mínimo 300px, se ajusta sola al ancho
+   disponible (1 columna en móvil, sin media queries manuales). */
+.revision-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px 24px;
+  padding: 8px 4px 4px;
 }
 
-/* Tarjeta individual dentro de la grilla de aprobadas. Es más
-   compacta que .tarjeta-pendiente porque aquí solo se muestra
-   información de solo lectura (no hay acciones ni edición). */
+/* Color de cada tipo de mazo (--mazo-color lo usa .mazo-pila en index.css) */
+.pila--pendiente {
+  --mazo-color: var(--color-role);
+}
+
+.pila--coautoria {
+  --mazo-color: #5B6FA8;
+}
+
+.pila--aprobada {
+  --mazo-color: var(--color-success-border);
+}
+
+/* Al editar, la tarjeta ocupa toda la fila para que el formulario respire */
+.pila--editando {
+  grid-column: 1 / -1;
+}
+
+.revision-grid .tarjeta-pendiente,
+.revision-grid .card-aprobada {
+  margin-bottom: 0;
+  border-top: 4px solid var(--mazo-color);
+}
+
+/* Tarjeta individual de aprobadas: solo lectura, más compacta que
+   .tarjeta-pendiente (no hay acciones ni edición). */
 .card-aprobada {
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 14px;
+}
+
+.revision-grid .card-aprobada {
+  padding: 16px;
 }
 
 .card-aprobada__encabezado {

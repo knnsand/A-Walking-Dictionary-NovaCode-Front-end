@@ -60,7 +60,7 @@ export function DiccionarioInvitado() {
 
                 <p>
                 <strong>Variante:</strong>{' '}
-                {mazo.variante || 'No especificada'}
+                {mazo.variante_regional_predeterminada || 'No especificada'}
                 </p>
 
                 <p>
