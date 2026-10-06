@@ -1,12 +1,13 @@
 import { apiRequest } from './httpClient';
-import { mockListarCoautoriasPendientes, mockAprobarCoautoria } from './mocks/coautoriaMock';
+import { mockListarCoautoriasPendientes, mockAprobarCoautoria, mockRechazarCoautoria } from './mocks/coautoriaMock';
 
 /**
  * Capa intermedia entre los componentes de React (CoautoriaPendienteCard,
  * RevisionPalabras) y el backend real. Endpoints reales:
  * - GET    /aportes/pending           → listar pendientes
  * - PATCH  /aportes/:id/approve       → aprobar (con correcciones opcionales)
- * Las coautorías ya no se rechazan. Ver AporteController.js y aporteRoutes.js en el backend.
+ * - DELETE /contributions/:id         → rechazar
+ * Ver AporteController.js, aporteRoutes.js y contributionRoutes.js en el backend.
  */
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
@@ -27,4 +28,10 @@ export async function aprobarCoautoria(idCoautoria, datosEditados = {}) {
     method: 'PATCH',
     body: JSON.stringify(datosEditados),
   });
+}
+
+/** Rechaza una coautoría o acepción nueva. */
+export async function rechazarCoautoria(idCoautoria) {
+  if (USE_MOCK) return Promise.resolve(mockRechazarCoautoria(idCoautoria));
+  return apiRequest(`/contributions/${idCoautoria}`, { method: 'DELETE' });
 }

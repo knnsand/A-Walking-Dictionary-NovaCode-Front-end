@@ -27,7 +27,7 @@ let coautorias = [
     texto_cita: 'I am no bird; and no net ensnares me; I am a free human being with an independent will.',
     fuente: 'Jane Eyre (1847) (Charlotte Brontë)',
     estudiante: 'Mateo Rodríguez',
-    // Estados posibles: 'pendiente_revision' | 'aprobada'
+    // Estados posibles: 'pendiente_revision' | 'aprobada' | 'rechazada'
     estado: 'pendiente_revision',
   },
   {
@@ -70,4 +70,23 @@ export function mockAprobarCoautoria(idCoautoria, datosEditados = {}) {
     c.id_coautoria === idCoautoria ? { ...c, ...datosEditados, estado: 'aprobada' } : c
   );
   return coautorias.find((c) => c.id_coautoria === idCoautoria);
+}
+
+/**
+ * Rechaza una coautoría: se usa cuando el contenido aportado
+ * (cita, ejemplo o significado) NO concuerda con la palabra a la
+ * que se está intentando asociar. A diferencia de las tarjetas
+ * nuevas (donde se quitó "Rechazar" por falta de criterio claro),
+ * aquí el criterio de rechazo sí es explícito.
+ *
+ * @param {number} idCoautoria - id_coautoria de la coautoría a rechazar.
+ * @returns {object} Objeto mínimo confirmando el nuevo estado
+ *   (no se retorna la coautoría completa porque, a diferencia de
+ *   aprobar, rechazar no requiere mostrar sus datos actualizados).
+ */
+export function mockRechazarCoautoria(idCoautoria) {
+  coautorias = coautorias.map((c) =>
+    c.id_coautoria === idCoautoria ? { ...c, estado: 'rechazada' } : c
+  );
+  return { id_coautoria: idCoautoria, estado: 'rechazada' };
 }

@@ -5,10 +5,9 @@ import { useState } from 'react';
  * Muestra un aporte de tipo 'coautoria' o 'acepcion_nueva' sobre una tarjeta ya
  * existente, comparado contra la tarjeta original, según el modelo real del DER
  * (tabla aporte + tarjeta, ver AporteRepository.listarCoautoriasPendientes).
- * Solo se puede editar o aprobar; las coautorías ya no se rechazan.
  */
 export function CoautoriaPendienteCard({
-  coautoria, enEdicion, onIniciarEdicion, onCancelarEdicion, onAprobar,
+  coautoria, enEdicion, onIniciarEdicion, onCancelarEdicion, onAprobar, onRechazar,
 }) {
   const [borrador, setBorrador] = useState({
     traduccion_aportada: coautoria.traduccion_aportada,
@@ -96,6 +95,7 @@ export function CoautoriaPendienteCard({
           <>
             <button className="btn btn-primary" onClick={() => onAprobar(borrador)}>Aprobar</button>
             <button className="btn btn-secondary" onClick={onIniciarEdicion}>Editar</button>
+            <button className="btn btn-rechazar" onClick={onRechazar}>Rechazar</button>
           </>
         )}
       </div>
