@@ -26,9 +26,15 @@ import { ModalUnirseCurso } from '../../vistas/estudiante/unirse-curso/ModalUnir
  * HU-012: pasa `perfilCompleto` al Sidebar para que deshabilite sus
  * opciones mientras el estudiante recién registrado no haya completado
  * su perfil académico (HU-013) y sus datos personales.
+ *
+ * Props:
+ * - rolFijo: fuerza el rol del layout sin importar la sesión. Se usa en
+ *   /invitado (modo consulta pública), donde no hay sesión iniciada.
  */
-export function LayoutPrincipal({ contadores = {} }) {
-  const { rol, usuario, perfilCompleto, logout } = useAuth();
+export function LayoutPrincipal({ contadores = {}, rolFijo }) {
+  const { rol: rolSesion, usuario, perfilCompleto, logout } = useAuth();
+  const rol = rolFijo ?? rolSesion;
+  const esInvitado = rol === 'invitado';
   const navigate = useNavigate();
   const [sidebarAbierto, setSidebarAbierto] = useState(false);
   const [modalCrearMazoAbierto, setModalCrearMazoAbierto] = useState(false);
@@ -45,10 +51,10 @@ export function LayoutPrincipal({ contadores = {} }) {
       <div className={`app-shell app-shell--${rol}`}>
         <Sidebar
           rol={rol}
-          nombreUsuario={usuario?.nombre_completo}
-          correoUsuario={usuario?.email}
+          nombreUsuario={esInvitado ? undefined : usuario?.nombre_completo}
+          correoUsuario={esInvitado ? undefined : usuario?.email}
           contadores={contadores}
-          perfilCompleto={perfilCompleto}
+          perfilCompleto={esInvitado ? true : perfilCompleto}
           abierto={sidebarAbierto}
           onCerrar={() => setSidebarAbierto(false)}
           onAbrirCrearMazo={() => setModalCrearMazoAbierto(true)}
@@ -70,9 +76,9 @@ export function LayoutPrincipal({ contadores = {} }) {
             onCerrar={() => setModalCrearMazoAbierto(false)}
             onMazoCreado={() => {
               // Al crear el mazo desde cualquier pantalla, lleva al
-              // docente a su panel para que vea el mazo recién creado
-              // en ListaMazosCreados (la marca de estado fuerza la recarga).
-              navigate('/docente/mazoscreados', { state: { refrescar: Date.now() } });
+              // docente a "Mazos de estudio" para que vea el mazo recién
+              // creado (la marca de estado fuerza la recarga).
+              navigate('/docente/mazos', { state: { refrescar: Date.now() } });
             }}
           />
         )}
