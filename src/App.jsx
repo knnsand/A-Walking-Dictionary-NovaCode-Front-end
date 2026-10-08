@@ -16,6 +16,7 @@ import { DiccionarioInvitado } from './vistas/invitado/DiccionarioInvitado';
 import { ParticipacionMazo } from './vistas/docente/participacion/ParticipacionMazo';
 import { PaginaEstudio } from './vistas/estudiante/estudiar-tarjetas/PaginaEstudio';
 import { MazosEstudio } from './vistas/mazos-estudio/MazosEstudio';
+import { GenerarQuiz } from './vistas/docente/quices/GenerarQuiz';
 
 function RutaSoloEstudiante({ children }) {
   const { autenticado, rol } = useAuth();
@@ -84,6 +85,10 @@ export default function App() {
               <Route
                 path="participacion"
                 element={<ParticipacionMazo />}
+              />
+                            <Route
+                path="quices"
+                element={<GenerarQuiz />}
               />
             </Route>
 
