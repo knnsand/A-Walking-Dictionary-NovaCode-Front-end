@@ -191,6 +191,16 @@ describe('GenerarQuiz', () => {
     expect(screen.getByLabelText(MAZO_7)).not.toBeChecked();
   });
 
+    it('usa el singular cuando el quiz generado tiene una sola pregunta', async () => {
+    generarQuiz.mockResolvedValue({ ...RESPUESTA, preguntas: [RESPUESTA.preguntas[0]] });
+    render(<GenerarQuiz />);
+    await completarFormularioValido();
+
+    pulsarGenerar();
+
+    expect(await screen.findByText(/con 1 pregunta\. Estado/)).toBeInTheDocument();
+  });
+
   it('incluye cantidad_preguntas en el cuerpo cuando la docente la escribe', async () => {
     generarQuiz.mockResolvedValue(RESPUESTA);
     render(<GenerarQuiz />);

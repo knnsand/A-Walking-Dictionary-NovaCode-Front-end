@@ -177,8 +177,11 @@ export function GenerarQuiz() {
     }
   }
 
+    const totalPreguntas = resultado?.preguntas.length ?? 0;
   const mensajeExito = resultado
-    ? `${TEXTOS.exitoTitulo}: «${resultado.quiz.titulo}» con ${resultado.preguntas.length} preguntas. Estado: ${
+    ? `${TEXTOS.exitoTitulo}: «${resultado.quiz.titulo}» con ${totalPreguntas} ${
+        totalPreguntas === 1 ? 'pregunta' : 'preguntas'
+      }. Estado: ${
         TEXTOS.estadoEfectivo[resultado.quiz.estado_efectivo] ?? resultado.quiz.estado_efectivo
       }.`
     : null;
