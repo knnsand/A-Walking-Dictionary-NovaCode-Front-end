@@ -17,7 +17,6 @@ vi.mock('../../../cliente-api/tarjetasApi', () => ({
 vi.mock('../../../cliente-api/coautoriaApi', () => ({
   listarCoautoriasPendientes: vi.fn(),
   aprobarCoautoria: vi.fn(),
-  rechazarCoautoria: vi.fn(),
 }));
 
 import {
