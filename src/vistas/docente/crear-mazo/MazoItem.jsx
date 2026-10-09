@@ -1,13 +1,15 @@
 import { useState } from 'react';
 // import { Link } from 'react-router-dom';
 import { actualizarEstadoMazo } from '../../../cliente-api/mazosApi';
+import { exportarMazoPdf } from '../../../cliente-api/exportacionesApi';
+import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
 
 const CANTIDAD_COLORES = 5;
 
 /**
  * Tarjeta de un mazo. Todos los roles ven la información del mazo;
  * las acciones dependen del rol:
- * - docente: abrir / cerrar el mazo.
+ * - docente: abrir / cerrar el mazo y exportarlo a PDF (HU-3.3).
  * - estudiante: ir a estudiar las palabras del mazo.
  * - invitado: solo lectura (sin acciones).
  */
@@ -63,15 +65,24 @@ export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
           </span>
 
           {rol === 'docente' && (
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleCambiarEstado}
-              disabled={guardando}
-              aria-label={`${abierto ? 'Cerrar' : 'Abrir'} el mazo ${mazo.nombre_lectura}`}
-            >
-              {guardando ? 'Guardando...' : abierto ? 'Cerrar mazo' : 'Abrir mazo'}
-            </button>
+            <div className="mazo-card__acciones">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleCambiarEstado}
+                disabled={guardando}
+                aria-label={`${abierto ? 'Cerrar' : 'Abrir'} el mazo ${mazo.nombre_lectura}`}
+              >
+                {guardando ? 'Guardando...' : abierto ? 'Cerrar mazo' : 'Abrir mazo'}
+              </button>
+
+              {/* HU-3.3 (CA-3.3.1): solo la docente exporta; el backend responde 403 a otros roles. */}
+              <BotonExportarPdf
+                onExportar={() => exportarMazoPdf(mazo.id_mazo)}
+                etiqueta="Exportar a PDF"
+                ariaLabel={`Exportar a PDF el mazo ${mazo.nombre_lectura}`}
+              />
+            </div>
           )}
 
           {rol === 'estudiante' && (

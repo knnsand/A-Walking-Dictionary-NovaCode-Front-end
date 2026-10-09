@@ -108,12 +108,22 @@
 
 .mazo-card__pie {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid var(--color-border);
+}
+
+/* Acciones de la docente (abrir/cerrar y exportar a PDF). */
+.mazo-card__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .mazo-card__estado-texto {
