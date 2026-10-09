@@ -226,7 +226,8 @@ Acuerdos del frontend con el backend. Todos están resueltos desde el commit `6d
 - Listado y consulta de quices (`GET /quizzes`, `GET /quizzes/:id`): el backend los ofrece, pero
   esta historia no los usa. Decisión del 2026-10-08: ningún criterio de HU-3.1 ni de HU-3.2 lo
   pide. CA-3.3.2 (exportar un quiz generado) implica que la docente pueda elegir un quiz
-  existente, así que el listado corresponde a HU-3.3.
+  existente, así que el listado corresponde a HU-3.3 (resuelto allí con `GET /quizzes`; ver
+  `docs/contrato-exportacion.md`).
 - Responder el quiz y calificarlo (HU-3.2).
 
 ## Historial de cambios
