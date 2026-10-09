@@ -13,11 +13,13 @@ vi.mock('../../../contexto/useAuth', () => ({
 }));
 vi.mock('../../../cliente-api/cursosApi', () => ({ listarCursos: vi.fn() }));
 vi.mock('../../../cliente-api/mazosApi', () => ({ listarMazos: vi.fn() }));
-vi.mock('../../../cliente-api/quizzesApi', () => ({ generarQuiz: vi.fn() }));
+vi.mock('../../../cliente-api/quizzesApi', () => ({ generarQuiz: vi.fn(), listarQuices: vi.fn() }));
+vi.mock('../../../cliente-api/exportacionesApi', () => ({ exportarQuizPdf: vi.fn() }));
 
 import { listarCursos } from '../../../cliente-api/cursosApi';
 import { listarMazos } from '../../../cliente-api/mazosApi';
-import { generarQuiz } from '../../../cliente-api/quizzesApi';
+import { generarQuiz, listarQuices } from '../../../cliente-api/quizzesApi';
+import { exportarQuizPdf } from '../../../cliente-api/exportacionesApi';
 
 const CURSOS = [
   { id_curso: 1, nombre: 'Literatura Anglófona I' },
@@ -107,6 +109,7 @@ describe('GenerarQuiz', () => {
     vi.resetAllMocks();
     listarCursos.mockResolvedValue(CURSOS);
     listarMazos.mockResolvedValue(MAZOS);
+    listarQuices.mockResolvedValue([]);
   });
 
   it('carga los cursos en el selector', async () => {
@@ -260,5 +263,43 @@ describe('GenerarQuiz', () => {
     terminarEnvio(RESPUESTA);
     expect(await screen.findByRole('button', { name: TEXTOS.botonGenerar })).toBeEnabled();
     expect(generarQuiz).toHaveBeenCalledTimes(1);
+  });
+
+  // HU-3.3 (CA-3.3.2): exportar el quiz a PDF.
+  it('ofrece exportar a PDF el quiz recién generado', async () => {
+    generarQuiz.mockResolvedValue(RESPUESTA);
+    exportarQuizPdf.mockResolvedValue(undefined);
+    render(<GenerarQuiz />);
+
+    // Antes de generar no hay quiz que exportar.
+    expect(screen.queryByRole('button', { name: /Exportar versión impresa/ })).not.toBeInTheDocument();
+
+    await completarFormularioValido();
+    pulsarGenerar();
+
+    const botonExportar = await screen.findByRole('button', {
+      name: `${TEXTOS.botonExportarQuiz} del quiz Quiz acumulativo`,
+    });
+    fireEvent.click(botonExportar);
+
+    expect(exportarQuizPdf).toHaveBeenCalledTimes(1);
+    expect(exportarQuizPdf).toHaveBeenCalledWith(1);
+  });
+
+  it('muestra la lista de quices generados y la recarga al generar uno nuevo', async () => {
+    const QUIZ_GUARDADO = { ...RESPUESTA.quiz };
+    listarQuices.mockResolvedValueOnce([]).mockResolvedValue([QUIZ_GUARDADO]);
+    generarQuiz.mockResolvedValue(RESPUESTA);
+    render(<GenerarQuiz />);
+
+    expect(await screen.findByText(TEXTOS.sinQuices)).toBeInTheDocument();
+
+    await completarFormularioValido();
+    pulsarGenerar();
+
+    // El nombre del quiz aparece en la lista (el mensaje de éxito es un texto más largo).
+    expect(await screen.findByText('Quiz acumulativo')).toBeInTheDocument();
+    expect(listarQuices).toHaveBeenCalledTimes(2);
+    expect(screen.queryByText(TEXTOS.sinQuices)).not.toBeInTheDocument();
   });
 });

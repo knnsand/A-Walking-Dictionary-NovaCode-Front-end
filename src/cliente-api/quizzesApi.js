@@ -47,3 +47,21 @@ export async function generarQuiz(datos) {
     body: JSON.stringify(datos),
   });
 }
+/**
+ * Lista todos los quices generados, cada uno con `estado_efectivo` calculado
+ * (CA-3.1.3). Lo usa HU-3.3 para que la docente elija un quiz existente y
+ * exporte su PDF aunque ya haya recargado la página (CA-3.3.2).
+ * GET /api/v1/quizzes
+ *
+ * El backend devuelve los quices de todos los cursos, sin orden garantizado.
+ *
+ * @returns {Promise<Array<{
+ *   id_quiz: number, curso_id: number, titulo: string, semana_corte: number,
+ *   fecha_creacion: string, fecha_apertura: string, fecha_cierre: string,
+ *   tiempo_limite_min: number, estado: string, estado_efectivo: string
+ * }>>}
+ * @throws {Error} con `.message` listo para mostrar al usuario.
+ */
+export async function listarQuices() {
+  return apiRequest('/quizzes');
+}

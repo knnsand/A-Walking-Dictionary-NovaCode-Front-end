@@ -39,6 +39,15 @@ export const TEXTOS = {
   },
   vistaPreviaTitulo: 'Vista previa (solo docente)',
   respuestaCorrecta: 'Respuesta correcta',
+
+  // Exportar a PDF (HU-3.3)
+  botonExportarQuiz: 'Exportar versión impresa',
+  listaQuicesTitulo: 'Quices generados',
+  listaQuicesDescripcion:
+    'Descarga el PDF imprimible de un quiz: la hoja de preguntas y, en página aparte, la hoja de respuestas para la docente.',
+  cargandoQuices: 'Cargando quices…',
+  errorQuices: 'No se pudieron cargar los quices.',
+  sinQuices: 'Todavía no se ha generado ningún quiz.',
 };
 
 // Mensajes de validación del formulario (ver docs/contrato-quiz.md).

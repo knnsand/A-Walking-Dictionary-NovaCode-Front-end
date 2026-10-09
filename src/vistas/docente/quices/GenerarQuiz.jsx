@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { listarCursos } from '../../../cliente-api/cursosApi';
 import { listarMazos } from '../../../cliente-api/mazosApi';
 import { generarQuiz } from '../../../cliente-api/quizzesApi';
+import { exportarQuizPdf } from '../../../cliente-api/exportacionesApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
+import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
 import { useAuth } from '../../../contexto/useAuth';
 import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import { TEXTOS, TITULO_MAX } from './generarQuiz.constants';
 import { validarFormularioQuiz } from './generarQuiz.validation';
 import { construirPayloadQuiz } from './generarQuiz.payload';
 import { VistaPreviaQuiz } from './VistaPreviaQuiz';
+import { ListaQuicesGenerados } from './ListaQuicesGenerados';
 import './generar-quiz.css';
 
 const FORM_INICIAL = {
@@ -343,7 +346,23 @@ export function GenerarQuiz() {
         </div>
       </form>
 
-      {resultado && <VistaPreviaQuiz preguntas={resultado.preguntas} />}
+      {resultado && (
+        <>
+          {/* HU-3.3 (CA-3.3.2): exportar de inmediato el quiz recién generado. */}
+          <div className="generar-quiz__exportar">
+            <BotonExportarPdf
+              onExportar={() => exportarQuizPdf(resultado.quiz.id_quiz)}
+              etiqueta={TEXTOS.botonExportarQuiz}
+              ariaLabel={`${TEXTOS.botonExportarQuiz} del quiz ${resultado.quiz.titulo}`}
+            />
+          </div>
+
+          <VistaPreviaQuiz preguntas={resultado.preguntas} />
+        </>
+      )}
+
+      {/* HU-3.3 (CA-3.3.2): quices ya generados; se recarga al generar uno nuevo. */}
+      <ListaQuicesGenerados refrescarTrigger={resultado?.quiz.id_quiz} />
     </section>
   );
 }
