@@ -220,3 +220,14 @@ Acuerdos del frontend que el backend aún no cumple. El frontend ya funciona sin
   error por tarjetas insuficientes es 400, no 422.
 - La validación de la ventana de tiempo pasa a ser pendiente del backend (P3); el frontend ya la
   aplica.
+
+## Estado del backend (2026-10-08)
+- `POST /api/v1/quizzes/generate` está fusionado en `develop` del backend y exige token y rol
+  docente (`authenticate` y `requireRole('docente')`).
+- El commit `6df73b9` del backend implementa los pendientes P2 a P5 (mínimo de 4 traducciones
+  distintas, ventana de tiempo, validación de curso y mazos, longitud del título).
+- Integración probada desde el frontend contra el backend local (`develop`, `6df73b9`):
+  respuesta 201 con quiz programado y preguntas de 4 opciones, y respuesta 400 cuando hay menos de
+  4 traducciones distintas. Los casos de P3 a P5 se aplican según el commit del backend y aún no se
+  han probado desde la pantalla.
+- El cliente (`quizzesApi.js`) llama siempre al backend real; no hay mocks.
