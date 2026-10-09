@@ -2,26 +2,30 @@
 
 Este documento describe lo que el frontend implementa y consume para generar quices
 acumulativos (HU-3.1 en el backlog Gherkin; HU-007 en la numeración de sprint del equipo).
-Refleja la implementación real del backend (rama `feature/Sprint_3_HU_007`) y su contrato
-`docs/CONTRATO_FRONTEND_HU-3.1.md`. Lo marcado como **Pendiente para el backend** son
-acuerdos del frontend que el backend todavía no cumple.
+Refleja la implementación real del backend (rama `develop`, commit `6df73b9`) y su contrato
+`docs/CONTRATO_FRONTEND_HU-3.1.md`.
 
-Última actualización: 2026-10-07.
+Última actualización: 2026-10-08.
 
 ## Origen de la información
 - HU-3.1 y criterios CA-3.1.1, CA-3.1.2 y CA-3.1.3 (backlog Gherkin).
 - HU-007 — Criterios de aceptación y especificaciones técnicas (Entrega 1, EPIC-003).
 - Contrato del backend `docs/CONTRATO_FRONTEND_HU-3.1.md` y `QuizService.js`
-  (rama `feature/Sprint_3_HU_007`, 2026-10-04).
+  (rama `develop`, commit `6df73b9`, 2026-10-08).
 - Tablas `quiz`, `quiz_mazo` y `pregunta_quiz` de `init.sql` (backend).
 - Decisiones aceptadas durante el diseño de la historia (ver más abajo).
 
-## Estado del backend (2026-10-07)
-- `POST /api/v1/quizzes/generate` está implementado en la rama `feature/Sprint_3_HU_007`,
-  **todavía no fusionada en `develop`**. Mientras no se fusione, el endpoint no existe en el
-  backend de `develop` ni en su despliegue.
-- La integración real del frontend se prueba cuando esa rama se fusione. El cliente
-  (`quizzesApi.js`) llama siempre al backend real; no hay mocks.
+## Estado del backend (2026-10-08)
+- `POST /api/v1/quizzes/generate` está fusionado en `develop` del backend y exige token y rol
+  docente (`authenticate` y `requireRole('docente')`).
+- El commit `6df73b9` del backend implementa los pendientes P2 a P5 acordados con el frontend
+  (mínimo de 4 traducciones distintas, ventana de tiempo, validación de curso y mazos, longitud
+  del título). Ver «Pendientes para el backend».
+- Integración probada desde el frontend contra el backend local (`develop`, `6df73b9`):
+  respuesta 201 con quiz programado y preguntas de 4 opciones, y respuesta 400 cuando hay menos de
+  4 traducciones distintas. Los casos de P3 a P5 se verificaron leyendo el código de
+  `QuizService.js`; aún no se han probado desde la pantalla.
+- El cliente (`quizzesApi.js`) llama siempre al backend real; no hay mocks.
 
 ## Endpoint
 `POST /api/v1/quizzes/generate`
@@ -30,12 +34,12 @@ Nota de numeración: el CRUD genérico de `quizRoutes.js` (`POST /api/v1/quizzes
 para esta historia; el endpoint oficial es `/quizzes/generate`.
 
 ## Autenticación y autorización
-- Hoy el endpoint **no exige token ni rol docente** (así lo documenta el backend).
-- `apiRequest` envía igualmente el header `Authorization` con el token de la sesión, por lo que
-  no habrá cambios en el frontend cuando el backend proteja la ruta.
+- El endpoint exige `Authorization: Bearer <token>` de un usuario con rol **docente**. Sin token
+  responde 401; con otro rol, 403.
+- `apiRequest` envía el header `Authorization` con el token de la sesión; no hay trabajo
+  adicional en el frontend para enviarlo.
 - El frontend muestra la pantalla solo a usuarios con rol docente (`RutaSoloDocente`), en la
   ruta `/docente/quices`.
-- **Pendiente para el backend:** ver P1 en la sección «Pendientes para el backend».
 
 ## Decisiones aceptadas para esta historia
 - Solo preguntas de **opción múltiple**: el enunciado es «¿Cuál es la traducción correcta de
@@ -50,6 +54,8 @@ para esta historia; el endpoint oficial es `/quizzes/generate`.
   (decisión provisional, ver sección correspondiente).
 - Los distractores salen de otras tarjetas `revisado_docente` de los mazos elegidos, sin repetir
   opciones (se comparan sin distinguir mayúsculas ni espacios).
+- Para generar un quiz hacen falta al menos **4 traducciones distintas** entre las tarjetas
+  `revisado_docente` de los mazos elegidos, de modo que toda pregunta tenga 4 opciones.
 
 ## Cuerpo de la petición (request)
 
@@ -137,11 +143,14 @@ Qué hace el frontend con la respuesta:
   `estado_efectivo`, y limpia el formulario.
 - Muestra una **vista previa solo para la docente**: preguntas ordenadas por `orden`, con la
   respuesta correcta marcada con texto.
-- **No pinta las opciones que vienen `null`.** Hoy una pregunta puede traer 2 o 3 opciones
-  cuando hay pocas traducciones distintas (ver P2).
+- **No pinta las opciones que vienen `null`.** Con la regla de 4 traducciones distintas toda
+  pregunta trae 4 opciones; el frontend conserva esta comprobación por seguridad.
 - Usa siempre `estado_efectivo`, nunca `estado`.
 - `respuesta_correcta` viene en esta respuesta porque es la vista de la docente. Este payload no
   debe usarse para pintar el quiz del estudiante (HU-3.2).
+- La vista previa solo se muestra al generar el quiz: al recargar la página se pierde. El
+  listado y la consulta de quices guardados no forman parte de esta historia (ver «Fuera del
+  alcance»).
 
 ## Errores
 
@@ -150,23 +159,30 @@ frontend muestra el mensaje tal cual, encima del botón «Generar Quiz».
 
 | HTTP | Mensaje del backend (resumen)                                                     | Cuándo |
 |------|------------------------------------------------------------------------------------|--------|
+| 401  | `Token de autenticación no proporcionado` / `Token inválido o expirado`            | Falta el token o expiró |
+| 403  | `No tiene permisos para acceder a este recurso`                                    | El usuario no es docente |
 | 400  | `Los siguientes campos son obligatorios: …`                                        | Faltan campos |
+| 400  | `curso_id debe ser un número entero mayor o igual a 1`                             | `curso_id` inválido |
+| 400  | `titulo debe tener máximo 200 caracteres`                                          | Título demasiado largo |
 | 400  | `fecha_apertura no es una fecha válida` / `fecha_cierre no es una fecha válida`    | Fecha no interpretable |
 | 400  | `fecha_cierre debe ser posterior a fecha_apertura`                                 | Fechas invertidas o iguales |
 | 400  | `tiempo_limite_min debe ser un número entero mayor o igual a 1`                    | Tiempo inválido |
+| 400  | `La ventana entre fecha_apertura y fecha_cierre (N min) debe ser mayor o igual a tiempo_limite_min (M min)` | Ventana menor que el tiempo límite |
 | 400  | `cantidad_preguntas debe ser un número entero mayor o igual a 1`                   | Solo si se envía el campo |
 | 400  | `mazo_ids debe contener solo ids de mazo (enteros mayores o iguales a 1)`          | Algún valor no es un id |
-| 400  | `Se necesitan al menos 2 tarjetas en estado revisado_docente en los mazos seleccionados para generar un quiz` | Tarjetas aprobadas insuficientes (ver P2) |
+| 400  | `Se encontraron N traducciones distintas entre las tarjetas revisado_docente de los mazos seleccionados; se requieren al menos 4.` | Menos de 4 traducciones distintas (mensaje verificado desde la pantalla) |
+| 404  | `El curso N no existe`                                                             | `curso_id` inexistente |
 | 404  | `El mazo N no existe`                                                              | Algún `mazo_id` no existe |
+| 404  | `El mazo N no pertenece al curso M`                                                | Un mazo es de otro curso |
 | 500  | (mensaje técnico)                                                                  | Error inesperado |
 
-Manejo de errores de sesión (cuando el backend proteja la ruta): igual que
-`ParticipacionMazo.jsx`, el frontend reconoce por el texto del mensaje «Token de autenticación
-no proporcionado» o «Token inválido o expirado» (muestra aviso y cierra la sesión) y «No tiene
-permisos para acceder a este recurso» (muestra aviso de rol insuficiente).
+Manejo de errores de sesión: igual que `ParticipacionMazo.jsx`, el frontend reconoce por el
+texto del mensaje «Token de autenticación no proporcionado» o «Token inválido o expirado»
+(muestra aviso y cierra la sesión) y «No tiene permisos para acceder a este recurso» (muestra
+aviso de rol insuficiente).
 
 Limitación conocida: `apiRequest` (`httpClient.js`) no expone el código HTTP, solo el mensaje.
-Por eso el frontend no distingue un 400 de un 422 ni muestra un mensaje genérico para el 500.
+Por eso el frontend no distingue un 400 de un 404 ni muestra un mensaje genérico para el 500.
 No es necesario modificar `httpClient.js` para esta historia.
 
 ## Estado del quiz (CA-3.1.3)
@@ -193,41 +209,37 @@ cantidad; si es mayor que las tarjetas disponibles, se usan todas.
 **Compromiso del frontend:** no asume ningún número fijo de preguntas; muestra siempre las
 preguntas recibidas.
 
-## Pendientes para el backend 
+## Pendientes para el backend
 
-Acuerdos del frontend que el backend aún no cumple. El frontend ya funciona sin ellos.
+Acuerdos del frontend con el backend. Todos están resueltos desde el commit `6df73b9`.
 
-| #  | Pendiente | Estado actual del backend |
-|----|-----------|---------------------------|
-| P1 | Proteger `POST /quizzes/generate` con `authenticate` y `requireRole('docente')`, en una ruta que no exponga el CRUD genérico sin protección | Sin protección |
-| P2 | Exigir al menos **4 traducciones distintas** (1 correcta + 3 distractores distintos) en lugar de 2 tarjetas, de modo que ninguna pregunta tenga menos de 4 opciones. El código HTTP (400 o 422) es indiferente para el frontend; se sugiere mantener 400 y ajustar el mensaje para indicar cuántas traducciones distintas se encontraron y cuántas se requieren | Mínimo de 2 tarjetas; hay preguntas con 2 o 3 opciones |
-| P3 | Rechazar con 400 una solicitud en la que `fecha_cierre` menos `fecha_apertura`, en minutos, sea menor que `tiempo_limite_min` | Solo exige cierre posterior a apertura |
-| P4 |  Validar que `curso_id` exista y que los mazos pertenezcan a ese curso | Solo valida que el mazo exista |
-| P5 |  Rechazar con 400 un `titulo` de más de 200 caracteres | El servicio no lo valida; depende de la columna de la base de datos |
+| #  | Acuerdo | Estado |
+|----|---------|--------|
+| P1 | Proteger `POST /quizzes/generate` con `authenticate` y `requireRole('docente')` | Resuelto |
+| P2 | Exigir al menos **4 traducciones distintas** para que ninguna pregunta tenga menos de 4 opciones | Resuelto; probado desde la pantalla |
+| P3 | Rechazar con 400 una ventana apertura–cierre menor que `tiempo_limite_min` | Resuelto; verificado en el código |
+| P4 | Validar que `curso_id` exista y que los mazos pertenezcan a ese curso | Resuelto; verificado en el código |
+| P5 | Rechazar con 400 un `titulo` de más de 200 caracteres | Resuelto; verificado en el código |
 
 ## Fuera del alcance de esta historia
 - Variante «asociación término-definición» y «completar contexto».
 - Listado y consulta de quices (`GET /quizzes`, `GET /quizzes/:id`): el backend los ofrece, pero
-  este frontend no los usa todavía.
+  esta historia no los usa. Decisión del 2026-10-08: ningún criterio de HU-3.1 ni de HU-3.2 lo
+  pide. CA-3.3.2 (exportar un quiz generado) implica que la docente pueda elegir un quiz
+  existente, así que el listado corresponde a HU-3.3.
 - Responder el quiz y calificarlo (HU-3.2).
 
-## Historial de cambios respecto a la versión del 2026-10-04
+## Historial de cambios
+### 2026-10-08
+- El endpoint está fusionado en `develop` del backend y exige token y rol docente (P1).
+- Se resuelven P2 a P5 en el backend; se actualiza la tabla de errores con los mensajes reales.
+- Se documenta el mínimo de 4 traducciones distintas y que toda pregunta trae 4 opciones.
+- Se registra la decisión sobre el listado de quices (corresponde a HU-3.3).
+
+### Respecto a la versión del 2026-10-04
 - `mazos_ids` pasa a `mazo_ids`, el nombre real del backend.
 - La respuesta pasa de un objeto plano con `total_preguntas` a `{ quiz, preguntas }`.
 - El estado se lee de `estado_efectivo` (`programado`, `abierto`, `cerrado`).
 - Se incluye `cantidad_preguntas` como campo opcional.
-- El mínimo de tarjetas y la protección de la ruta pasan a ser pendientes (P1 y P2); el código de
-  error por tarjetas insuficientes es 400, no 422.
-- La validación de la ventana de tiempo pasa a ser pendiente del backend (P3); el frontend ya la
-  aplica.
-
-## Estado del backend (2026-10-08)
-- `POST /api/v1/quizzes/generate` está fusionado en `develop` del backend y exige token y rol
-  docente (`authenticate` y `requireRole('docente')`).
-- El commit `6df73b9` del backend implementa los pendientes P2 a P5 (mínimo de 4 traducciones
-  distintas, ventana de tiempo, validación de curso y mazos, longitud del título).
-- Integración probada desde el frontend contra el backend local (`develop`, `6df73b9`):
-  respuesta 201 con quiz programado y preguntas de 4 opciones, y respuesta 400 cuando hay menos de
-  4 traducciones distintas. Los casos de P3 a P5 se aplican según el commit del backend y aún no se
-  han probado desde la pantalla.
-- El cliente (`quizzesApi.js`) llama siempre al backend real; no hay mocks.
+- El código de error por tarjetas insuficientes es 400, no 422.
+- La validación de la ventana de tiempo se aplica también en el frontend.
