@@ -1,0 +1,122 @@
+.generar-quiz {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.generar-quiz__form,
+.vista-previa-quiz {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.18);
+}
+
+.generar-quiz__form small {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.generar-quiz__error {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: var(--color-error-text);
+}
+
+.generar-quiz__acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Lista de mazos del curso (checkboxes) */
+.generar-quiz__mazos {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.generar-quiz__mazos label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.generar-quiz__mazos label:hover {
+  border-color: var(--color-role-border);
+}
+
+.generar-quiz__mazos input[type='checkbox'] {
+  accent-color: var(--color-role);
+}
+
+/* Vista previa de las preguntas generadas (solo docente) */
+.vista-previa-quiz {
+  margin-top: 24px;
+}
+
+.vista-previa-quiz__titulo {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+}
+
+.vista-previa-quiz__lista {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.vista-previa-quiz__enunciado {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.vista-previa-quiz__opciones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vista-previa-quiz__opcion {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.vista-previa-quiz__opcion--correcta {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-color: var(--color-success-border);
+}
+
+.vista-previa-quiz__letra {
+  font-weight: 700;
+}
+
+.vista-previa-quiz__marca {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .generar-quiz__form,
+  .vista-previa-quiz {
+    padding: 16px;
+  }
+}

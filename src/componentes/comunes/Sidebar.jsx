@@ -86,7 +86,6 @@ const RUTA_PERFIL_ESTUDIANTE = '/estudiante/configuracion-perfil';
 const RUTAS_DESHABILITADAS_POR_ROL = {
   docente: [
     '/docente/diccionario',
-    '/docente/quices',
   ],
   estudiante: [
     '/estudiante/diccionario',
