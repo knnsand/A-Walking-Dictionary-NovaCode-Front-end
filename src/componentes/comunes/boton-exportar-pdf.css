@@ -1,0 +1,16 @@
+/* Botón "Exportar a PDF" con su mensaje de error debajo. */
+
+.boton-exportar-pdf {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.boton-exportar-pdf__error {
+  margin: 0;
+  max-width: 260px;
+  font-size: 0.8rem;
+  text-align: right;
+  color: var(--color-error-text);
+}
