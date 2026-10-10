@@ -1,0 +1,90 @@
+/* HU-3.2: pantallas del estudiante para responder un quiz. */
+
+/* Portada del quiz */
+.portada-quiz {
+  max-width: 640px;
+  margin: 0 auto;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.18);
+}
+
+.portada-quiz__cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.portada-quiz__titulo {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.portada-quiz__estado {
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.portada-quiz__estado--abierto {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-color: var(--color-success-border);
+}
+
+.portada-quiz__datos {
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.portada-quiz__datos > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.portada-quiz__datos dt {
+  color: var(--color-text-muted);
+}
+
+.portada-quiz__datos dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+.portada-quiz__mensaje {
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+.portada-quiz__aviso {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.portada-quiz__acciones {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .portada-quiz {
+    padding: 16px;
+  }
+}
