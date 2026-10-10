@@ -5,7 +5,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { apiRequest } from './httpClient';
-import { enviarRespuestasQuiz, obtenerPreguntasQuiz } from './quizzesApi';
+import { enviarRespuestasQuiz, obtenerPreguntasQuiz, obtenerQuiz } from './quizzesApi';
 
 vi.mock('./httpClient', () => ({ apiRequest: vi.fn() }));
 
@@ -59,6 +59,24 @@ function errorHttp(status, cuerpo) {
 describe('quizzesApi (HU-3.2)', () => {
   beforeEach(() => {
     apiRequest.mockReset();
+  });
+
+  
+  it('obtenerQuiz llama a GET /quizzes/:id y devuelve el quiz con su estado_efectivo', async () => {
+    const quiz = {
+      id_quiz: 12,
+      curso_id: 1,
+      titulo: 'Quiz semana 3',
+      tiempo_limite_min: 10,
+      estado: 'programado',
+      estado_efectivo: 'abierto',
+    };
+    apiRequest.mockResolvedValue(quiz);
+
+    const datos = await obtenerQuiz(12);
+
+    expect(apiRequest).toHaveBeenCalledWith('/quizzes/12');
+    expect(datos).toEqual(quiz);
   });
 
   it('obtenerPreguntasQuiz llama a GET /quizzes/:id/preguntas y devuelve la respuesta', async () => {

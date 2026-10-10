@@ -125,3 +125,24 @@ export async function enviarRespuestasQuiz(idQuiz, datos) {
     throw error;
   }
 }
+
+
+/**
+ * Obtiene un quiz con su `estado_efectivo` calculado, para la portada del quiz (HU-3.2).
+ * GET /api/v1/quizzes/:id
+ * No incluye preguntas (para eso, `obtenerPreguntasQuiz`).
+ * Fuente: CONTRATO_FRONTEND_HU-3.1.md (backend), sección "Endpoints de apoyo".
+ *
+ * Usar siempre `estado_efectivo` ("programado" | "abierto" | "cerrado"), nunca `estado`.
+ *
+ * @param {number|string} idQuiz
+ * @returns {Promise<{
+ *   id_quiz: number, curso_id: number, titulo: string, semana_corte: number,
+ *   fecha_creacion: string, fecha_apertura: string, fecha_cierre: string,
+ *   tiempo_limite_min: number, estado: string, estado_efectivo: string
+ * }>}
+ * @throws {Error} con `.message` listo para mostrar (400 id inválido, 404 quiz no encontrado).
+ */
+export async function obtenerQuiz(idQuiz) {
+  return apiRequest(`/quizzes/${idQuiz}`);
+}
