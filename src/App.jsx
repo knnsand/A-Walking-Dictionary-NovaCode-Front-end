@@ -17,6 +17,7 @@ import { ParticipacionMazo } from './vistas/docente/participacion/ParticipacionM
 import { PaginaEstudio } from './vistas/estudiante/estudiar-tarjetas/PaginaEstudio';
 import { MazosEstudio } from './vistas/mazos-estudio/MazosEstudio';
 import { GenerarQuiz } from './vistas/docente/quices/GenerarQuiz';
+import { ResponderQuiz } from './vistas/estudiante/responder-quiz/ResponderQuiz';
 
 function RutaSoloEstudiante({ children }) {
   const { autenticado, rol } = useAuth();
@@ -107,6 +108,9 @@ export default function App() {
               <Route path="mazos/:idMazo/estudio" element={<PaginaEstudio />} />
 
               <Route path="estudio" element={<PaginaEstudio />} />
+              
+              {/* HU-3.2: responder un quiz y recibir la nota */}
+              <Route path="quices/:idQuiz" element={<ResponderQuiz />} />
 
               <Route
                 path="configuracion-perfil"
