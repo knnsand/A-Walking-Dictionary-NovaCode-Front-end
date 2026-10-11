@@ -402,3 +402,22 @@
     padding: 16px;
   }
 }
+
+/* Contenedor ResponderQuiz */
+.responder-quiz__estado {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.responder-quiz__columna {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

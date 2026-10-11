@@ -67,3 +67,10 @@ export const TEXTOS_RESULTADO = {
   sinDetalle: 'No se pudo cargar el detalle de las preguntas.',
   botonVolver: 'Volver al panel',
 };
+
+// Contenedor de la pantalla (carga y errores)
+export const TEXTOS_CONTENEDOR = {
+  cargando: 'Cargando el quiz…',
+  reintentar: 'Reintentar',
+  errorGenerico: 'Ocurrió un error inesperado. Intenta de nuevo.',
+};
