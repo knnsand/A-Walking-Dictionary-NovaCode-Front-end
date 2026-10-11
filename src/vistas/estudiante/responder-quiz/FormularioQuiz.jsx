@@ -6,7 +6,7 @@
 // inicio, y entrega el cuerpo del envío a `onEnviar`. El envío real y su resultado
 // los maneja quien use este componente.
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Aviso } from '../../../componentes/comunes/Aviso';
 import { TEXTOS_FORMULARIO as T } from './responderQuiz.constants';
 import { formatearTiempo } from './responderQuiz.format';
@@ -44,6 +44,26 @@ export function FormularioQuiz({
 }) {
   const [respuestas, setRespuestas] = useState(respuestasIniciales);
   const [confirmando, setConfirmando] = useState(false);
+
+  
+  // La barra del cronómetro se fija justo bajo el encabezado de la app, cuyo alto cambia
+  // (por ejemplo, cuando su subtítulo ocupa dos líneas en un móvil). Por eso se mide y se
+  // entrega como variable CSS en lugar de fijar un número.
+  const seccionRef = useRef(null);
+  useEffect(() => {
+    const seccion = seccionRef.current;
+    const encabezado = document.querySelector('.topbar--con-titulo');
+    if (!seccion || !encabezado) return undefined;
+
+    const medir = () =>
+      seccion.style.setProperty('--alto-encabezado', `${encabezado.offsetHeight}px`);
+    medir();
+
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const observador = new ResizeObserver(medir);
+    observador.observe(encabezado);
+    return () => observador.disconnect();
+  }, []);
 
   const preguntasOrdenadas = ordenarPreguntas(preguntas);
   const total = preguntas.length;
@@ -85,9 +105,13 @@ export function FormularioQuiz({
     faltan === 1 ? T.faltaUna : T.faltanVarias.replace('{n}', String(faltan));
 
   return (
-    <section className="formulario-quiz" aria-labelledby="formulario-quiz-titulo">
-      <header className="formulario-quiz__barra">
-        <div>
+    <section
+      ref={seccionRef}
+      className="formulario-quiz"
+      aria-labelledby="formulario-quiz-titulo"
+    >
+    <header className="formulario-quiz__barra">
+        <div className="formulario-quiz__info">
           <h2 id="formulario-quiz-titulo" className="formulario-quiz__titulo">
             {quiz.titulo}
           </h2>

@@ -96,53 +96,73 @@
   margin: 0 auto;
 }
 
+/* Barra del cronómetro: se fija justo bajo el encabezado de la app.
+   --alto-encabezado lo calcula FormularioQuiz.jsx midiendo ese encabezado. */
 .formulario-quiz__barra {
   position: sticky;
-  top: 0;
+  top: calc(var(--alto-encabezado, 76px) + 8px);
   z-index: 5;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
-  padding: 12px 16px;
-  background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.18);
+  padding: 10px 16px;
+  background-color: var(--color-role-bg);
+  color: var(--color-role-text);
+  border: 1px solid var(--color-role-border);
+  border-radius: 10px;
+  /* La primera sombra tapa el hueco de 8 px sobre la barra, para que el contenido no
+     se asome al desplazarse; la segunda separa la barra del contenido. */
+  box-shadow:
+    0 -8px 0 var(--color-bg-page),
+    0 8px 18px -8px rgba(0, 0, 0, 0.3);
+}
+
+.formulario-quiz__info {
+  min-width: 0;
 }
 
 .formulario-quiz__titulo {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .formulario-quiz__progreso {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   font-size: 0.8rem;
-  color: var(--color-text-muted);
+  color: inherit;
+  opacity: 0.85;
 }
 
 .formulario-quiz__reloj {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .formulario-quiz__reloj-etiqueta {
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  opacity: 0.85;
 }
 
 .formulario-quiz__tiempo {
-  font-size: 1.5rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 1.35rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
+/* Último minuto: el cronómetro se resalta con el color sólido del rol. */
 .formulario-quiz__tiempo--urgente {
-  color: var(--color-error-text);
+  background-color: var(--color-role);
+  color: #ffffff;
 }
 
 .formulario-quiz__mensaje {
@@ -157,6 +177,7 @@
 }
 
 .formulario-quiz__pregunta {
+  min-width: 0;
   margin: 0;
   padding: 16px 20px;
   background-color: var(--color-bg-card);
@@ -164,29 +185,40 @@
   border-radius: 12px;
 }
 
+/* El legend flota para quedar dentro de la tarjeta y no sobre su borde. */
 .formulario-quiz__enunciado {
-  padding: 0 6px;
+  float: left;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
   font-weight: 600;
+  line-height: 1.4;
+}
+
+.formulario-quiz__enunciado + .formulario-quiz__opciones {
+  clear: both;
 }
 
 .formulario-quiz__opciones {
   list-style: none;
-  margin: 8px 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .formulario-quiz__opcion {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  min-height: 44px;
+  padding: 8px 12px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;
+  overflow-wrap: anywhere;
 }
 
 .formulario-quiz__opcion:hover {
@@ -195,10 +227,12 @@
 
 .formulario-quiz__opcion:has(input:checked) {
   border-color: var(--color-role);
+  background-color: var(--color-role-bg-soft);
 }
 
 .formulario-quiz__opcion input[type='radio'] {
   accent-color: var(--color-role);
+  flex-shrink: 0;
 }
 
 .formulario-quiz__letra {
@@ -239,15 +273,36 @@
 
 @media (max-width: 600px) {
   .formulario-quiz__barra {
-    padding: 10px 12px;
+    padding: 8px 12px;
+  }
+
+  /* En móvil la etiqueta se oculta a la vista pero sigue disponible para lectores de pantalla. */
+  .formulario-quiz__reloj-etiqueta {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .formulario-quiz__tiempo {
+    font-size: 1.2rem;
   }
 
   .formulario-quiz__pregunta {
     padding: 12px 14px;
   }
+
+  .formulario-quiz__confirmacion-acciones {
+    flex-direction: column-reverse;
+  }
+
+  .formulario-quiz__confirmacion-acciones .btn,
+  .formulario-quiz__acciones .btn {
+    width: 100%;
+  }
 }
-
-
 /* Resultado del quiz */
 .resultado-quiz {
   max-width: 760px;
