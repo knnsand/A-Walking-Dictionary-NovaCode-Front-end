@@ -29,3 +29,21 @@ export const ESTADO = {
   ABIERTO: 'abierto',
   CERRADO: 'cerrado',
 };
+
+
+// Formulario del quiz (preguntas, cronómetro y envío)
+export const TEXTOS_FORMULARIO = {
+  tiempoRestante: 'Tiempo restante',
+  contestadas: 'Contestadas',
+  botonFinalizar: 'Finalizar examen',
+  botonEnviando: 'Enviando…',
+  tiempoAgotado:
+    'Se agotó el tiempo. Se envían las respuestas contestadas hasta este momento.',
+
+  // Confirmación cuando faltan preguntas por contestar
+  faltaUna: 'Te falta 1 pregunta por contestar.',
+  faltanVarias: 'Te faltan {n} preguntas por contestar.',
+  avisoSinContestar: 'Las preguntas sin contestar cuentan como incorrectas.',
+  botonVolver: 'Volver al quiz',
+  botonEnviarIgual: 'Enviar de todas formas',
+};
