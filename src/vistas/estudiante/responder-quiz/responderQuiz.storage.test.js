@@ -79,9 +79,10 @@ describe('responderQuiz.storage', () => {
 
 
 describe('resultado ya enviado (CA-3.2.3)', () => {
-  const datos = {
+const datos = {
     resultado: { id_resultado: 5, quiz_id: 12, puntaje_obtenido: 1, puntaje_maximo: 2 },
     respuestas: [{ pregunta_id: 101, respuesta_estudiante: 'cocinar', es_correcta: true }],
+    preguntas: [{ id_pregunta: 101, enunciado: 'Primera pregunta', orden: 1 }],
   };
 
   beforeEach(() => {
@@ -100,6 +101,26 @@ describe('resultado ya enviado (CA-3.2.3)', () => {
 
   it('devuelve null si no hay resultado guardado', () => {
     expect(leerResultado(12, 3)).toBeNull();
+  });
+
+  
+  it('si se guardó sin preguntas, leer devuelve preguntas en null', () => {
+    guardarResultado(12, 3, { resultado: datos.resultado, respuestas: datos.respuestas });
+
+    expect(leerResultado(12, 3)).toEqual({
+      resultado: datos.resultado,
+      respuestas: datos.respuestas,
+      preguntas: null,
+    });
+  });
+
+  it('ignora `preguntas` si lo guardado no es una lista', () => {
+    localStorage.setItem(
+      'quiz_12_resultado_3',
+      JSON.stringify({ resultado: {}, respuestas: [], preguntas: 'no es lista' })
+    );
+
+    expect(leerResultado(12, 3).preguntas).toBeNull();
   });
 
   it('separa los resultados por estudiante (computador compartido)', () => {

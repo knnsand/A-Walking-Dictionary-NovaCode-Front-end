@@ -76,15 +76,18 @@ const claveResultado = (idQuiz, idEstudiante) => `quiz_${idQuiz}_resultado_${idE
  *
  * @param {number|string} idQuiz
  * @param {number|string} idEstudiante
- * @param {{ resultado: Object, respuestas: Array }} datos Lo que devuelve el submit (201 o 409).
+ * @param {{ resultado: Object, respuestas: Array, preguntas?: Array }} datos Lo que devuelve
+ *   el submit (201 o 409) y, si se tienen, las preguntas tal como las entregó
+ *   GET /quizzes/:id/preguntas (sin respuesta correcta), para poder mostrar el detalle
+ *   aunque el quiz ya haya cerrado.
  */
-export function guardarResultado(idQuiz, idEstudiante, { resultado, respuestas }) {
+export function guardarResultado(idQuiz, idEstudiante, { resultado, respuestas, preguntas }) {
   if (!idEstudiante) return;
 
   try {
     localStorage.setItem(
       claveResultado(idQuiz, idEstudiante),
-      JSON.stringify({ resultado, respuestas })
+      JSON.stringify({ resultado, respuestas, preguntas: preguntas ?? null })
     );
   } catch {
     // Sin almacenamiento disponible: el resumen se obtendrá por el 409.
@@ -94,8 +97,9 @@ export function guardarResultado(idQuiz, idEstudiante, { resultado, respuestas }
 /**
  * @param {number|string} idQuiz
  * @param {number|string} idEstudiante
- * @returns {{ resultado: Object, respuestas: Array } | null} null si no hay resultado
- *   guardado, si no se conoce el estudiante o si el dato está dañado.
+ * @returns {{ resultado: Object, respuestas: Array, preguntas: Array|null } | null}
+ *   null si no hay resultado guardado, si no se conoce el estudiante o si el dato está
+ *   dañado. `preguntas` es null si no se guardaron.
  */
 export function leerResultado(idQuiz, idEstudiante) {
   if (!idEstudiante) return null;
@@ -110,7 +114,13 @@ export function leerResultado(idQuiz, idEstudiante) {
       typeof dato.resultado === 'object' &&
       dato.resultado !== null &&
       Array.isArray(dato.respuestas);
-    return valido ? { resultado: dato.resultado, respuestas: dato.respuestas } : null;
+    if (!valido) return null;
+
+    return {
+      resultado: dato.resultado,
+      respuestas: dato.respuestas,
+      preguntas: Array.isArray(dato.preguntas) ? dato.preguntas : null,
+    };
   } catch {
     return null;
   }
