@@ -47,3 +47,23 @@ export const TEXTOS_FORMULARIO = {
   botonVolver: 'Volver al quiz',
   botonEnviarIgual: 'Enviar de todas formas',
 };
+
+
+// Pantalla de resultado (CA-3.2.2 y CA-3.2.3)
+export const TEXTOS_RESULTADO = {
+  titulo: 'Resultado',
+  yaEnviado:
+    'Ya enviaste este quiz y no se permite un nuevo intento. Este es el resultado de tu envío.',
+  etiquetaCalificacion: 'Calificación',
+  etiquetaAciertos: 'Aciertos',
+  etiquetaErrores: 'Errores',
+  etiquetaTiempo: 'Tiempo empleado',
+  de: 'de',
+  detalleTitulo: 'Detalle por pregunta',
+  tuRespuesta: 'Tu respuesta',
+  correcta: 'Correcta',
+  incorrecta: 'Incorrecta',
+  sinContestar: 'Sin contestar',
+  sinDetalle: 'No se pudo cargar el detalle de las preguntas.',
+  botonVolver: 'Volver al panel',
+};
