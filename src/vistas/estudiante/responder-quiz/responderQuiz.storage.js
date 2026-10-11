@@ -53,3 +53,65 @@ export function borrarBorrador(idQuiz) {
     // Nada que borrar si el almacenamiento no está disponible.
   }
 }
+
+
+// ---------------------------------------------------------------------------
+// Resultado ya enviado (CA-3.2.3)
+//
+// RESPALDO TEMPORAL: el backend solo devuelve el resumen de un envío anterior
+// como respuesta a un reenvío (409), y no lo devuelve si el quiz ya cerró.
+// Mientras no exista un endpoint para consultar el resultado previo, se recuerda
+// aquí para poder mostrarlo al reabrir el enlace del quiz. Solo funciona en el
+// mismo navegador; si el endpoint llega, este respaldo pasa a ser secundario.
+//
+// Se usa `localStorage` para que sobreviva al cierre de la pestaña. La clave
+// incluye al estudiante porque cerrar sesión no borra otras claves, y en un
+// computador compartido el siguiente estudiante vería el resultado del anterior.
+// ---------------------------------------------------------------------------
+
+const claveResultado = (idQuiz, idEstudiante) => `quiz_${idQuiz}_resultado_${idEstudiante}`;
+
+/**
+ * Guarda el resultado de un quiz ya enviado. No hace nada si no se conoce el estudiante.
+ *
+ * @param {number|string} idQuiz
+ * @param {number|string} idEstudiante
+ * @param {{ resultado: Object, respuestas: Array }} datos Lo que devuelve el submit (201 o 409).
+ */
+export function guardarResultado(idQuiz, idEstudiante, { resultado, respuestas }) {
+  if (!idEstudiante) return;
+
+  try {
+    localStorage.setItem(
+      claveResultado(idQuiz, idEstudiante),
+      JSON.stringify({ resultado, respuestas })
+    );
+  } catch {
+    // Sin almacenamiento disponible: el resumen se obtendrá por el 409.
+  }
+}
+
+/**
+ * @param {number|string} idQuiz
+ * @param {number|string} idEstudiante
+ * @returns {{ resultado: Object, respuestas: Array } | null} null si no hay resultado
+ *   guardado, si no se conoce el estudiante o si el dato está dañado.
+ */
+export function leerResultado(idQuiz, idEstudiante) {
+  if (!idEstudiante) return null;
+
+  try {
+    const crudo = localStorage.getItem(claveResultado(idQuiz, idEstudiante));
+    if (!crudo) return null;
+
+    const dato = JSON.parse(crudo);
+    const valido =
+      dato &&
+      typeof dato.resultado === 'object' &&
+      dato.resultado !== null &&
+      Array.isArray(dato.respuestas);
+    return valido ? { resultado: dato.resultado, respuestas: dato.respuestas } : null;
+  } catch {
+    return null;
+  }
+}

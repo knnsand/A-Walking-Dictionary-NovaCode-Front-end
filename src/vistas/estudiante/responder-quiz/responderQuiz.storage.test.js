@@ -2,7 +2,7 @@
 // HU-3.2: respaldo del intento en sessionStorage.
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { borrarBorrador, guardarBorrador, leerBorrador } from './responderQuiz.storage';
+import {borrarBorrador, guardarBorrador, guardarResultado, leerBorrador, leerResultado,} from './responderQuiz.storage';
 
 const INICIO = '2026-10-10T15:00:00.000Z';
 
@@ -74,5 +74,76 @@ describe('responderQuiz.storage', () => {
     expect(() => guardarBorrador(12, { fechaInicio: INICIO, respuestas: {} })).not.toThrow();
     expect(leerBorrador(12)).toBeNull();
     expect(() => borrarBorrador(12)).not.toThrow();
+  });
+});
+
+
+describe('resultado ya enviado (CA-3.2.3)', () => {
+  const datos = {
+    resultado: { id_resultado: 5, quiz_id: 12, puntaje_obtenido: 1, puntaje_maximo: 2 },
+    respuestas: [{ pregunta_id: 101, respuesta_estudiante: 'cocinar', es_correcta: true }],
+  };
+
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('guarda y recupera el resultado de un quiz para un estudiante', () => {
+    guardarResultado(12, 3, datos);
+
+    expect(leerResultado(12, 3)).toEqual(datos);
+  });
+
+  it('devuelve null si no hay resultado guardado', () => {
+    expect(leerResultado(12, 3)).toBeNull();
+  });
+
+  it('separa los resultados por estudiante (computador compartido)', () => {
+    guardarResultado(12, 3, datos);
+
+    expect(leerResultado(12, 4)).toBeNull();
+  });
+
+  it('separa los resultados por quiz', () => {
+    guardarResultado(12, 3, datos);
+
+    expect(leerResultado(13, 3)).toBeNull();
+  });
+
+  it('sin id de estudiante no guarda ni lee nada', () => {
+    guardarResultado(12, null, datos);
+
+    expect(localStorage.length).toBe(0);
+    expect(leerResultado(12, null)).toBeNull();
+  });
+
+  it('ignora un dato dañado: JSON inválido, sin resultado o con respuestas que no son una lista', () => {
+    localStorage.setItem('quiz_12_resultado_3', '{no es json');
+    expect(leerResultado(12, 3)).toBeNull();
+
+    localStorage.setItem('quiz_12_resultado_3', JSON.stringify({ respuestas: [] }));
+    expect(leerResultado(12, 3)).toBeNull();
+
+    localStorage.setItem(
+      'quiz_12_resultado_3',
+      JSON.stringify({ resultado: {}, respuestas: 'no es lista' })
+    );
+    expect(leerResultado(12, 3)).toBeNull();
+  });
+
+  it('si el almacenamiento falla, no lanza error y leer devuelve null', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('cuota excedida');
+    });
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('acceso bloqueado');
+    });
+
+    expect(() => guardarResultado(12, 3, datos)).not.toThrow();
+    expect(leerResultado(12, 3)).toBeNull();
   });
 });
