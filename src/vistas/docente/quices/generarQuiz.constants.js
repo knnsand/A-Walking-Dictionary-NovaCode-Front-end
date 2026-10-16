@@ -39,6 +39,9 @@ export const TEXTOS = {
   },
   vistaPreviaTitulo: 'Vista previa (solo docente)',
   respuestaCorrecta: 'Respuesta correcta',
+
+  // Exportar a PDF (HU-3.3)
+  botonExportarQuiz: 'Exportar versión impresa',
 };
 
 // Mensajes de validación del formulario (ver docs/contrato-quiz.md).

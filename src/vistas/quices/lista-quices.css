@@ -1,0 +1,91 @@
+/* vistas/quices/lista-quices.css
+   Estilos EXCLUSIVOS de la lista de quices (docente y estudiante): la cuadrícula, el subtítulo
+   cuando va embebida y el color por estado. La tarjeta en sí reutiliza la librería visual
+   global de index.css (.tarjeta-pendiente, .mazo-pila, .badge, .btn), igual que
+   Revisión de Palabras. */
+
+/* Cuando la lista va debajo del formulario del docente: separación y subtítulo de sección. */
+.lista-quices-vista--embebida {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.lista-quices-vista__titulo {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+  font-family: var(--font-serif);
+  color: var(--color-text-main);
+}
+
+.lista-quices-vista__descripcion {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* Cuadrícula de tarjetas: tantas columnas como quepan de mínimo 300px
+   (1 columna en móvil, sin media queries manuales). */
+.quices-grid {
+  list-style: none;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px 24px;
+  padding: 8px 4px 4px;
+}
+
+/* Color de cada estado (--mazo-color lo usan .mazo-pila y el borde superior). */
+.quiz-pila--programado {
+  --mazo-color: #5B6FA8;
+}
+
+.quiz-pila--abierto {
+  --mazo-color: var(--color-success-border);
+}
+
+.quiz-pila--cerrado {
+  --mazo-color: var(--color-text-muted);
+}
+
+.quices-grid .tarjeta-pendiente {
+  margin-bottom: 0;
+  border-top: 4px solid var(--mazo-color);
+}
+
+/* Los botones quedan alineados al fondo aunque una tarjeta de la fila tenga menos contenido. */
+.quices-grid .tarjeta-pendiente__acciones {
+  margin-top: auto;
+}
+
+/* Marca "Respondido · Nota X.X" del estudiante. */
+.quiz-respondido {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-role-text);
+}
+
+/* "Programado" no tiene badge en la librería global (solo abierto y cerrado). */
+.quiz-badge--programado {
+  background-color: var(--color-info-bg);
+  color: var(--color-info-text);
+}
+
+/* .btn sobre un <a> (el estudiante navega a la portada del quiz). */
+.quices-grid a.btn {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* El botón de exportar de la docente va a la izquierda dentro de la tarjeta
+   (el estilo base lo alinea a la derecha). */
+.quices-grid .boton-exportar-pdf {
+  align-items: flex-start;
+}
+
+.quices-grid .boton-exportar-pdf__error {
+  max-width: none;
+  text-align: left;
+}
