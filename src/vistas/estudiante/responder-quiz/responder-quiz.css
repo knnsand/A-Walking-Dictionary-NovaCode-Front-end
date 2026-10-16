@@ -1,0 +1,478 @@
+/* HU-3.2: pantallas del estudiante para responder un quiz. */
+
+/* Portada del quiz */
+.portada-quiz {
+  max-width: 640px;
+  margin: 0 auto;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.18);
+}
+
+.portada-quiz__cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.portada-quiz__titulo {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.portada-quiz__estado {
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.portada-quiz__estado--abierto {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-color: var(--color-success-border);
+}
+
+.portada-quiz__datos {
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.portada-quiz__datos > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.portada-quiz__datos dt {
+  color: var(--color-text-muted);
+}
+
+.portada-quiz__datos dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+.portada-quiz__mensaje {
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+.portada-quiz__aviso {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.portada-quiz__acciones {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .portada-quiz {
+    padding: 16px;
+  }
+}
+
+
+/* Formulario del quiz */
+.formulario-quiz {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* Barra del cronómetro: se fija justo bajo el encabezado de la app.
+   --alto-encabezado lo calcula FormularioQuiz.jsx midiendo ese encabezado. */
+.formulario-quiz__barra {
+  position: sticky;
+  top: calc(var(--alto-encabezado, 76px) + 8px);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 10px 16px;
+  background-color: var(--color-role-bg);
+  color: var(--color-role-text);
+  border: 1px solid var(--color-role-border);
+  border-radius: 10px;
+  /* La primera sombra tapa el hueco de 8 px sobre la barra, para que el contenido no
+     se asome al desplazarse; la segunda separa la barra del contenido. */
+  box-shadow:
+    0 -8px 0 var(--color-bg-page),
+    0 8px 18px -8px rgba(0, 0, 0, 0.3);
+}
+
+.formulario-quiz__info {
+  min-width: 0;
+}
+
+.formulario-quiz__titulo {
+  margin: 0;
+  font-size: 1rem;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.formulario-quiz__progreso {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.formulario-quiz__reloj {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.formulario-quiz__reloj-etiqueta {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.formulario-quiz__tiempo {
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Último minuto: el cronómetro se resalta con el color sólido del rol. */
+.formulario-quiz__tiempo--urgente {
+  background-color: var(--color-role);
+  color: #ffffff;
+}
+
+.formulario-quiz__mensaje {
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+.formulario-quiz__preguntas {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formulario-quiz__pregunta {
+  min-width: 0;
+  margin: 0;
+  padding: 16px 20px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+/* El legend flota para quedar dentro de la tarjeta y no sobre su borde. */
+.formulario-quiz__enunciado {
+  float: left;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.formulario-quiz__enunciado + .formulario-quiz__opciones {
+  clear: both;
+}
+
+.formulario-quiz__opciones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formulario-quiz__opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.formulario-quiz__opcion:hover {
+  border-color: var(--color-role-border);
+}
+
+.formulario-quiz__opcion:has(input:checked) {
+  border-color: var(--color-role);
+  background-color: var(--color-role-bg-soft);
+}
+
+.formulario-quiz__opcion input[type='radio'] {
+  accent-color: var(--color-role);
+  flex-shrink: 0;
+}
+
+.formulario-quiz__letra {
+  font-weight: 700;
+}
+
+.formulario-quiz__confirmacion {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-role-border);
+  border-radius: 12px;
+}
+
+.formulario-quiz__confirmacion-texto {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.formulario-quiz__confirmacion-ayuda {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.formulario-quiz__confirmacion-acciones {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.formulario-quiz__acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+@media (max-width: 600px) {
+  .formulario-quiz__barra {
+    padding: 8px 12px;
+  }
+
+  /* En móvil la etiqueta se oculta a la vista pero sigue disponible para lectores de pantalla. */
+  .formulario-quiz__reloj-etiqueta {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .formulario-quiz__tiempo {
+    font-size: 1.2rem;
+  }
+
+  .formulario-quiz__pregunta {
+    padding: 12px 14px;
+  }
+
+  .formulario-quiz__confirmacion-acciones {
+    flex-direction: column-reverse;
+  }
+
+  .formulario-quiz__confirmacion-acciones .btn,
+  .formulario-quiz__acciones .btn {
+    width: 100%;
+  }
+}
+/* Resultado del quiz */
+.resultado-quiz {
+  max-width: 760px;
+  margin: 0 auto;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.18);
+}
+
+.resultado-quiz__cabecera {
+  margin-bottom: 16px;
+}
+
+.resultado-quiz__titulo {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.resultado-quiz__quiz {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.resultado-quiz__aviso {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-role-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.resultado-quiz__nota {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.resultado-quiz__nota-etiqueta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.resultado-quiz__nota-valor {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.resultado-quiz__datos {
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resultado-quiz__datos > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.resultado-quiz__datos dt {
+  color: var(--color-text-muted);
+}
+
+.resultado-quiz__datos dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+.resultado-quiz__subtitulo {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+}
+
+.resultado-quiz__lista {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resultado-quiz__item {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.resultado-quiz__item--correcta {
+  background-color: var(--color-success-bg);
+  border-color: var(--color-success-border);
+}
+
+.resultado-quiz__item--incorrecta,
+.resultado-quiz__item--sin {
+  border-color: var(--color-error-text);
+}
+
+.resultado-quiz__enunciado {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.resultado-quiz__respuesta {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+}
+
+.resultado-quiz__estado {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.resultado-quiz__item--correcta .resultado-quiz__estado {
+  color: var(--color-success-text);
+}
+
+.resultado-quiz__item--incorrecta .resultado-quiz__estado,
+.resultado-quiz__item--sin .resultado-quiz__estado {
+  color: var(--color-error-text);
+}
+
+.resultado-quiz__sin-detalle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.resultado-quiz__acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+  .resultado-quiz {
+    padding: 16px;
+  }
+}
+
+/* Contenedor ResponderQuiz */
+.responder-quiz__estado {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.responder-quiz__columna {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

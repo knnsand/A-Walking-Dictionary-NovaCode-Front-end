@@ -15,9 +15,10 @@ export async function apiRequest(path, options = {}) {
 
   if (!response.ok) {
     let mensaje = `Error ${response.status} al llamar ${path}`;
+    let cuerpo = null;
 
     try {
-      const cuerpo = await response.json();
+      cuerpo = await response.json();
 
       if (cuerpo?.error) {
         mensaje = cuerpo.error;
@@ -26,7 +27,10 @@ export async function apiRequest(path, options = {}) {
       // El cuerpo no era JSON o vino vacío.
     }
 
-    throw new Error(mensaje);
+    const error = new Error(mensaje);
+    error.status = response.status;
+    error.cuerpo = cuerpo;
+    throw error;
   }
 
   return response.json();
