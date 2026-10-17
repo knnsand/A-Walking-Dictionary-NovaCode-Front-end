@@ -114,6 +114,13 @@
   font-weight: 700;
 }
 
+/* Botón para exportar el quiz recién generado (HU-3.3) */
+.generar-quiz__exportar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
 @media (max-width: 600px) {
   .generar-quiz__form,
   .vista-previa-quiz {
