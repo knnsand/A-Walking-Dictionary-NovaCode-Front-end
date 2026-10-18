@@ -3,6 +3,20 @@ import { useEffect, useState } from 'react';
 import { obtenerFamiliaPalabras } from '../../../cliente-api/enriquecimientoApi';
 import './sugerencias-palabras.css';
 
+// El backend agrupa por categoría gramatical (sustantivos, verbos, adjetivos, adverbios).
+// Aquí se aplana todo en una sola lista de términos.
+function aplanarSugerencias(sugerencias) {
+  if (Array.isArray(sugerencias)) return sugerencias;
+  if (!sugerencias || typeof sugerencias !== 'object') return [];
+
+  return Object.values(sugerencias).flatMap((categoria) => [
+    ...(categoria?.sinonimos ?? []),
+    ...(categoria?.familia ?? []),
+    ...(categoria?.hiperonimos ?? []),
+    ...(categoria?.hiponimos ?? []),
+  ]);
+}
+
 export default function SugerenciasPalabras({ palabra }) {
   const [sugerencias, setSugerencias] = useState([]);
   const [cargando, setCargando] = useState(false);
@@ -31,9 +45,7 @@ export default function SugerenciasPalabras({ palabra }) {
 
         if (cancelado) return;
 
-        const lista = Array.isArray(respuesta?.sugerencias)
-          ? respuesta.sugerencias
-          : [];
+        const lista = aplanarSugerencias(respuesta?.sugerencias);
 
         // WordNet puede devolver términos como texto u objetos.
         const palabras = lista
@@ -68,6 +80,7 @@ export default function SugerenciasPalabras({ palabra }) {
                 (p) => p.toLowerCase() === normalizada
               )
             )
+            .slice(0, 10)
         );
       } catch {
         if (!cancelado) {

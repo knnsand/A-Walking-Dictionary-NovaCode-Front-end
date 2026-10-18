@@ -1,3 +1,4 @@
+
 import SugerenciasPalabras from './SugerenciasPalabras';
 
 // vistas/estudiante/estudiar-tarjetas/TarjetaFlashcard.jsx
@@ -168,6 +169,8 @@ export function TarjetaFlashcard({
                 <p className="estudiar-cita__texto">{conComillas(tarjeta.ejemplo)}</p>
               </aside>
             )}
+
+            <SugerenciasPalabras palabra={tarjeta.palabra} />
           </div>
         </div>
       </div>
