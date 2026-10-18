@@ -22,6 +22,8 @@ export default defineConfig({
     ['list'],
     ['html', { outputFolder: 'reportes-e2e/html', open: 'never' }],
     ['junit', { outputFile: 'reportes-e2e/junit.xml' }],
+    // Lo lee e2e/soporte/generar-resumen.js para el resumen en Markdown.
+    ['json', { outputFile: 'reportes-e2e/resultados.json' }],
     ...(process.env.GITHUB_ACTIONS ? [['github']] : []),
   ],
   use: {

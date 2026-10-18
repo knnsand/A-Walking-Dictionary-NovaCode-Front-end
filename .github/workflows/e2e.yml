@@ -106,9 +106,21 @@ jobs:
           echo "===== backend =====" && cat backend.log
           echo "===== frontend =====" && cat frontend.log
 
+      # Resumen en Markdown: se muestra en la página de esta ejecución y va en el artefacto
+      # (RESUMEN.md). No toca el repositorio.
+      - name: Resumen de resultados
+        if: always()
+        run: >-
+          node e2e/soporte/generar-resumen.js
+          --resultados reportes-e2e/resultados.json
+          --criterios e2e/criterios.json
+          --suite "Pruebas E2E (front)"
+          --salida reportes-e2e/RESUMEN.md
+
       - name: Publicar reporte
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: reporte-pruebas-e2e
           path: reportes-e2e/
+          retention-days: 30

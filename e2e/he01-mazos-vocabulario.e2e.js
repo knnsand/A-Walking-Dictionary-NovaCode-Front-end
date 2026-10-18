@@ -37,7 +37,7 @@ test.describe('HU-1.1 — Crear mazos precargados por semana', () => {
     await expect(modal.getByRole('alert')).toContainText('Completa todos los campos obligatorios');
   });
 
-  test('CA-1.1.3 Al cerrar un mazo queda "cerrado" y deja de ofrecerse a los estudiantes', async ({ page, browser }) => {
+  test('CA-1.1.3 + CA-1.2.3 Al cerrar un mazo queda "cerrado" y deja de ofrecerse a los estudiantes', async ({ page, browser }) => {
     await page.getByRole('button', { name: 'Cerrar el mazo The Composition' }).click();
     const tarjeta = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: 'The Composition' }) });
     await expect(tarjeta).toContainText('Mazo cerrado');
@@ -90,7 +90,7 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
     await expect(modal.getByRole('alert')).toContainText('Completa los campos obligatorios');
   });
 
-  test('CA-1.3.4 + CA-1.3.1 Duplicado exacto: avisa antes de enviar y registra la coautoría', async ({ page }) => {
+  test('CA-1.3.4 + CA-1.3.1 + CA-1.3.3 Duplicado exacto (sin importar mayúsculas): avisa antes de enviar y registra la coautoría', async ({ page }) => {
     // "stone" ya existe en "Fear of Stones" (seed) con esta definición y este ejemplo
     const modal = await llenar(page, {
       palabra: 'Stone',

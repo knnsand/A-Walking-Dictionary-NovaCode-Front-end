@@ -16,7 +16,7 @@ test.describe('HU-3.1 — Generar quices acumulativos', () => {
     await page.goto('/docente/quices');
   });
 
-  test('CA-3.1.1 + CA-3.1.3 La docente genera un quiz programado con las tarjetas aprobadas', async ({ page }) => {
+  test('CA-3.1.1 + CA-3.1.2 + CA-3.1.3 La docente genera un quiz programado con las tarjetas aprobadas', async ({ page }) => {
     await page.getByLabel('Curso').selectOption({ label: 'Literatura Anglófona' });
     await page.getByRole('checkbox', { name: /Stitch by Stitch/ }).check();
     await page.getByRole('checkbox', { name: /Just Ask!/ }).check();
