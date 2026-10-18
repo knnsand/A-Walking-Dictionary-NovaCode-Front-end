@@ -1,0 +1,114 @@
+name: Frontend pruebas E2E
+
+# Levanta el sistema completo y ejecuta las pruebas E2E (Playwright, carpeta e2e/):
+#   PostgreSQL de servicio + backend (descargado de su repo, rama develop) + este frontend.
+# Independiente del workflow de CI del frontend (lint, pruebas unitarias, cobertura, SonarQube).
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine   # misma imagen que el docker-compose.yml de infra
+        env:
+          POSTGRES_USER: walking
+          POSTGRES_PASSWORD: walking
+          POSTGRES_DB: walking_dictionary
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U walking -d walking_dictionary"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Backend
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: walking
+      DB_PASSWORD: walking
+      DB_NAME: walking_dictionary
+      PORT: 5000
+      DISABLE_AUTH: 'false'
+      GOOGLE_CLIENT_ID: ci-sin-google.apps.googleusercontent.com
+      CORS_ORIGINS: http://localhost:3000
+      # Frontend (Vite)
+      VITE_API_BASE_URL: http://localhost:5000/api/v1
+      VITE_USE_MOCK: 'false'
+      VITE_GOOGLE_CLIENT_ID: ci-sin-google.apps.googleusercontent.com
+      # Pruebas
+      FRONT_URL: http://localhost:3000
+      API_URL: http://localhost:5000
+      BACK_REPO: ${{ github.workspace }}/backend-repo
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # El repo del backend es público: no hace falta token.
+      - name: Descargar el backend (develop)
+        uses: actions/checkout@v4
+        with:
+          repository: wsernam/A-Walking-Dictionary-NovaCode-Back-end
+          ref: develop
+          path: backend-repo
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22          # misma versión que el Dockerfile del frontend (node:22-alpine)
+
+      # Secreto de un solo uso: lo comparten el backend y las pruebas, y desaparece con el job.
+      - name: Generar JWT_SECRET
+        run: echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+
+      - name: Arrancar el backend
+        working-directory: backend-repo/backend
+        run: |
+          npm ci
+          nohup npm start > ../../backend.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:5000/health && exit 0
+            sleep 1
+          done
+          cat ../../backend.log
+          exit 1
+
+      - name: Arrancar el frontend
+        run: |
+          npm ci
+          nohup npx vite --port 3000 --strictPort > frontend.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:3000 > /dev/null && exit 0
+            sleep 1
+          done
+          cat frontend.log
+          exit 1
+
+      - name: Instalar Chromium y psql
+        run: |
+          npx playwright install --with-deps chromium
+          command -v psql || (sudo apt-get update && sudo apt-get install -y postgresql-client)
+
+      # La preparación global reinicia la base con init.sql + seed.sql del backend descargado.
+      - run: npm run test:e2e
+
+      - name: Logs de los servidores
+        if: failure()
+        run: |
+          echo "===== backend =====" && cat backend.log
+          echo "===== frontend =====" && cat frontend.log
+
+      - name: Publicar reporte
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-pruebas-e2e
+          path: reportes-e2e/
