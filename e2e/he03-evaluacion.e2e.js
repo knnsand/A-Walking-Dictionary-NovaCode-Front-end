@@ -93,6 +93,34 @@ test.describe('HU-3.2 — Responder quiz y recibir nota', () => {
     await expect(page.getByRole('heading', { name: 'Detalle por pregunta' })).toBeVisible();
   });
 
+  test('CA-3.2.1 Al agotarse el tiempo se envía solo lo contestado y se bloquea el formulario', async ({ page, context }) => {
+    // Quiz propio de 1 minuto; el reloj del navegador se adelanta en vez de esperar.
+    const corto = await api('POST', '/quizzes/generate', 'ana', {
+      curso_id: 1,
+      titulo: 'Quiz de 1 minuto (E2E)',
+      mazo_ids: [1, 2],
+      fecha_apertura: new Date(Date.now() - 60000).toISOString(),
+      fecha_cierre: new Date(Date.now() + 3600000).toISOString(),
+      tiempo_limite_min: 1,
+      cantidad_preguntas: 3,
+    });
+
+    await page.clock.install();
+    await iniciarSesion(context, 'juan');
+    await page.goto(`/estudiante/quices/${corto.quiz.id_quiz}`);
+    await page.getByRole('button', { name: 'Iniciar' }).click();
+    await expect(page.getByRole('timer')).toBeVisible();
+
+    const primera = corto.preguntas[0];
+    await opcion(page, primera, primera.respuesta_correcta).check();
+
+    await page.clock.fastForward('01:05');
+
+    // Sin pulsar "Finalizar examen": el envío lo hace el temporizador
+    await expect(page.getByRole('heading', { name: 'Resultado' })).toBeVisible();
+    await expect(page.getByText('Sin contestar')).toHaveCount(corto.preguntas.length - 1);
+  });
+
   test('CA-3.2.2 Si faltan preguntas, avisa antes de enviar y las cuenta como incorrectas', async ({ page, context }) => {
     await iniciarSesion(context, 'maria');
     await page.goto(`/estudiante/quices/${quiz.id_quiz}`);
