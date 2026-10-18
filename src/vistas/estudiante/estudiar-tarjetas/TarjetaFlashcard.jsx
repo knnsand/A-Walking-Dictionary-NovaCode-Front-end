@@ -1,3 +1,5 @@
+import SugerenciasPalabras from './SugerenciasPalabras';
+
 // vistas/estudiante/estudiar-tarjetas/TarjetaFlashcard.jsx
 // HU-010 / CA-4.1.1: frente (palabra en inglés) y dorso (traducción, definición y ejemplo).
 //
