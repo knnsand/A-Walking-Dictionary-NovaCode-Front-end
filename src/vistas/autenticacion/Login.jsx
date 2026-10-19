@@ -1,6 +1,7 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../../contexto/useAuth';
 import { useTheme } from '../../contexto/useTheme';
 import { obtenerPerfil } from '../../cliente-api/perfilApi';
@@ -8,6 +9,7 @@ import { calcularPerfilCompleto } from '../../contexto/perfilCompleto';
 import './Login.css';
 
 export function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { loginWithGoogle, logout } = useAuth();
   const { tema, alternarTema } = useTheme();
@@ -16,7 +18,7 @@ export function Login() {
 
   async function manejarLoginGoogle(credentialResponse) {
     if (!credentialResponse?.credential) {
-      setError('No se recibió la credencial de Google.');
+      setError(t('auth.errors.noGoogleCredential'));
       return;
     }
 
@@ -44,13 +46,11 @@ export function Login() {
           { replace: true }
         );
       } else {
-        setError('El rol del usuario no es válido.');
+        setError(t('login.errors.invalidRole'));
       }
     } catch (errorLogin) {
-      setError(
-        errorLogin.message ||
-          'No se pudo iniciar sesión. Intenta nuevamente.'
-      );
+      // errorLogin.message viene del backend y puede estar en español (pendiente de revisar).
+      setError(errorLogin.message || t('login.errors.loginFailed'));
     } finally {
       setCargando(false);
     }
@@ -59,18 +59,16 @@ export function Login() {
   return (
     <main className="login">
       <button type="button" className="login__tema" onClick={alternarTema}>
-        {tema === 'claro' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
+        {tema === 'claro' ? `🌙 ${t('auth.darkMode')}` : `☀️ ${t('auth.lightMode')}`}
       </button>
 
       <section className="login__content">
         <div className="login__marca" aria-hidden="true" />
 
         <h1>A Walking Dictionary</h1>
-        <p className="login__subtitulo">Literatura Anglófona · Unicauca</p>
+        <p className="login__subtitulo">{t('auth.subtitle')}</p>
 
-        <p className="login__texto">
-          Inicia sesión con tu cuenta de Google para continuar.
-        </p>
+        <p className="login__texto">{t('login.prompt')}</p>
 
         {error && (
           <p role="alert" className="aviso aviso--error login__error">
@@ -79,16 +77,17 @@ export function Login() {
         )}
 
         {cargando ? (
-          <p>Iniciando sesión...</p>
+          <p>{t('login.loggingIn')}</p>
         ) : (
           <>
             <div className="login__google">
               <GoogleLogin
                 theme={tema === 'oscuro' ? 'filled_black' : 'outline'}
                 width="300"
+                locale="en"
                 onSuccess={manejarLoginGoogle}
                 onError={() => {
-                  setError('No se pudo iniciar sesión con Google.');
+                  setError(t('login.errors.googleFailed'));
                 }}
               />
             </div>
@@ -101,13 +100,15 @@ export function Login() {
                 navigate('/invitado');
               }}
             >
-              Continuar como invitado
+              {t('login.continueAsGuest')}
             </button>
 
             {/* HU-012: entrada al registro autónomo de estudiante. */}
             <p className="login__enlace">
-              ¿Aún no tienes cuenta?{' '}
-              <Link to="/registro">Regístrate como estudiante</Link>
+              <Trans
+                i18nKey="login.registerNotice"
+                components={{ registerlink: <Link to="/registro" /> }}
+              />
             </p>
           </>
         )}

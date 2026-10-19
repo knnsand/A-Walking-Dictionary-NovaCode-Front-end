@@ -119,6 +119,39 @@
   "createDeckModal": {
     "ariaLabel": "Create new study deck"
   },
+    "auth": {
+    "subtitle": "Anglophone Literature · Unicauca",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "errors": {
+      "noGoogleCredential": "No Google credential was received."
+    }
+  },
+  "header": {
+    "openMenu": "Open menu"
+  },
+  "login": {
+    "prompt": "Log in with your Google account to continue.",
+    "loggingIn": "Logging in...",
+    "continueAsGuest": "Continue as guest",
+    "registerNotice": "Don't have an account yet? <registerlink>Sign up as a student</registerlink>",
+    "errors": {
+      "invalidRole": "The user's role is not valid.",
+      "loginFailed": "Could not log in. Please try again.",
+      "googleFailed": "Could not log in with Google."
+    }
+  },
+  "register": {
+    "title": "Create student account",
+    "prompt": "Sign up with your institutional Google account to start using A Walking Dictionary.",
+    "creating": "Creating your account...",
+    "loginNotice": "Already have an account? <loginlink>Log in</loginlink>",
+    "errors": {
+      "studentsOnly": "Self-registration is only available for students.",
+      "registrationFailed": "Could not complete the registration. Please try again.",
+      "googleFailed": "Could not complete the registration with Google."
+    }
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
