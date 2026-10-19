@@ -1,1 +1,51 @@
-{}
+{
+  "sidebar": {
+    "brand": {
+      "logoAlt": "Universidad del Cauca crest",
+      "subtitle": "Anglophone Literature",
+      "institution": "Universidad del Cauca"
+    },
+    "actions": {
+      "createDeck": "+ Create Study Deck",
+      "addWord": "+ Add Word to Deck",
+      "joinCourse": "Join a course",
+      "logIn": "Log in",
+      "logOut": "Log out"
+    },
+    "guest": {
+      "name": "Guest",
+      "modeTitle": "Public Browsing Mode",
+      "modeDemo": "(Demo)"
+    },
+    "groups": {
+      "teacherManagement": "Teacher Management",
+      "myLearning": "My Learning"
+    },
+    "menu": {
+      "globalDictionary": "Global Dictionary",
+      "studyDecks": "Study Decks",
+      "wordReview": "Word Review",
+      "coursesAndStudents": "Courses & Students",
+      "quizzesAndDifficulty": "Quizzes & Difficulty",
+      "participationAnalytics": "Participation Analytics",
+      "studyMode": "Study Mode",
+      "quizzes": "Quizzes",
+      "progressAndPerformance": "Progress & Performance",
+      "settingsAndProfile": "Settings & Profile"
+    },
+    "theme": {
+      "dark": "Dark Mode",
+      "light": "Light Mode"
+    },
+    "tooltips": {
+      "completeProfile": "Complete your profile in Settings & Profile to enable this option",
+      "notAvailable": "This section is not available yet"
+    },
+    "profileNotice": "Go to <profilelink>Settings & Profile</profilelink> and complete your academic profile to unlock these options."
+  },
+  "roles": {
+    "docente": "Teacher",
+    "estudiante": "Student",
+    "invitado": "Guest"
+  }
+}
