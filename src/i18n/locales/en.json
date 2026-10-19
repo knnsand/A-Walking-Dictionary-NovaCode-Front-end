@@ -152,6 +152,86 @@
       "googleFailed": "Could not complete the registration with Google."
     }
   },
+    "studentPanel": {
+    "title": "My Contributions",
+    "subtitle": "Register new words in the available decks.",
+    "actions": {
+      "registerWord": "Register word",
+      "joinCourse": "Join a course"
+    }
+  },
+  "profilePage": {
+    "title": "Account Settings",
+    "subtitle": "Preferences and academic identity",
+    "loading": "Loading profile...",
+    "info": {
+      "title": "Profile Information",
+      "fullName": "Full name:",
+      "institutionalEmail": "Institutional email:",
+      "institutionalRole": "Institutional role:"
+    },
+    "appearance": {
+      "title": "System Appearance",
+      "switchToDark": "Switch to dark mode",
+      "switchToLight": "Switch to light mode"
+    },
+    "academic": {
+      "title": "Academic Context",
+      "assignedCourse": "Assigned course:",
+      "activeSemester": "Active semester:",
+      "university": "Universidad del Cauca"
+    },
+    "errors": {
+      "loadFailed": "Could not load the profile."
+    }
+  },
+  "profileForm": {
+    "avatarUrl": "Avatar URL",
+    "avatarPlaceholder": "https://example.com/avatar.jpg",
+    "avatarPreviewAlt": "Avatar preview",
+    "cefrLevel": "CEFR level",
+    "studentCode": "Student code",
+    "interests": "Interests",
+    "interestsPlaceholder": "Example: programming, music, video games",
+    "actions": {
+      "save": "Save Changes",
+      "saving": "Saving..."
+    },
+    "success": "Profile updated successfully.",
+    "errors": {
+      "invalidData": "Check your profile data. Verify your CEFR level, student code, interests and avatar.",
+      "updateFailed": "Could not update the profile. Please try again."
+    }
+  },
+  "cefrLevels": {
+    "A1": "Basic everyday phrases",
+    "A2": "Frequently used expressions",
+    "B1": "Clear, everyday texts",
+    "B2": "Understanding of complex literary texts",
+    "C1": "Fluency and thorough critical analysis",
+    "C2": "Native or near-native mastery"
+  },
+  "joinCourseForm": {
+    "title": "Join a course",
+    "subtitle": "Enter the code your teacher shared with you.",
+    "close": "Close",
+    "accessCode": "Access code",
+    "accessCodePlaceholder": "E.g., LIT2026",
+    "actions": {
+      "cancel": "Cancel",
+      "join": "Join course",
+      "joining": "Joining..."
+    },
+    "success": "You joined the course successfully.",
+    "errors": {
+      "codeRequired": "Enter the access code provided by your teacher.",
+      "noStudent": "No simulated student is configured (VITE_ESTUDIANTE_ID_SIMULADO). Check your .env.local file.",
+      "joinFailed": "Could not join the course. Please try again."
+    }
+  },
+  "joinCourseModal": {
+    "ariaLabel": "Join a course"
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",

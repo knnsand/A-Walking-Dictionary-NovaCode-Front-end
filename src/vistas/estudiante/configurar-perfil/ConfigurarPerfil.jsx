@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexto/useAuth';
 import { useTheme } from '../../../contexto/useTheme';
 import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
@@ -6,6 +7,7 @@ import { obtenerPerfil, obtenerContextoAcademico } from '../../../cliente-api/pe
 import { ConfigurarPerfilForm } from './ConfigurarPerfilForm';
 
 export function ConfigurarPerfil() {
+  const { t } = useTranslation();
   const { estudianteId, completarPerfilInicial } = useAuth();
   const { tema, alternarTema } = useTheme();
   const [perfil, setPerfil] = useState(null);
@@ -16,8 +18,8 @@ export function ConfigurarPerfil() {
   // El título de la página lo pinta el layout (barra superior). Debe ir antes
   // de los return anticipados de abajo para respetar las reglas de los hooks.
   useEncabezadoPagina(
-    'Configuración de la Cuenta',
-    'Preferencias e identidad académica'
+    t('profilePage.title'),
+    t('profilePage.subtitle')
   );
 
   useEffect(() => {
@@ -32,7 +34,8 @@ export function ConfigurarPerfil() {
         setContexto(datosContexto);
       } catch (error) {
           console.error('Error al cargar el perfil:', error);
-          setErrorCarga(error.message || 'No se pudo cargar el perfil.');
+          // error.message viene del backend y puede estar en español (pendiente de revisar).
+          setErrorCarga({ mensaje: error.message || null });
         } finally {
         setCargando(false);
       }
@@ -41,17 +44,17 @@ export function ConfigurarPerfil() {
     cargarDatos();
   }, [estudianteId]);
 
-  if (cargando) return <p>Cargando perfil...</p>;
-  if (errorCarga) { return <p role="alert">{errorCarga}</p>;}
+  if (cargando) return <p>{t('profilePage.loading')}</p>;
+  if (errorCarga) { return <p role="alert">{errorCarga.mensaje || t('profilePage.errors.loadFailed')}</p>;}
 
   return (
     <div className="configurar-perfil">
         <div className="configurar-perfil__grid">
         <section className="tarjeta">
-            <h3>Información del Perfil</h3>
-            <p><strong>Nombre completo:</strong> {perfil.nombre_completo}</p>
-            <p><strong>Correo institucional:</strong> {perfil.correo}</p>
-            <p><strong>Rol institucional:</strong> {perfil.rol}</p>
+            <h3>{t('profilePage.info.title')}</h3>
+            <p><strong>{t('profilePage.info.fullName')}</strong> {perfil.nombre_completo}</p>
+            <p><strong>{t('profilePage.info.institutionalEmail')}</strong> {perfil.correo}</p>
+            <p><strong>{t('profilePage.info.institutionalRole')}</strong> {perfil.rol}</p>
 
             <ConfigurarPerfilForm
               datosIniciales={perfil}
@@ -66,17 +69,19 @@ export function ConfigurarPerfil() {
 
         <div className="configurar-perfil__columna-derecha">
             <section className="tarjeta">
-            <h3>Apariencia del Sistema</h3>
+            <h3>{t('profilePage.appearance.title')}</h3>
             <button className="sidebar__tema-btn" type="button" onClick={alternarTema}>
-                {tema === 'claro' ? '🌙 Cambiar a modo oscuro' : '☀️ Cambiar a modo claro'}
+                {tema === 'claro'
+                  ? `🌙 ${t('profilePage.appearance.switchToDark')}`
+                  : `☀️ ${t('profilePage.appearance.switchToLight')}`}
             </button>
             </section>
 
             <section className="tarjeta tarjeta--contexto-academico">
-            <h3>Contexto Académico</h3>
-            <p><strong>Curso asignado:</strong> {contexto.curso_asignado}</p>
-            <p><strong>Semestre activo:</strong> {contexto.semestre_activo}</p>
-            <p><strong>Universidad del Cauca</strong> {contexto.departamento_universidad}</p>
+            <h3>{t('profilePage.academic.title')}</h3>
+            <p><strong>{t('profilePage.academic.assignedCourse')}</strong> {contexto.curso_asignado}</p>
+            <p><strong>{t('profilePage.academic.activeSemester')}</strong> {contexto.semestre_activo}</p>
+            <p><strong>{t('profilePage.academic.university')}</strong> {contexto.departamento_universidad}</p>
             </section>
         </div>
         </div>

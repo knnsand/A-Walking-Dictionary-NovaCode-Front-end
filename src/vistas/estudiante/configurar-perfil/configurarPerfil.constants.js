@@ -1,10 +1,10 @@
 export const NIVELES_MCER = [
-  { value: 'A1', descripcion: 'Frases cotidianas elementales' },
-  { value: 'A2', descripcion: 'Expresiones de uso frecuente' },
-  { value: 'B1', descripcion: 'Textos claros y cotidianos' },
-  { value: 'B2', descripcion: 'Comprensión de textos literarios complejos' },
-  { value: 'C1', descripcion: 'Fluidez y análisis crítico exhaustivo' },
-  { value: 'C2', descripcion: 'Dominio nativo o casi nativo' },
+  { value: 'A1', descripcionKey: 'cefrLevels.A1' },
+  { value: 'A2', descripcionKey: 'cefrLevels.A2' },
+  { value: 'B1', descripcionKey: 'cefrLevels.B1' },
+  { value: 'B2', descripcionKey: 'cefrLevels.B2' },
+  { value: 'C1', descripcionKey: 'cefrLevels.C1' },
+  { value: 'C2', descripcionKey: 'cefrLevels.C2' },
 ];
 
 export const FORM_INICIAL = {
