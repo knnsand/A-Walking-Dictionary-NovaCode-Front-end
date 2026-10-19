@@ -5,6 +5,7 @@
 // (SM2Service) trabajan con cuatro valoraciones. Se mantiene el estilo circular del diseño y
 // se amplía a cuatro.
 
+import { useTranslation } from 'react-i18next';
 import { VALORACIONES_UI } from './estudiarTarjetas.constants';
 
 const ICONO = {
@@ -59,10 +60,13 @@ const ICONOS = {
  * @param {Function} props.onValorar   Recibe el texto exacto que espera el back.
  */
 export function BotonesValoracion({ habilitado, guardando, onValorar }) {
+  const { t } = useTranslation();
+
   return (
-    <div className="estudiar-valoracion" role="group" aria-label="¿Qué tan bien la recordaste?">
-      {VALORACIONES_UI.map(({ id, valor, tecla, etiqueta }) => {
+    <div className="estudiar-valoracion" role="group" aria-label={t('studySession.ratings.question')}>
+      {VALORACIONES_UI.map(({ id, valor, tecla, etiquetaKey }) => {
         const Icono = ICONOS[id];
+        const etiqueta = t(etiquetaKey);
         return (
           <div key={id} className="estudiar-valoracion__item">
             <button
@@ -70,7 +74,7 @@ export function BotonesValoracion({ habilitado, guardando, onValorar }) {
               className={`estudiar-valoracion__boton estudiar-valoracion__boton--${id}`}
               disabled={!habilitado || guardando}
               aria-keyshortcuts={tecla}
-              aria-label={`${etiqueta} (tecla ${tecla})`}
+              aria-label={t('studySession.ratings.keyLabel', { label: etiqueta, key: tecla })}
               onClick={() => onValorar(valor)}
             >
               <Icono />

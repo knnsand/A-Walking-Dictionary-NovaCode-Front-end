@@ -232,6 +232,66 @@
   "joinCourseModal": {
     "ariaLabel": "Join a course"
   },
+    "studySession": {
+    "title": "Vocabulary Review",
+    "mode": "Interactive 3D flashcards mode",
+    "weekAndMode": "Week {{week}} · {{mode}}",
+    "ariaLabel": "Study mode",
+    "backToDecks": "Back to decks",
+    "loading": "Preparing your cards…",
+    "contextTags": "Context tags",
+    "endSession": "End review session",
+    "progress": {
+      "label": "Session progress",
+      "cardOf": "Card {{current}} of {{total}}",
+      "term": "Term {{current}}/{{total}}"
+    },
+    "feedback": {
+      "repeat": "Saved. This card will return at the end of the session.",
+      "saved": "Saved.",
+      "nextReview_one": "Saved. Next review in {{count}} day.",
+      "nextReview_other": "Saved. Next review in {{count}} days."
+    },
+    "errors": {
+      "title": "We couldn't load your review",
+      "retry": "Retry",
+      "noEnrollment": "Your course enrollment was not found. Go back to the decks and try again.",
+      "unknown": "Something went wrong. Please try again.",
+      "saveFailed": "Could not save your rating: {{message}} Choose an option to try again."
+    },
+    "empty": {
+      "title": "You have no cards to review right now",
+      "text": "They will appear here when the next review of a word is due or when the teacher approves new words in the open decks.",
+      "reload": "Reload"
+    },
+    "summary": {
+      "title": "Session completed",
+      "reviewed_one": "You reviewed {{count}} card in {{duration}}.",
+      "reviewed_other": "You reviewed {{count}} cards in {{duration}}.",
+      "ratingsRecorded_one": "{{count}} rating recorded",
+      "ratingsRecorded_other": "{{count}} ratings recorded"
+    },
+    "ratings": {
+      "question": "How well did you remember it?",
+      "keyLabel": "{{label}} (key {{key}})",
+      "repeat": "Repeat",
+      "hard": "Hard",
+      "good": "Good",
+      "easy": "Easy"
+    },
+    "card": {
+      "flip": "Flip card",
+      "clickToFlip": "Click to flip card",
+      "again": "Again",
+      "termToRemember": "Term to remember",
+      "listen": "Listen to the pronunciation of {{word}}",
+      "shortcutSpace": "Space",
+      "shortcutFlip": "Flip",
+      "translation": "Translation:",
+      "definition": "Academic definition:",
+      "quoteContext": "Literary quote & textual context"
+    }
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
