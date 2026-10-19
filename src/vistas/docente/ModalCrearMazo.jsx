@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CrearMazoForm } from "./crear-mazo/CrearMazoForm";
 /**
  * Envoltorio de modal para CrearMazoForm (HU-001). No modifica la
@@ -10,6 +11,8 @@ import { CrearMazoForm } from "./crear-mazo/CrearMazoForm";
  * (ver handleMazoCreado).
  */
 export function ModalCrearMazo({ onCerrar, onMazoCreado }) {
+  const { t } = useTranslation();
+
   useEffect(() => {
     function handleEscape(evento) {
       if (evento.key === 'Escape') onCerrar();
@@ -32,7 +35,7 @@ export function ModalCrearMazo({ onCerrar, onMazoCreado }) {
       className="modal-overlay"
       role="dialog"
       aria-modal="true"
-      aria-label="Crear nuevo mazo de estudio"
+      aria-label={t('createDeckModal.ariaLabel')}
       onClick={handleClicFondo}
     >
       <div className="modal-card">

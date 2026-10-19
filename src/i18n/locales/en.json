@@ -85,6 +85,40 @@
     "ghanaian": "Ghanaian",
     "american": "American"
   },
+    "createDeckForm": {
+    "title": "Create New Study Deck",
+    "subtitle": "Creation tool exclusively for the Teacher",
+    "close": "Close",
+    "fields": {
+      "week": "Week/period",
+      "selectWeek": "Select a week",
+      "course": "Course/group",
+      "selectCourse": "Select a course",
+      "work": "Literary work / assigned reading",
+      "author": "Author",
+      "openingDate": "Opening date",
+      "closingDate": "Closing date",
+      "regionalVariant": "Default regional variant"
+    },
+    "weekOption": "Week {{week}} · {{date}}",
+    "requiredLegend": "Fields marked with * are required.",
+    "info": "Once the deck is created, the students in the course will be able to contribute words and examples for your review.",
+    "actions": {
+      "cancel": "Cancel",
+      "create": "Create deck",
+      "creating": "Creating..."
+    },
+    "success": "Deck \"{{name}}\" created successfully.",
+    "errors": {
+      "requiredFields": "Complete all required fields before creating the deck.",
+      "invalidDates": "The closing date must be the same as or later than the opening date.",
+      "noTeacher": "No simulated teacher is configured (VITE_DOCENTE_ID_SIMULADO). Check your .env.local file.",
+      "createFailed": "Could not create the deck: {{message}}"
+    }
+  },
+  "createDeckModal": {
+    "ariaLabel": "Create new study deck"
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",

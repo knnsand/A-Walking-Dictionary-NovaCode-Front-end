@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { listarCursos } from '../../../cliente-api/cursosApi';
 import { crearMazo } from '../../../cliente-api/mazosApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
@@ -13,17 +14,39 @@ import {
 
 import {
   VARIANTES_REGIONALES,
+  VARIANTE_REGIONAL_CLAVES,
   SEMANAS_SEMESTRE,
   FORM_INICIAL,
 } from './crearMazo.constants';
 
 
 export function CrearMazoForm({ onMazoCreado, onCerrar }) {
+  const { t, i18n } = useTranslation();
   const { docenteId } = useAuth();
   const [cursos, setCursos] = useState([]);
   const [form, setForm] = useState(FORM_INICIAL);
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
   const [enviando, setEnviando] = useState(false);
+
+  // Formatea mes y día de cada semana (por ejemplo "August 6") según el idioma activo.
+  const formatoFecha = new Intl.DateTimeFormat(i18n.language, {
+    month: 'long',
+    day: 'numeric',
+  });
+
+  function etiquetaSemana(semana) {
+    return t('createDeckForm.weekOption', {
+      week: semana.value,
+      date: formatoFecha.format(new Date(2000, semana.mes - 1, semana.dia)),
+    });
+  }
+
+  // La variante se guarda en español en la base de datos; aquí solo se traduce
+  // lo que se muestra. Si llegara un valor desconocido, se muestra tal cual.
+  function etiquetaVariante(variante) {
+    const clave = VARIANTE_REGIONAL_CLAVES[variante];
+    return clave ? t(clave) : variante;
+  }
 
   useEffect(() => {
     listarCursos().then(setCursos);
@@ -38,20 +61,17 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
     evento.preventDefault();
 
     if (!validarCamposObligatorios(form)) {
-      setAviso({ tipo: 'error', mensaje: 'Completa todos los campos obligatorios antes de crear el mazo.' });
+      setAviso({ tipo: 'error', mensaje: t('createDeckForm.errors.requiredFields') });
       return;
     }
 
     if (!validarFechas(form)) {
-      setAviso({ tipo: 'error', mensaje: 'La fecha de cierre debe ser igual o posterior a la fecha de apertura.' });
+      setAviso({ tipo: 'error', mensaje: t('createDeckForm.errors.invalidDates') });
       return;
     }
 
     if (!docenteId) {
-      setAviso({
-        tipo: 'error',
-        mensaje: 'No hay un docente simulado configurado (VITE_DOCENTE_ID_SIMULADO). Revisa tu archivo .env.local.',
-      });
+      setAviso({ tipo: 'error', mensaje: t('createDeckForm.errors.noTeacher') });
       return;
     }
 
@@ -62,11 +82,18 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
         curso_id: Number(form.curso_id),
         docente_id: docenteId,
       });
-      setAviso({ tipo: 'exito', mensaje: `Mazo "${mazoCreado.nombre_lectura}" creado correctamente.` });
+      setAviso({
+        tipo: 'exito',
+        mensaje: t('createDeckForm.success', { name: mazoCreado.nombre_lectura }),
+      });
       setForm((anterior) => ({ ...anterior, nombre_lectura: '', autor: '', semana: '', fecha_apertura: '', fecha_cierre: '' }));
       onMazoCreado?.(mazoCreado);
     } catch (error) {
-      setAviso({ tipo: 'error', mensaje: `No se pudo crear el mazo: ${error.message}` });
+      // error.message viene del backend y puede estar en español (pendiente de revisar).
+      setAviso({
+        tipo: 'error',
+        mensaje: t('createDeckForm.errors.createFailed', { message: error.message }),
+      });
     } finally {
       setEnviando(false);
     }
@@ -104,15 +131,15 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
           </svg>
         </div>
         <div>
-          <h2 className="card-mazo__title">Crear Nuevo Mazo de Estudio</h2>
-          <p className="card-mazo__subtitle">Herramienta exclusiva de creación para el Docente</p>
+          <h2 className="card-mazo__title">{t('createDeckForm.title')}</h2>
+          <p className="card-mazo__subtitle">{t('createDeckForm.subtitle')}</p>
         </div>
 
         <button
           type="button"
           className="card-mazo__close"
           onClick={onCerrar}
-          aria-label="Cerrar"
+          aria-label={t('createDeckForm.close')}
         >
           ×
         </button>
@@ -123,18 +150,18 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
 
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label form-label--obligatorio" htmlFor="semana">Semana/periodo</label>
+            <label className="form-label form-label--obligatorio" htmlFor="semana">{t('createDeckForm.fields.week')}</label>
             <select id="semana" className="form-select" name="semana" value={form.semana} onChange={handleChange}>
-              <option value="">Selecciona una semana</option>
+              <option value="">{t('createDeckForm.fields.selectWeek')}</option>
               {SEMANAS_SEMESTRE.map((semana) => (
-                <option key={semana.value} value={semana.value}>{semana.label}</option>
+                <option key={semana.value} value={semana.value}>{etiquetaSemana(semana)}</option>
               ))}
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label form-label--obligatorio" htmlFor="curso_id">Curso/grupo</label>
+            <label className="form-label form-label--obligatorio" htmlFor="curso_id">{t('createDeckForm.fields.course')}</label>
             <select id="curso_id" className="form-select" name="curso_id" value={form.curso_id} onChange={handleChange}>
-              <option value="">Selecciona un curso</option>
+              <option value="">{t('createDeckForm.fields.selectCourse')}</option>
               {cursos.map((curso) => (
                 <option key={curso.id_curso} value={curso.id_curso}>{curso.nombre}</option>
               ))}
@@ -144,29 +171,29 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
 
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label form-label--obligatorio" htmlFor="nombre_lectura">Obra literaria / lectura asignada</label>
+            <label className="form-label form-label--obligatorio" htmlFor="nombre_lectura">{t('createDeckForm.fields.work')}</label>
             <input id="nombre_lectura" className="form-input" type="text" name="nombre_lectura" value={form.nombre_lectura} onChange={handleChange} />
           </div>
           <div className="form-group">
-            <label className="form-label form-label--obligatorio" htmlFor="autor">Autor</label>
+            <label className="form-label form-label--obligatorio" htmlFor="autor">{t('createDeckForm.fields.author')}</label>
             <input id="autor" className="form-input" type="text" name="autor" value={form.autor} onChange={handleChange} />
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label form-label--obligatorio" htmlFor="fecha_apertura">Fecha de apertura </label>
+            <label className="form-label form-label--obligatorio" htmlFor="fecha_apertura">{t('createDeckForm.fields.openingDate')}</label>
             <input id="fecha_apertura" className="form-input" type="date" name="fecha_apertura" value={form.fecha_apertura} onChange={handleChange} />
           </div>
           <div className="form-group">
-            <label className="form-label form-label--obligatorio" htmlFor="fecha_cierre">Fecha de cierre </label>
+            <label className="form-label form-label--obligatorio" htmlFor="fecha_cierre">{t('createDeckForm.fields.closingDate')}</label>
             <input id="fecha_cierre" className="form-input" type="date" name="fecha_cierre" value={form.fecha_cierre} onChange={handleChange} />
           </div>
         </div>
 
         <div className="form-group">
-          <span className="form-label form-label--obligatorio">Variante regional predeterminada</span>
-          <div className="chip-group" role="radiogroup" aria-label="Variante regional predeterminada">
+          <span className="form-label form-label--obligatorio">{t('createDeckForm.fields.regionalVariant')}</span>
+          <div className="chip-group" role="radiogroup" aria-label={t('createDeckForm.fields.regionalVariant')}>
             {VARIANTES_REGIONALES.map((variante) => (
               <div className="chip-option" key={variante}>
                 <input
@@ -177,23 +204,23 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
                   checked={form.variante_regional_predeterminada === variante}
                   onChange={handleChange}
                 />
-                <label htmlFor={`variante-${variante}`}>{variante}</label>
+                <label htmlFor={`variante-${variante}`}>{etiquetaVariante(variante)}</label>
               </div>
             ))}
           </div>
         </div>
 
-        <p className="form-leyenda-obligatorio">Los campos marcados con * son obligatorios.</p>
+        <p className="form-leyenda-obligatorio">{t('createDeckForm.requiredLegend')}</p>
 
         <div className="info-box">
-          Una vez creado el mazo, los estudiantes del curso podrán aportar palabras y ejemplos para tu revisión.
+          {t('createDeckForm.info')}
         </div>
       </div>
 
       <div className="card-mazo__footer">
-        <button type="button" className="btn btn-secondary" onClick={onCerrar}> Cancelar</button>
+        <button type="button" className="btn btn-secondary" onClick={onCerrar}>{t('createDeckForm.actions.cancel')}</button>
         <button type="submit" className="btn btn-primary" disabled={enviando}>
-          {enviando ? 'Creando...' : 'Crear mazo'}
+          {enviando ? t('createDeckForm.actions.creating') : t('createDeckForm.actions.create')}
         </button>
       </div>
     </form>
