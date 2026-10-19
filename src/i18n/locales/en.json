@@ -43,6 +43,20 @@
     },
     "profileNotice": "Go to <profilelink>Settings & Profile</profilelink> and complete your academic profile to unlock these options."
   },
+  
+  "studyDecksPage": {
+    "title": "Study Decks",
+    "subtitle": "Organized by week",
+    "errors": {
+      "loadFailed": "Could not load the decks."
+    },
+    "empty": {
+      "docente": "No decks have been created yet.",
+      "estudiante": "You don't have any decks available yet. Join a course to see them.",
+      "invitado": "There are no decks available yet."
+    }
+  },  
+  
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",

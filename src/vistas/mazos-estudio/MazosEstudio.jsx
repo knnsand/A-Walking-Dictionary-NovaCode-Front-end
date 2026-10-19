@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { listarMazos } from '../../cliente-api/mazosApi';
 import { MazoItem } from '../docente/crear-mazo/MazoItem';
@@ -9,16 +10,10 @@ import { useEncabezadoPagina } from '../../contexto/useEncabezadoPagina';
 // Ordena por semana (soporta números y textos como "2-3") y, a igual semana, por id.
 function compararPorSemana(a, b) {
   return (
-    String(a.semana).localeCompare(String(b.semana), 'es', { numeric: true }) ||
+    String(a.semana).localeCompare(String(b.semana), 'en', { numeric: true }) ||
     a.id_mazo - b.id_mazo
   );
 }
-
-const MENSAJE_VACIO = {
-  docente: 'Todavía no se han creado mazos.',
-  estudiante: 'Aún no tienes mazos disponibles. Únete a un curso para verlos.',
-  invitado: 'Todavía no hay mazos disponibles.',
-};
 
 /**
  * Vista "Mazos de estudio", compartida por los tres roles.
@@ -31,11 +26,13 @@ const MENSAJE_VACIO = {
  *   tras crear un mazo).
  */
 export function MazosEstudio({ rol, refrescarTrigger }) {
+  const { t } = useTranslation();
   const [mazos, setMazos] = useState([]);
+  // Guarda la CLAVE de traducción del error (no el texto); se traduce al mostrarlo.
   const [error, setError] = useState(null);
 
   // El título de la página lo pinta el layout (barra superior).
-  useEncabezadoPagina('Mazos de estudio', 'Organizados por semana');
+  useEncabezadoPagina(t('studyDecksPage.title'), t('studyDecksPage.subtitle'));
 
   const cargarMazos = useCallback(() => {
     setError(null);
@@ -43,7 +40,7 @@ export function MazosEstudio({ rol, refrescarTrigger }) {
       .then(setMazos)
       .catch((e) => {
         console.error(e);
-        setError('No se pudieron cargar los mazos.');
+        setError('studyDecksPage.errors.loadFailed');
       });
   }, []);
 
@@ -65,12 +62,16 @@ export function MazosEstudio({ rol, refrescarTrigger }) {
     <section className="mazos-creados">
       {error && (
         <p className="mazo-card__error" role="alert">
-          {error}
+          {t(error)}
         </p>
       )}
 
       {mazosOrdenados.length === 0 && !error ? (
-        <p className="empty-state">{MENSAJE_VACIO[rol] ?? MENSAJE_VACIO.invitado}</p>
+        <p className="empty-state">
+          {t(`studyDecksPage.empty.${rol}`, {
+            defaultValue: t('studyDecksPage.empty.invitado'),
+          })}
+        </p>
       ) : (
         <ul className="mazos-grid">
           {mazosOrdenados.map((mazo) => (
