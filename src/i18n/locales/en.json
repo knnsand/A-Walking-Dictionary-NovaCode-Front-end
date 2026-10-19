@@ -56,7 +56,35 @@
       "invitado": "There are no decks available yet."
     }
   },  
-  
+    "deckCard": {
+    "week": "Week {{week}}",
+    "regionalVariant": "Regional variant",
+    "status": {
+      "open": "Deck open for contributions",
+      "closed": "Deck closed"
+    },
+    "actions": {
+      "close": "Close deck",
+      "open": "Open deck",
+      "saving": "Saving...",
+      "viewWords": "View deck words"
+    },
+    "aria": {
+      "close": "Close deck {{name}}",
+      "open": "Open deck {{name}}",
+      "study": "Study the words of deck {{name}}"
+    },
+    "errors": {
+      "changeStateFailed": "Could not change the deck status."
+    }
+  },
+  "regionalVariants": {
+    "british": "British",
+    "nigerian": "Nigerian",
+    "jamaican": "Jamaican",
+    "ghanaian": "Ghanaian",
+    "american": "American"
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",

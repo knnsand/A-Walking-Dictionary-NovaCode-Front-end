@@ -6,6 +6,16 @@ export const VARIANTES_REGIONALES = [
   'Estadounidense',
 ];
 
+// Clave de traducción de cada variante regional. El valor en español es el que
+// se guarda en la base de datos y NO cambia; solo se traduce lo que se muestra.
+export const VARIANTE_REGIONAL_CLAVES = {
+  Británico: 'regionalVariants.british',
+  Nigeriano: 'regionalVariants.nigerian',
+  Jamaicano: 'regionalVariants.jamaican',
+  Ghanés: 'regionalVariants.ghanaian',
+  Estadounidense: 'regionalVariants.american',
+};
+
 export const ESTADOS = [
   { value: 'abierto', label: 'Abierto' },
   { value: 'cerrado', label: 'Cerrado' },
