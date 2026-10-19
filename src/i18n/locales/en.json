@@ -292,6 +292,61 @@
       "quoteContext": "Literary quote & textual context"
     }
   },
+    "registerWordModal": {
+    "ariaLabel": "Add new word to the deck"
+  },
+  "registerWordForm": {
+    "title": "Add New Word to the Deck",
+    "close": "Close",
+    "requiredLegend": "Fields marked with * are required.",
+    "duplicate": {
+      "sameTitle": "⚠️ This word already exists in the deck, with the same definition.",
+      "sameText": "You will be added as a co-author of the existing contribution; no new card will be created.",
+      "differentTitle": "⚠️ This word already exists in the deck, with a different definition.",
+      "differentText": "Your contribution will be saved as an additional meaning, without overwriting the existing one.",
+      "cancel": "Cancel",
+      "confirm": "Confirm and submit"
+    },
+    "lexical": {
+      "title": "Lexical information",
+      "word": "Word",
+      "wordPlaceholder": "E.g., Doppelgänger, Sublime...",
+      "translation": "Translation",
+      "translationPlaceholder": "E.g., Doble",
+      "definition": "Definition",
+      "definitionPlaceholder": "A precise explanation of the meaning...",
+      "example": "Example",
+      "examplePlaceholder": "Write a sentence that shows how the word is used...",
+      "characterCount": "{{current}}/{{max}} characters"
+    },
+    "assignment": {
+      "title": "Assignment to the reading deck",
+      "helper": "The word will be added to the selected deck.",
+      "deck": "Reading deck",
+      "selectDeck": "Select a deck",
+      "noOpenDecks": "There are no open decks in your courses. If you haven't enrolled yet, join a course with the access code your teacher gives you."
+    },
+    "reviewNotice": {
+      "title": "ℹ️ Contribution for teacher review",
+      "text": "Your proposal will be sent to the teacher's review panel for academic review and approval."
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Submit word for approval"
+    },
+    "success": {
+      "coauthor": "You were registered as a co-author: this word already existed in the deck with the same information.",
+      "newMeaning": "Additional meaning registered successfully for teacher review.",
+      "submitted": "Word submitted successfully for teacher review."
+    },
+    "errors": {
+      "loadDecks": "Could not load the available decks.",
+      "requiredFields": "Complete the required fields: word, translation and definition.",
+      "exampleTooLong": "The example cannot exceed {{max}} characters.",
+      "selectDeck": "Select a deck to continue.",
+      "processFailed": "Could not process the word. Please try again."
+    }
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
