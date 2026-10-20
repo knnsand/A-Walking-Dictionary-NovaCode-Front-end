@@ -40,6 +40,21 @@ La preparación global completa el perfil de Juan, María, Karen y Manuela, porq
 
 En `reportes-e2e/html` (abrir con `npx playwright show-report reportes-e2e/html`) y `reportes-e2e/junit.xml`. Si una prueba falla, guarda captura de pantalla y *trace* (`npx playwright show-trace <archivo>.zip`). En GitHub Actions se descarga como artefacto `reporte-pruebas-e2e`.
 
+### Resumen de métricas
+
+`reportes-e2e/resumen.html` es un tablero con las métricas de la ejecución. En GitHub Actions va en el mismo artefacto y una versión corta aparece en la página de la ejecución (Summary). En local: `npm run test:e2e` y luego `npm run test:e2e:resumen`. Lo genera `soporte/generar-resumen.js` a partir de `reportes-e2e/resultados.json`.
+
+| Métrica | Cálculo |
+|---|---|
+| Tasa de éxito | pasan ÷ ejecutadas (ejecutadas = pasan + fallan + errores conocidos) |
+| Cobertura de CA | criterios con al menos una prueba E2E ejecutada ÷ criterios en alcance |
+| CA aprobados | criterios con todas sus pruebas en verde ÷ criterios en alcance |
+| Pruebas inestables | pruebas que fallaron y pasaron al reintentar (en CI hay 1 reintento) ÷ ejecutadas |
+| Duración | total, promedio por prueba y las 5 más lentas |
+| Deuda abierta | errores conocidos (`test.fail`) + pendientes (`test.fixme`), con su motivo |
+
+Además: resultados por épica y por HU, fallas con su captura y *trace*, y la matriz de trazabilidad CA → estado. Los criterios en alcance son los de `backend/pruebas-funcionales/criterios.json` del repo del back (la misma lista que usan las pruebas funcionales); se toman de `BACK_REPO`, o con `--criterios <archivo>`. Los CA que las E2E no prueban (por ejemplo HU-5.1) cuentan como "sin prueba".
+
 ## Qué cubre
 
 | Archivo | HU |
