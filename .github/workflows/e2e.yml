@@ -106,6 +106,12 @@ jobs:
           echo "===== backend =====" && cat backend.log
           echo "===== frontend =====" && cat frontend.log
 
+      # Tablero de métricas (reportes-e2e/resumen.html) y resumen en la página de la ejecución.
+      # Corre aunque fallen las pruebas; no hace fallar el job.
+      - name: Generar resumen de métricas
+        if: always()
+        run: npm run test:e2e:resumen
+
       - name: Publicar reporte
         if: always()
         uses: actions/upload-artifact@v4

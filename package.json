@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:resumen": "node e2e/soporte/generar-resumen.js"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
