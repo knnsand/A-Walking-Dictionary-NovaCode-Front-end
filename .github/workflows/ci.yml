@@ -30,11 +30,8 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
-      # Informativo: hay errores de ESLint preexistentes (react-hooks/set-state-in-effect).
-      # Se quitará continue-on-error cuando se corrijan.
       - name: Lint
         run: npm run lint
-        continue-on-error: true
 
       - name: Pruebas unitarias
         run: npm test
