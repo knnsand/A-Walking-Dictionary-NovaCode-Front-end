@@ -650,6 +650,9 @@
       "genericError": "An unexpected error occurred. Please try again."
     }
   },
+    "api": {
+    "requestFailed": "Error {{status}} when calling {{path}}"
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
