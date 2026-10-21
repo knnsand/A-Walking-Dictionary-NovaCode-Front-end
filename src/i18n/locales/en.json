@@ -666,6 +666,12 @@
       "loadFailed": "Could not load the readings."
     }
   },
+    "exportActions": {
+    "deckPdf": "Export to PDF",
+    "deckPdfAria": "Export the deck {{name}} to PDF",
+    "quizPrintable": "Export printable version",
+    "quizPrintableAria": "Export printable version of the quiz {{title}}"
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",

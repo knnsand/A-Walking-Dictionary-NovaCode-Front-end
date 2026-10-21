@@ -3,13 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { listarCursos } from '../../../cliente-api/cursosApi';
 import { listarMazos } from '../../../cliente-api/mazosApi';
 import { generarQuiz } from '../../../cliente-api/quizzesApi';
+import { exportarQuizPdf } from '../../../cliente-api/exportacionesApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
+import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
 import { useAuth } from '../../../contexto/useAuth';
 import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import { TEXTOS_CLAVES, TITULO_MAX } from './generarQuiz.constants';
 import { validarFormularioQuiz } from './generarQuiz.validation';
 import { construirPayloadQuiz } from './generarQuiz.payload';
 import { VistaPreviaQuiz } from './VistaPreviaQuiz';
+import { ListaQuices } from '../../quices/ListaQuices';
 import './generar-quiz.css';
 
 const FORM_INICIAL = {
@@ -356,7 +359,25 @@ export function GenerarQuiz() {
         </div>
       </form>
 
-      {resultado && <VistaPreviaQuiz preguntas={resultado.preguntas} />}
+      {resultado && (
+        <>
+          {/* HU-3.3 (CA-3.3.2): exportar de inmediato el quiz recién generado. */}
+          <div className="generar-quiz__exportar">
+            <BotonExportarPdf
+              onExportar={() => exportarQuizPdf(resultado.quiz.id_quiz)}
+              etiqueta={t(TEXTOS_CLAVES.botonExportarQuiz)}
+              ariaLabel={t('exportActions.quizPrintableAria', { title: resultado.quiz.titulo })}
+            />
+          </div>
+
+          <VistaPreviaQuiz preguntas={resultado.preguntas} />
+        </>
+      )}
+
+      {/* HU-009 / HU-3.3 (CA-3.3.2): quices ya generados, justo debajo del formulario, cada
+          uno con su botón de exportar a PDF. Es la misma vista que ve el estudiante
+          (vistas/quices/ListaQuices); se recarga al generar uno nuevo. */}
+      <ListaQuices rol="docente" embebida refrescarTrigger={resultado?.quiz.id_quiz} />
     </section>
   );
 }

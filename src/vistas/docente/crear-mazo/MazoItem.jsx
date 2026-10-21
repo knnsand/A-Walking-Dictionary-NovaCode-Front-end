@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 // import { Link } from 'react-router-dom';
 import { actualizarEstadoMazo } from '../../../cliente-api/mazosApi';
+import { exportarMazoPdf } from '../../../cliente-api/exportacionesApi';
+import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
 import { VARIANTE_REGIONAL_CLAVES } from './crearMazo.constants';
 
 const CANTIDAD_COLORES = 5;
@@ -9,7 +11,7 @@ const CANTIDAD_COLORES = 5;
 /**
  * Tarjeta de un mazo. Todos los roles ven la información del mazo;
  * las acciones dependen del rol:
- * - docente: abrir / cerrar el mazo.
+ * - docente: abrir / cerrar el mazo y exportarlo a PDF (HU-3.3).
  * - estudiante: ir a estudiar las palabras del mazo.
  * - invitado: solo lectura (sin acciones).
  */
@@ -78,23 +80,32 @@ export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
           </span>
 
           {rol === 'docente' && (
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleCambiarEstado}
-              disabled={guardando}
-              aria-label={
-                abierto
-                  ? t('deckCard.aria.close', { name: mazo.nombre_lectura })
-                  : t('deckCard.aria.open', { name: mazo.nombre_lectura })
-              }
-            >
-              {guardando
-                ? t('deckCard.actions.saving')
-                : abierto
-                  ? t('deckCard.actions.close')
-                  : t('deckCard.actions.open')}
-            </button>
+            <div className="mazo-card__acciones">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleCambiarEstado}
+                disabled={guardando}
+                aria-label={
+                  abierto
+                    ? t('deckCard.aria.close', { name: mazo.nombre_lectura })
+                    : t('deckCard.aria.open', { name: mazo.nombre_lectura })
+                }
+              >
+                {guardando
+                  ? t('deckCard.actions.saving')
+                  : abierto
+                    ? t('deckCard.actions.close')
+                    : t('deckCard.actions.open')}
+              </button>
+
+              {/* HU-3.3 (CA-3.3.1): solo la docente exporta; el backend responde 403 a otros roles. */}
+              <BotonExportarPdf
+                onExportar={() => exportarMazoPdf(mazo.id_mazo)}
+                etiqueta={t('exportActions.deckPdf')}
+                ariaLabel={t('exportActions.deckPdfAria', { name: mazo.nombre_lectura })}
+              />
+            </div>
           )}
 
           {rol === 'estudiante' && (

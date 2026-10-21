@@ -38,6 +38,9 @@ export const TEXTOS_CLAVES = {
   },
   vistaPreviaTitulo: 'quizGenerator.preview.title',
   respuestaCorrecta: 'quizGenerator.preview.correctAnswer',
+
+  // Exportar a PDF (HU-3.3)
+  botonExportarQuiz: 'exportActions.quizPrintable',
 };
 
 // Claves de los mensajes de validación del formulario (ver docs/contrato-quiz.md).

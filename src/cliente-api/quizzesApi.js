@@ -47,6 +47,27 @@ export async function generarQuiz(datos) {
     body: JSON.stringify(datos),
   });
 }
+/**
+ * Lista todos los quices generados, cada uno con `estado_efectivo` calculado
+ * (CA-3.1.3). Lo usa la lista compartida de quices (vistas/quices/ListaQuices):
+ * la docente la ve bajo el formulario y exporta el PDF de cualquiera, aunque ya
+ * haya recargado la página (CA-3.3.2); el estudiante la ve en /estudiante/quices.
+ * GET /api/v1/quizzes
+ *
+ * El backend devuelve los quices de todos los cursos, sin orden garantizado.
+ * Cuando exista GET /quizzes/mine (docs/contrato-quiz-estudiante.md, 2.1), el
+ * estudiante usará una función propia y esta quedará para la docente.
+ *
+ * @returns {Promise<Array<{
+ *   id_quiz: number, curso_id: number, titulo: string, semana_corte: number,
+ *   fecha_creacion: string, fecha_apertura: string, fecha_cierre: string,
+ *   tiempo_limite_min: number, estado: string, estado_efectivo: string
+ * }>>}
+ * @throws {Error} con `.message` listo para mostrar al usuario.
+ */
+export async function listarQuices() {
+  return apiRequest('/quizzes');
+}
 
 
 /**

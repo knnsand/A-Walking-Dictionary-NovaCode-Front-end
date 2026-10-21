@@ -1,3 +1,6 @@
+
+import SugerenciasPalabras from './SugerenciasPalabras';
+
 // vistas/estudiante/estudiar-tarjetas/TarjetaFlashcard.jsx
 // HU-010 / CA-4.1.1: frente (palabra en inglés) y dorso (traducción, definición y ejemplo).
 //
@@ -170,6 +173,8 @@ export function TarjetaFlashcard({
                 <p className="estudiar-cita__texto">{conComillas(tarjeta.ejemplo)}</p>
               </aside>
             )}
+
+            <SugerenciasPalabras palabra={tarjeta.palabra} />
           </div>
         </div>
       </div>
