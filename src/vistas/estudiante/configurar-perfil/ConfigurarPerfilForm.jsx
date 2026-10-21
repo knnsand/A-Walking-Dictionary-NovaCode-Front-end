@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { actualizarPerfil } from '../../../cliente-api/perfilApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
 import { NIVELES_MCER, FORM_INICIAL } from './configurarPerfil.constants';
 import { validarCamposObligatorios } from './configurarPerfil.validation';
 
 export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
-  
+  const { t } = useTranslation();
+
   const [form, setForm] = useState({ ...FORM_INICIAL, ...datosIniciales });
   const [interesesTexto, setInteresesTexto] = useState((datosIniciales?.intereses || []).join(', '));
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
@@ -22,7 +24,7 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
     if (!validarCamposObligatorios(form)) {
       setAviso({
         tipo: 'error',
-        mensaje: 'Revisa los datos del perfil. Verifica tu nivel MCER, código estudiantil, intereses y avatar.'
+        mensaje: t('profileForm.errors.invalidData')
       });
       return;
     }
@@ -39,10 +41,11 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
     setEnviando(true);
     try {
       const perfilActualizado = await actualizarPerfil(form);
-      setAviso({ tipo: 'exito', mensaje: 'Perfil actualizado correctamente.' });
+      setAviso({ tipo: 'exito', mensaje: t('profileForm.success') });
       onPerfilActualizado?.(perfilActualizado);
     } catch (error) {
-      setAviso({ tipo: 'error', mensaje: error.message || 'No se pudo actualizar el perfil. Intenta nuevamente.' });
+      // error.message viene del backend y puede estar en español (pendiente de revisar).
+      setAviso({ tipo: 'error', mensaje: error.message || t('profileForm.errors.updateFailed') });
     } finally {
       setEnviando(false);
     }
@@ -54,7 +57,7 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
 
       <div className="form-group">
         <label className="form-label" htmlFor="avatar">
-          URL del avatar
+          {t('profileForm.avatarUrl')}
         </label>
 
         <input
@@ -64,13 +67,13 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
           name="avatar"
           value={form.avatar}
           onChange={handleChange}
-          placeholder="https://ejemplo.com/avatar.jpg"
+          placeholder={t('profileForm.avatarPlaceholder')}
         />
 
         {form.avatar && (
           <img
             src={form.avatar}
-            alt="Vista previa del avatar"
+            alt={t('profileForm.avatarPreviewAlt')}
             className="perfil__avatar-preview"
             width={80}
             height={80}
@@ -78,7 +81,7 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
         )}
       </div>
       <fieldset className="form-group nivel-mcer-fieldset">
-        <legend className="form-label">Nivel MCER</legend>
+        <legend className="form-label">{t('profileForm.cefrLevel')}</legend>
         <div className="nivel-mcer-grid">
             {NIVELES_MCER.map((nivel) => (
             <div className="nivel-mcer-opcion" key={nivel.value}>
@@ -92,7 +95,7 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
                 />
                 <label htmlFor={`nivel-${nivel.value}`}>
                 <span className="nivel-mcer-opcion__codigo">{nivel.value}</span>
-                <span className="nivel-mcer-opcion__descripcion">{nivel.descripcion}</span>
+                <span className="nivel-mcer-opcion__descripcion">{t(nivel.descripcionKey)}</span>
                 </label>
             </div>
             ))}
@@ -100,7 +103,7 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
         </fieldset>
 
       <div className="form-group">
-        <label className="form-label" htmlFor="codigo_estudiantil">Código estudiantil</label>
+        <label className="form-label" htmlFor="codigo_estudiantil">{t('profileForm.studentCode')}</label>
         <input
           id="codigo_estudiantil"
           className="form-input"
@@ -113,7 +116,7 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
 
       <div className="form-group">
       <label className="form-label" htmlFor="intereses">
-        Intereses
+        {t('profileForm.interests')}
       </label>
       <textarea
         id="intereses"
@@ -135,13 +138,13 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
             intereses,
           }));
         }}
-        placeholder="Ejemplo: programación, música, videojuegos"
+        placeholder={t('profileForm.interestsPlaceholder')}
         rows={3}
       />
     </div>
 
       <button type="submit" className="btn btn-primary" disabled={enviando}>
-        {enviando ? 'Guardando...' : 'Guardar Cambios'}
+        {enviando ? t('profileForm.actions.saving') : t('profileForm.actions.save')}
       </button>
     </form>
   );

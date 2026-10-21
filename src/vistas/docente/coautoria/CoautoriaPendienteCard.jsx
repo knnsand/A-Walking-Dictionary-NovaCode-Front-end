@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Tarjeta individual de la pestaña "Coautoría" (dentro de RevisionPalabras.jsx).
@@ -10,6 +11,7 @@ import { useState } from 'react';
 export function CoautoriaPendienteCard({
   coautoria, enEdicion, onIniciarEdicion, onCancelarEdicion, onAprobar,
 }) {
+  const { t } = useTranslation();
   const [borrador, setBorrador] = useState({
     traduccion_aportada: coautoria.traduccion_aportada,
     definicion_aportada: coautoria.definicion_aportada,
@@ -28,20 +30,22 @@ export function CoautoriaPendienteCard({
       <div className="tarjeta-pendiente__encabezado">
         <h3 className="tarjeta-pendiente__palabra">{coautoria.palabra_tarjeta}</h3>
         <span className="badge badge-abierto">
-          {esCoautoriaExacta ? 'Coautoría' : 'Acepción nueva'}
+          {esCoautoriaExacta ? t('coauthorCard.badges.coauthorship') : t('coauthorCard.badges.newMeaning')}
         </span>
       </div>
 
       <div className="tarjeta-pendiente__original">
-        <p className="tarjeta-pendiente__meta">Definición existente en el mazo:</p>
+        <p className="tarjeta-pendiente__meta">{t('coauthorCard.existingDefinition')}</p>
         <p>{coautoria.definicion_tarjeta}</p>
-        <p className="tarjeta-pendiente__meta">Traducción existente: {coautoria.traduccion_tarjeta}</p>
+        <p className="tarjeta-pendiente__meta">
+          {t('coauthorCard.existingTranslation', { value: coautoria.traduccion_tarjeta })}
+        </p>
       </div>
 
       {enEdicion ? (
         <>
           <div className="form-group">
-            <label className="form-label" htmlFor={`traduccion-${coautoria.id_aporte}`}>Traducción aportada</label>
+            <label className="form-label" htmlFor={`traduccion-${coautoria.id_aporte}`}>{t('coauthorCard.fields.translation')}</label>
             <input
               id={`traduccion-${coautoria.id_aporte}`}
               className="form-input"
@@ -51,7 +55,7 @@ export function CoautoriaPendienteCard({
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor={`definicion-${coautoria.id_aporte}`}>Definición aportada</label>
+            <label className="form-label" htmlFor={`definicion-${coautoria.id_aporte}`}>{t('coauthorCard.fields.definition')}</label>
             <textarea
               id={`definicion-${coautoria.id_aporte}`}
               className="form-textarea"
@@ -62,7 +66,7 @@ export function CoautoriaPendienteCard({
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor={`ejemplo-${coautoria.id_aporte}`}>Ejemplo aportado</label>
+            <label className="form-label" htmlFor={`ejemplo-${coautoria.id_aporte}`}>{t('coauthorCard.fields.example')}</label>
             <textarea
               id={`ejemplo-${coautoria.id_aporte}`}
               className="form-textarea"
@@ -75,9 +79,9 @@ export function CoautoriaPendienteCard({
         </>
       ) : (
         <>
-          <p className="tarjeta-pendiente__meta">Aporte nuevo:</p>
-          <p><strong>Traducción:</strong> {coautoria.traduccion_aportada}</p>
-          <p><strong>Definición:</strong> {coautoria.definicion_aportada}</p>
+          <p className="tarjeta-pendiente__meta">{t('coauthorCard.newContribution')}</p>
+          <p><strong>{t('coauthorCard.translationColon')}</strong> {coautoria.traduccion_aportada}</p>
+          <p><strong>{t('coauthorCard.definitionColon')}</strong> {coautoria.definicion_aportada}</p>
           {coautoria.ejemplo_aportado && (
             <div className="tarjeta-pendiente__cita">
               "{coautoria.ejemplo_aportado}"
@@ -89,13 +93,13 @@ export function CoautoriaPendienteCard({
       <div className="tarjeta-pendiente__acciones">
         {enEdicion ? (
           <>
-            <button className="btn btn-primary" onClick={() => onAprobar(borrador)}>Guardar y aprobar</button>
-            <button className="btn btn-secondary" onClick={onCancelarEdicion}>Cancelar</button>
+            <button className="btn btn-primary" onClick={() => onAprobar(borrador)}>{t('coauthorCard.actions.saveAndApprove')}</button>
+            <button className="btn btn-secondary" onClick={onCancelarEdicion}>{t('coauthorCard.actions.cancel')}</button>
           </>
         ) : (
           <>
-            <button className="btn btn-primary" onClick={() => onAprobar(borrador)}>Aprobar</button>
-            <button className="btn btn-secondary" onClick={onIniciarEdicion}>Editar</button>
+            <button className="btn btn-primary" onClick={() => onAprobar(borrador)}>{t('coauthorCard.actions.approve')}</button>
+            <button className="btn btn-secondary" onClick={onIniciarEdicion}>{t('coauthorCard.actions.edit')}</button>
           </>
         )}
       </div>

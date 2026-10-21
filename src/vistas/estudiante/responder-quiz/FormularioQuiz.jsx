@@ -7,8 +7,9 @@
 // los maneja quien use este componente.
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Aviso } from '../../../componentes/comunes/Aviso';
-import { TEXTOS_FORMULARIO as T } from './responderQuiz.constants';
+import { TEXTOS_FORMULARIO_CLAVES as T } from './responderQuiz.constants';
 import { formatearTiempo } from './responderQuiz.format';
 import {
   construirPayloadEnvio,
@@ -31,7 +32,7 @@ const SEGUNDOS_URGENTE = 60;
  * @param {Object<string, string>} [props.respuestasIniciales] Borrador recuperado.
  * @param {Function} props.onEnviar    Recibe el cuerpo del POST /submit.
  * @param {boolean}  [props.enviando]  true mientras el envío está en curso.
- * @param {string|null} [props.errorEnvio] Mensaje del último envío fallido.
+ * @param {string|null} [props.errorEnvio] Mensaje (ya traducido) del último envío fallido.
  */
 export function FormularioQuiz({
   quiz,
@@ -42,6 +43,7 @@ export function FormularioQuiz({
   enviando = false,
   errorEnvio = null,
 }) {
+  const { t } = useTranslation();
   const [respuestas, setRespuestas] = useState(respuestasIniciales);
   const [confirmando, setConfirmando] = useState(false);
 
@@ -101,8 +103,7 @@ export function FormularioQuiz({
     enviar();
   }
 
-  const textoFaltan =
-    faltan === 1 ? T.faltaUna : T.faltanVarias.replace('{n}', String(faltan));
+  const textoFaltan = t(T.faltan, { count: faltan });
 
   return (
     <section
@@ -116,12 +117,12 @@ export function FormularioQuiz({
             {quiz.titulo}
           </h2>
           <p className="formulario-quiz__progreso">
-            {`${T.contestadas}: ${total - faltan} de ${total}`}
+            {t(T.contestadas, { answered: total - faltan, total })}
           </p>
         </div>
 
         <div className="formulario-quiz__reloj">
-          <span className="formulario-quiz__reloj-etiqueta">{T.tiempoRestante}</span>
+          <span className="formulario-quiz__reloj-etiqueta">{t(T.tiempoRestante)}</span>
           <span
             role="timer"
             className={`formulario-quiz__tiempo${
@@ -135,7 +136,7 @@ export function FormularioQuiz({
 
       {agotado && (
         <p className="formulario-quiz__mensaje" role="status">
-          {T.tiempoAgotado}
+          {t(T.tiempoAgotado)}
         </p>
       )}
 
@@ -178,17 +179,17 @@ export function FormularioQuiz({
       {confirmando && !agotado && (
         <div className="formulario-quiz__confirmacion" role="alert">
           <p className="formulario-quiz__confirmacion-texto">{textoFaltan}</p>
-          <p className="formulario-quiz__confirmacion-ayuda">{T.avisoSinContestar}</p>
+          <p className="formulario-quiz__confirmacion-ayuda">{t(T.avisoSinContestar)}</p>
           <div className="formulario-quiz__confirmacion-acciones">
             <button
               type="button"
               className="btn btn-secondary"
               onClick={() => setConfirmando(false)}
             >
-              {T.botonVolver}
+              {t(T.botonVolver)}
             </button>
             <button type="button" className="btn btn-primary" onClick={enviar}>
-              {T.botonEnviarIgual}
+              {t(T.botonEnviarIgual)}
             </button>
           </div>
         </div>
@@ -196,7 +197,7 @@ export function FormularioQuiz({
 
       <div className="formulario-quiz__acciones">
         <button type="button" className="btn btn-primary" disabled={enviando} onClick={finalizar}>
-          {enviando ? T.botonEnviando : T.botonFinalizar}
+          {enviando ? t(T.botonEnviando) : t(T.botonFinalizar)}
         </button>
       </div>
     </section>

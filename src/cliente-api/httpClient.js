@@ -1,3 +1,5 @@
+import i18n from '../i18n';
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const TOKEN_KEY = 'walking_dictionary_token';
 
@@ -14,7 +16,8 @@ export async function apiRequest(path, options = {}) {
   });
 
   if (!response.ok) {
-    let mensaje = `Error ${response.status} al llamar ${path}`;
+    // Mensaje de respaldo si el backend no trae uno propio.
+    let mensaje = i18n.t('api.requestFailed', { status: response.status, path });
     let cuerpo = null;
 
     try {

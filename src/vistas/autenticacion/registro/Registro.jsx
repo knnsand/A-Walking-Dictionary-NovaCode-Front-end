@@ -1,6 +1,7 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../../../contexto/useAuth';
 import { useTheme } from '../../../contexto/useTheme';
 // Registro comparte el diseño del Login (tarjeta central, botón de tema,
@@ -21,6 +22,7 @@ import '../Login.css';
  * (donde de todos modos el menú aparecería deshabilitado, ver Sidebar.jsx).
  */
 export function Registro() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { registrarConGoogle } = useAuth();
   const { tema, alternarTema } = useTheme();
@@ -29,7 +31,7 @@ export function Registro() {
 
   async function manejarRegistroGoogle(credentialResponse) {
     if (!credentialResponse?.credential) {
-      setError('No se recibió la credencial de Google.');
+      setError(t('auth.errors.noGoogleCredential'));
       return;
     }
 
@@ -40,19 +42,16 @@ export function Registro() {
       const respuesta = await registrarConGoogle(credentialResponse.credential);
 
       if (respuesta.usuario.rol !== 'estudiante') {
-        setError('El registro autónomo solo está disponible para estudiantes.');
+        setError(t('register.errors.studentsOnly'));
         return;
       }
 
       navigate('/estudiante/configuracion-perfil', { replace: true });
     } catch (errorRegistro) {
       // El mensaje viene del backend vía apiRequest (p. ej. correo no
-      // institucional, o cuenta ya existente — en ese caso el mensaje
-      // debería sugerir iniciar sesión en vez de registrarse).
-      setError(
-        errorRegistro.message ||
-          'No se pudo completar el registro. Intenta nuevamente.'
-      );
+      // institucional, o cuenta ya existente) y puede estar en español
+      // (pendiente de revisar).
+      setError(errorRegistro.message || t('register.errors.registrationFailed'));
     } finally {
       setCargando(false);
     }
@@ -61,19 +60,16 @@ export function Registro() {
   return (
     <main className="login">
       <button type="button" className="login__tema" onClick={alternarTema}>
-        {tema === 'claro' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
+        {tema === 'claro' ? `🌙 ${t('auth.darkMode')}` : `☀️ ${t('auth.lightMode')}`}
       </button>
 
       <section className="login__content">
         <div className="login__marca" aria-hidden="true" />
 
-        <h1>Crear cuenta de estudiante</h1>
-        <p className="login__subtitulo">Literatura Anglófona · Unicauca</p>
+        <h1>{t('register.title')}</h1>
+        <p className="login__subtitulo">{t('auth.subtitle')}</p>
 
-        <p className="login__texto">
-          Regístrate con tu cuenta de Google institucional para empezar a
-          usar A Walking Dictionary.
-        </p>
+        <p className="login__texto">{t('register.prompt')}</p>
 
         {error && (
           <p role="alert" className="aviso aviso--error login__error">
@@ -82,21 +78,25 @@ export function Registro() {
         )}
 
         {cargando ? (
-          <p>Creando tu cuenta...</p>
+          <p>{t('register.creating')}</p>
         ) : (
           <div className="login__google">
             <GoogleLogin
               theme={tema === 'oscuro' ? 'filled_black' : 'outline'}
               width="300"
               text="signup_with"
+              locale="en"
               onSuccess={manejarRegistroGoogle}
-              onError={() => setError('No se pudo completar el registro con Google.')}
+              onError={() => setError(t('register.errors.googleFailed'))}
             />
           </div>
         )}
 
         <p className="login__enlace">
-          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+          <Trans
+            i18nKey="register.loginNotice"
+            components={{ loginlink: <Link to="/login" /> }}
+          />
         </p>
       </section>
     </main>

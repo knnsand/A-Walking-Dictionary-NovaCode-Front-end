@@ -59,12 +59,12 @@ describe('VistaPreviaQuiz', () => {
     render(<VistaPreviaQuiz preguntas={PREGUNTAS} />);
 
     const opcionCorrecta = screen.getByText('trabajo de retazos').closest('li');
-    expect(within(opcionCorrecta).getByText(/Respuesta correcta/)).toBeInTheDocument();
+    expect(within(opcionCorrecta).getByText(/Correct answer/)).toBeInTheDocument();
 
     const opcionIncorrecta = screen.getByText('posibilidad').closest('li');
-    expect(within(opcionIncorrecta).queryByText(/Respuesta correcta/)).not.toBeInTheDocument();
+    expect(within(opcionIncorrecta).queryByText(/Correct answer/)).not.toBeInTheDocument();
 
-    expect(screen.getAllByText(/Respuesta correcta/)).toHaveLength(2);
+    expect(screen.getAllByText(/Correct answer/)).toHaveLength(2);
   });
 
   it('no renderiza nada cuando no hay preguntas', () => {

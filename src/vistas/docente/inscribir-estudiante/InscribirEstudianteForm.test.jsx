@@ -21,26 +21,26 @@ describe('InscribirEstudianteForm', () => {
   it('muestra un error si se envía sin completar los campos obligatorios', async () => {
     render(<InscribirEstudianteForm onCerrar={() => {}} />);
     await waitFor(() => screen.getByRole('option', { name: /literatura anglófona/i }));
-    fireEvent.click(screen.getByRole('button', { name: /^inscribir$/i }));
-    expect(await screen.findByRole('alert')).toHaveTextContent(/selecciona un curso e ingresa el correo/i);
+    fireEvent.click(screen.getByRole('button', { name: /^enroll$/i }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(/select a course and enter the student's email/i);
   });
 
   it('muestra un error si el correo no tiene un formato válido', async () => {
     render(<InscribirEstudianteForm onCerrar={() => {}} />);
     await waitFor(() => screen.getByRole('option', { name: /literatura anglófona/i }));
-    fireEvent.change(screen.getByLabelText(/curso/i), { target: { value: '1' } });
-    fireEvent.change(screen.getByLabelText(/correo del estudiante/i), { target: { value: 'no-es-un-correo' } });
-    fireEvent.click(screen.getByRole('button', { name: /^inscribir$/i }));
-    expect(await screen.findByRole('alert')).toHaveTextContent(/formato válido/i);
+    fireEvent.change(screen.getByLabelText(/course/i), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText(/student email/i), { target: { value: 'no-es-un-correo' } });
+    fireEvent.click(screen.getByRole('button', { name: /^enroll$/i }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(/valid format/i);
   });
 
   it('inscribe al estudiante correctamente cuando los datos son válidos', async () => {
     render(<InscribirEstudianteForm onCerrar={() => {}} />);
     await waitFor(() => screen.getByRole('option', { name: /literatura anglófona/i }));
-    fireEvent.change(screen.getByLabelText(/curso/i), { target: { value: '1' } });
-    fireEvent.change(screen.getByLabelText(/correo del estudiante/i), { target: { value: 'juan.estudiante@correo.edu' } });
-    fireEvent.click(screen.getByRole('button', { name: /^inscribir$/i }));
-    expect(await screen.findByRole('alert')).toHaveTextContent(/juan estudiante.*inscrito correctamente/i);
+    fireEvent.change(screen.getByLabelText(/course/i), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText(/student email/i), { target: { value: 'juan.estudiante@correo.edu' } });
+    fireEvent.click(screen.getByRole('button', { name: /^enroll$/i }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(/juan estudiante.*enrolled successfully/i);
     expect(inscribirEstudiante).toHaveBeenCalledWith(1, 'juan.estudiante@correo.edu');
   });
 });

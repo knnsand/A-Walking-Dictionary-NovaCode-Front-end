@@ -108,9 +108,9 @@ function montar(servicio) {
   );
 }
 
-const botonIniciar = () => screen.findByRole('button', { name: 'Iniciar' });
+const botonIniciar = () => screen.findByRole('button', { name: 'Start' });
 const radio = (texto) => screen.getByRole('radio', { name: new RegExp(texto) });
-const botonFinalizar = () => screen.getByRole('button', { name: 'Finalizar examen' });
+const botonFinalizar = () => screen.getByRole('button', { name: 'Finish exam' });
 
 async function iniciar() {
   fireEvent.click(await botonIniciar());
@@ -134,7 +134,7 @@ describe('ResponderQuiz', () => {
     const servicio = crearServicio();
     montar(servicio);
 
-    expect(screen.getByText('Cargando el quiz…')).toBeInTheDocument();
+    expect(screen.getByText('Loading the quiz…')).toBeInTheDocument();
 
     expect(await screen.findByRole('heading', { name: 'Quiz semana 3' })).toBeInTheDocument();
     expect(await botonIniciar()).toBeEnabled();
@@ -162,7 +162,7 @@ describe('ResponderQuiz', () => {
 
     fireEvent.click(botonFinalizar());
 
-    expect(await screen.findByRole('heading', { name: 'Resultado' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Result' })).toBeInTheDocument();
     expect(servicio.enviarRespuestasQuiz).toHaveBeenCalledTimes(1);
     expect(servicio.enviarRespuestasQuiz).toHaveBeenCalledWith('12', {
       fecha_inicio: expect.any(String),
@@ -175,7 +175,7 @@ describe('ResponderQuiz', () => {
     // Nota y detalle por pregunta.
     expect(screen.getByText('2.50')).toBeInTheDocument();
     expect(screen.getByText('Primera pregunta')).toBeInTheDocument();
-    expect(screen.queryByText(/no se permite un nuevo intento/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/a new attempt is not allowed/)).not.toBeInTheDocument();
 
     // Se recuerda el resultado (con las preguntas) y se borra el borrador.
     expect(leerBorrador('12')).toBeNull();
@@ -193,7 +193,7 @@ describe('ResponderQuiz', () => {
     fireEvent.click(botonFinalizar());
 
     expect(
-      await screen.findByText(/Ya enviaste este quiz y no se permite un nuevo intento/)
+      await screen.findByText(/You have already submitted this quiz and a new attempt is not allowed/)
     ).toBeInTheDocument();
     expect(screen.getByText('2.50')).toBeInTheDocument();
     expect(leerResultado('12', 3)).not.toBeNull();
@@ -204,11 +204,13 @@ describe('ResponderQuiz', () => {
     const servicio = crearServicio();
     montar(servicio);
 
-    expect(await screen.findByRole('heading', { name: 'Resultado' })).toBeInTheDocument();
-    expect(screen.getByText(/Ya enviaste este quiz y no se permite un nuevo intento/)).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Result' })).toBeInTheDocument();
+    expect(
+      screen.getByText(/You have already submitted this quiz and a new attempt is not allowed/)
+    ).toBeInTheDocument();
     expect(screen.getByText('Quiz semana 3')).toBeInTheDocument();
     expect(screen.getByText('Primera pregunta')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Iniciar' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Start' })).not.toBeInTheDocument();
     expect(servicio.obtenerPreguntasQuiz).not.toHaveBeenCalled();
   });
 
@@ -218,7 +220,7 @@ describe('ResponderQuiz', () => {
     servicio.obtenerQuiz.mockRejectedValue(new Error('Quiz no encontrado'));
     montar(servicio);
 
-    expect(await screen.findByRole('heading', { name: 'Resultado' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Result' })).toBeInTheDocument();
     expect(screen.getByText('2.50')).toBeInTheDocument();
     expect(screen.queryByText('Quiz no encontrado')).not.toBeInTheDocument();
   });
@@ -232,9 +234,9 @@ describe('ResponderQuiz', () => {
     montar(servicio);
 
     expect(await screen.findByRole('radio', { name: /cocinar/ })).toBeChecked();
-    expect(screen.getByText('Contestadas: 1 de 2')).toBeInTheDocument();
+    expect(screen.getByText('Answered: 1 of 2')).toBeInTheDocument();
     expect(servicio.obtenerPreguntasQuiz).toHaveBeenCalledTimes(1);
-    expect(screen.queryByRole('button', { name: 'Iniciar' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Start' })).not.toBeInTheDocument();
   });
 
   it('ignora el borrador si el quiz ya no está abierto y muestra la portada', async () => {
@@ -244,7 +246,7 @@ describe('ResponderQuiz', () => {
     montar(servicio);
 
     expect(await botonIniciar()).toBeDisabled();
-    expect(screen.getByText(/Este quiz cerró el/)).toBeInTheDocument();
+    expect(screen.getByText(/This quiz closed on/)).toBeInTheDocument();
     expect(servicio.obtenerPreguntasQuiz).not.toHaveBeenCalled();
   });
 
@@ -257,7 +259,7 @@ describe('ResponderQuiz', () => {
 
     expect(await screen.findByText('Quiz no encontrado')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Reintentar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
 
     expect(await botonIniciar()).toBeEnabled();
     expect(servicio.obtenerQuiz).toHaveBeenCalledTimes(2);
@@ -275,7 +277,7 @@ describe('ResponderQuiz', () => {
     expect(
       await screen.findByText('El quiz ya cerró y no acepta más respuestas')
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Iniciar' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
     expect(leerBorrador('12')).toBeNull();
     expect(logoutMock).not.toHaveBeenCalled();
   });
@@ -310,7 +312,7 @@ describe('ResponderQuiz', () => {
 
     fireEvent.click(botonFinalizar());
 
-    expect(await screen.findByRole('heading', { name: 'Resultado' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Result' })).toBeInTheDocument();
     expect(servicio.enviarRespuestasQuiz).toHaveBeenCalledTimes(2);
   });
 
@@ -318,7 +320,7 @@ describe('ResponderQuiz', () => {
     guardarResultado('12', 3, { resultado: RESULTADO, respuestas: RESPUESTAS, preguntas: PREGUNTAS });
     montar(crearServicio());
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Volver al panel' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Back to the panel' }));
 
     expect(await screen.findByText('Panel del estudiante')).toBeInTheDocument();
   });

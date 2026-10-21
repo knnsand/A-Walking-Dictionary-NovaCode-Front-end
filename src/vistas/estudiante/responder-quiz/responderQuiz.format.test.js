@@ -41,7 +41,7 @@ describe('formatearTiempo', () => {
 
 describe('textoMinutos', () => {
   it('usa singular para 1 y plural para el resto', () => {
-    expect(textoMinutos(1)).toBe('1 minuto');
-    expect(textoMinutos(10)).toBe('10 minutos');
+    expect(textoMinutos(1)).toBe('1 minute');
+    expect(textoMinutos(10)).toBe('10 minutes');
   });
 });

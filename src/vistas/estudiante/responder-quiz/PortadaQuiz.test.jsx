@@ -17,15 +17,15 @@ const quizBase = {
 };
 
 const quizCon = (estadoEfectivo) => ({ ...quizBase, estado_efectivo: estadoEfectivo });
-const botonIniciar = () => screen.getByRole('button', { name: 'Iniciar' });
+const botonIniciar = () => screen.getByRole('button', { name: 'Start' });
 
 describe('PortadaQuiz', () => {
   it('muestra el título, el estado y el tiempo límite', () => {
     render(<PortadaQuiz quiz={quizCon('abierto')} onIniciar={() => {}} />);
 
     expect(screen.getByRole('heading', { name: 'Quiz semana 3' })).toBeInTheDocument();
-    expect(screen.getByText('Abierto')).toBeInTheDocument();
-    expect(screen.getByText('10 minutos')).toBeInTheDocument();
+    expect(screen.getByText('Open')).toBeInTheDocument();
+    expect(screen.getByText('10 minutes')).toBeInTheDocument();
   });
 
   it('con el quiz abierto habilita "Iniciar" y llama a onIniciar al pulsarlo', () => {
@@ -33,7 +33,7 @@ describe('PortadaQuiz', () => {
     render(<PortadaQuiz quiz={quizCon('abierto')} onIniciar={onIniciar} />);
 
     expect(botonIniciar()).toBeEnabled();
-    expect(screen.getByText(/Solo puedes enviar el quiz una vez/)).toBeInTheDocument();
+    expect(screen.getByText(/You can only submit the quiz once/)).toBeInTheDocument();
 
     fireEvent.click(botonIniciar());
     expect(onIniciar).toHaveBeenCalledTimes(1);
@@ -44,8 +44,8 @@ describe('PortadaQuiz', () => {
     render(<PortadaQuiz quiz={quizCon('programado')} onIniciar={onIniciar} />);
 
     expect(botonIniciar()).toBeDisabled();
-    expect(screen.getByText(/Disponible el/)).toBeInTheDocument();
-    expect(screen.queryByText(/Solo puedes enviar el quiz una vez/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Available on/)).toBeInTheDocument();
+    expect(screen.queryByText(/You can only submit the quiz once/)).not.toBeInTheDocument();
 
     fireEvent.click(botonIniciar());
     expect(onIniciar).not.toHaveBeenCalled();
@@ -56,7 +56,7 @@ describe('PortadaQuiz', () => {
     render(<PortadaQuiz quiz={quizCon('cerrado')} onIniciar={onIniciar} />);
 
     expect(botonIniciar()).toBeDisabled();
-    expect(screen.getByText(/Este quiz cerró el/)).toBeInTheDocument();
+    expect(screen.getByText(/This quiz closed on/)).toBeInTheDocument();
 
     fireEvent.click(botonIniciar());
     expect(onIniciar).not.toHaveBeenCalled();

@@ -3,9 +3,15 @@
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
+import i18n from '../../../i18n';
 import { GenerarQuiz } from './GenerarQuiz';
-import { TEXTOS, ERRORES_VALIDACION } from './generarQuiz.constants';
+import { TEXTOS_CLAVES, ERRORES_VALIDACION } from './generarQuiz.constants';
+// ListaQuices (vista compartida) aún no está migrada: sus textos siguen en español.
 import { TEXTOS as TEXTOS_LISTA } from '../../quices/listaQuices.constants';
+
+// Los textos de la pantalla y los errores de validación son claves de traducción:
+// las pruebas buscan el texto en inglés que ve el usuario.
+const t = (clave, opciones) => i18n.t(clave, opciones);
 
 const { logoutMock } = vi.hoisted(() => ({ logoutMock: vi.fn() }));
 
@@ -34,9 +40,9 @@ const MAZOS = [
   { id_mazo: 9, curso_id: 2, semana: 3, nombre_lectura: 'Beloved' },
 ];
 
-const MAZO_7 = 'Semana 7 · Their Eyes Were Watching God';
-const MAZO_8 = 'Semana 8 · Wide Sargasso Sea';
-const MAZO_OTRO_CURSO = 'Semana 3 · Beloved';
+const MAZO_7 = 'Week 7 · Their Eyes Were Watching God';
+const MAZO_8 = 'Week 8 · Wide Sargasso Sea';
+const MAZO_OTRO_CURSO = 'Week 3 · Beloved';
 
 const RESPUESTA = {
   quiz: {
@@ -83,7 +89,7 @@ const CIERRE = '2099-01-12T08:00';
 
 async function elegirCurso(idCurso, nombreCurso) {
   await screen.findByRole('option', { name: nombreCurso });
-  fireEvent.change(screen.getByLabelText(TEXTOS.etiquetaCurso), { target: { value: String(idCurso) } });
+  fireEvent.change(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaCurso)), { target: { value: String(idCurso) } });
 }
 
 // Rellena un formulario válido: curso 1, mazos 7 y 8 y los campos de texto.
@@ -92,17 +98,17 @@ async function completarFormularioValido({ cantidad } = {}) {
   fireEvent.click(await screen.findByLabelText(MAZO_7));
   fireEvent.click(screen.getByLabelText(MAZO_8));
 
-  fireEvent.change(screen.getByLabelText(TEXTOS.etiquetaTitulo), { target: { value: 'Quiz acumulativo' } });
-  fireEvent.change(screen.getByLabelText(TEXTOS.etiquetaApertura), { target: { value: APERTURA } });
-  fireEvent.change(screen.getByLabelText(TEXTOS.etiquetaCierre), { target: { value: CIERRE } });
-  fireEvent.change(screen.getByLabelText(TEXTOS.etiquetaTiempo), { target: { value: '30' } });
+  fireEvent.change(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaTitulo)), { target: { value: 'Quiz acumulativo' } });
+  fireEvent.change(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaApertura)), { target: { value: APERTURA } });
+  fireEvent.change(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaCierre)), { target: { value: CIERRE } });
+  fireEvent.change(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaTiempo)), { target: { value: '30' } });
   if (cantidad) {
-    fireEvent.change(screen.getByLabelText(TEXTOS.etiquetaCantidad), { target: { value: cantidad } });
+    fireEvent.change(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaCantidad)), { target: { value: cantidad } });
   }
 }
 
 function pulsarGenerar() {
-  fireEvent.click(screen.getByRole('button', { name: TEXTOS.botonGenerar }));
+  fireEvent.click(screen.getByRole('button', { name: t(TEXTOS_CLAVES.botonGenerar) }));
 }
 
 describe('GenerarQuiz', () => {
@@ -138,10 +144,10 @@ describe('GenerarQuiz', () => {
     fireEvent.click(await screen.findByLabelText(MAZO_7));
     expect(screen.getByLabelText(MAZO_7)).toBeChecked();
 
-    fireEvent.change(screen.getByLabelText(TEXTOS.etiquetaCurso), { target: { value: '2' } });
+    fireEvent.change(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaCurso)), { target: { value: '2' } });
     expect(screen.queryByLabelText(MAZO_7)).not.toBeInTheDocument();
 
-    fireEvent.change(screen.getByLabelText(TEXTOS.etiquetaCurso), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaCurso)), { target: { value: '1' } });
     expect(screen.getByLabelText(MAZO_7)).not.toBeChecked();
   });
 
@@ -151,11 +157,11 @@ describe('GenerarQuiz', () => {
 
     pulsarGenerar();
 
-    expect(screen.getByText(ERRORES_VALIDACION.curso)).toBeInTheDocument();
-    expect(screen.getByText(ERRORES_VALIDACION.tituloVacio)).toBeInTheDocument();
-    expect(screen.getByText(ERRORES_VALIDACION.aperturaVacia)).toBeInTheDocument();
-    expect(screen.getByText(ERRORES_VALIDACION.cierreVacio)).toBeInTheDocument();
-    expect(screen.getByText(ERRORES_VALIDACION.tiempoInvalido)).toBeInTheDocument();
+    expect(screen.getByText(t(ERRORES_VALIDACION.curso))).toBeInTheDocument();
+    expect(screen.getByText(t(ERRORES_VALIDACION.tituloVacio))).toBeInTheDocument();
+    expect(screen.getByText(t(ERRORES_VALIDACION.aperturaVacia))).toBeInTheDocument();
+    expect(screen.getByText(t(ERRORES_VALIDACION.cierreVacio))).toBeInTheDocument();
+    expect(screen.getByText(t(ERRORES_VALIDACION.tiempoInvalido))).toBeInTheDocument();
     expect(generarQuiz).not.toHaveBeenCalled();
   });
 
@@ -166,7 +172,7 @@ describe('GenerarQuiz', () => {
 
     pulsarGenerar();
 
-    expect(screen.getByText(ERRORES_VALIDACION.mazos)).toBeInTheDocument();
+    expect(screen.getByText(t(ERRORES_VALIDACION.mazos))).toBeInTheDocument();
     expect(generarQuiz).not.toHaveBeenCalled();
   });
 
@@ -177,7 +183,8 @@ describe('GenerarQuiz', () => {
 
     pulsarGenerar();
 
-    expect(await screen.findByText(/Quiz generado: «Quiz acumulativo» con 2 preguntas/)).toBeInTheDocument();
+    // "." en lugar de las comillas tipográficas del mensaje: “Quiz acumulativo”.
+    expect(await screen.findByText(/Quiz generated: .Quiz acumulativo. with 2 questions/)).toBeInTheDocument();
     expect(generarQuiz).toHaveBeenCalledTimes(1);
     expect(generarQuiz).toHaveBeenCalledWith({
       curso_id: 1,
@@ -189,20 +196,20 @@ describe('GenerarQuiz', () => {
     });
 
     // Vista previa para la docente y formulario limpio para un nuevo quiz.
-    expect(screen.getByText(TEXTOS.vistaPreviaTitulo)).toBeInTheDocument();
-    expect(screen.getAllByText(/Respuesta correcta/)).toHaveLength(2);
-    expect(screen.getByLabelText(TEXTOS.etiquetaTitulo)).toHaveValue('');
+    expect(screen.getByText(t(TEXTOS_CLAVES.vistaPreviaTitulo))).toBeInTheDocument();
+    expect(screen.getAllByText(/Correct answer/)).toHaveLength(2);
+    expect(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaTitulo))).toHaveValue('');
     expect(screen.getByLabelText(MAZO_7)).not.toBeChecked();
   });
 
-    it('usa el singular cuando el quiz generado tiene una sola pregunta', async () => {
+  it('usa el singular cuando el quiz generado tiene una sola pregunta', async () => {
     generarQuiz.mockResolvedValue({ ...RESPUESTA, preguntas: [RESPUESTA.preguntas[0]] });
     render(<GenerarQuiz />);
     await completarFormularioValido();
 
     pulsarGenerar();
 
-    expect(await screen.findByText(/con 1 pregunta\. Estado/)).toBeInTheDocument();
+    expect(await screen.findByText(/with 1 question\. Status/)).toBeInTheDocument();
   });
 
   it('incluye cantidad_preguntas en el cuerpo cuando la docente la escribe', async () => {
@@ -212,11 +219,12 @@ describe('GenerarQuiz', () => {
 
     pulsarGenerar();
 
-    await screen.findByText(/Quiz generado/);
+    await screen.findByText(/Quiz generated/);
     expect(generarQuiz).toHaveBeenCalledWith(expect.objectContaining({ cantidad_preguntas: 12 }));
   });
 
   it('muestra el mensaje de error que devuelve el backend', async () => {
+    // El mensaje del backend se muestra tal cual (puede estar en español).
     const mensaje =
       'Se necesitan al menos 2 tarjetas en estado revisado_docente en los mazos seleccionados para generar un quiz';
     generarQuiz.mockRejectedValue(new Error(mensaje));
@@ -226,19 +234,20 @@ describe('GenerarQuiz', () => {
     pulsarGenerar();
 
     expect(await screen.findByText(mensaje)).toBeInTheDocument();
-    expect(screen.queryByText(TEXTOS.vistaPreviaTitulo)).not.toBeInTheDocument();
+    expect(screen.queryByText(t(TEXTOS_CLAVES.vistaPreviaTitulo))).not.toBeInTheDocument();
     // Ante un error se conservan los datos escritos para poder corregirlos.
-    expect(screen.getByLabelText(TEXTOS.etiquetaTitulo)).toHaveValue('Quiz acumulativo');
+    expect(screen.getByLabelText(t(TEXTOS_CLAVES.etiquetaTitulo))).toHaveValue('Quiz acumulativo');
   });
 
   it('si la sesión venció, avisa y cierra la sesión', async () => {
+    // Mensaje exacto que devuelve el backend: la pantalla lo detecta y muestra su propio texto.
     generarQuiz.mockRejectedValue(new Error('Token inválido o expirado'));
     render(<GenerarQuiz />);
     await completarFormularioValido();
 
     pulsarGenerar();
 
-    expect(await screen.findByText(TEXTOS.sesionVencida)).toBeInTheDocument();
+    expect(await screen.findByText(t(TEXTOS_CLAVES.sesionVencida))).toBeInTheDocument();
     expect(logoutMock).toHaveBeenCalledTimes(1);
   });
 
@@ -254,7 +263,7 @@ describe('GenerarQuiz', () => {
 
     pulsarGenerar();
 
-    const botonOcupado = await screen.findByRole('button', { name: TEXTOS.botonGenerando });
+    const botonOcupado = await screen.findByRole('button', { name: t(TEXTOS_CLAVES.botonGenerando) });
     expect(botonOcupado).toBeDisabled();
 
     // Un clic adicional mientras se envía no debe lanzar otra petición.
@@ -262,7 +271,7 @@ describe('GenerarQuiz', () => {
     expect(generarQuiz).toHaveBeenCalledTimes(1);
 
     terminarEnvio(RESPUESTA);
-    expect(await screen.findByRole('button', { name: TEXTOS.botonGenerar })).toBeEnabled();
+    expect(await screen.findByRole('button', { name: t(TEXTOS_CLAVES.botonGenerar) })).toBeEnabled();
     expect(generarQuiz).toHaveBeenCalledTimes(1);
   });
 
@@ -273,13 +282,13 @@ describe('GenerarQuiz', () => {
     render(<GenerarQuiz />);
 
     // Antes de generar no hay quiz que exportar.
-    expect(screen.queryByRole('button', { name: /Exportar versión impresa/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Export printable version/ })).not.toBeInTheDocument();
 
     await completarFormularioValido();
     pulsarGenerar();
 
     const botonExportar = await screen.findByRole('button', {
-      name: `${TEXTOS.botonExportarQuiz} del quiz Quiz acumulativo`,
+      name: t('exportActions.quizPrintableAria', { title: 'Quiz acumulativo' }),
     });
     fireEvent.click(botonExportar);
 

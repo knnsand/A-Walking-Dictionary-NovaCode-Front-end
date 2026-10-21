@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   listarTarjetasPendientes,
   listarTarjetasAprobadas,
@@ -14,19 +15,22 @@ import { Aviso } from '../../../componentes/comunes/Aviso';
 import { TarjetaPendienteCard } from './TarjetaPendienteCard';
 import { CoautoriaPendienteCard } from '../coautoria/CoautoriaPendienteCard';
 import { EtiquetaContextoModal } from './EtiquetaContextoModal';
-import { TABS } from './revisionPalabras.constants';
+import { TABS, REGISTRO_CLAVES } from './revisionPalabras.constants';
+import { VARIANTE_REGIONAL_CLAVES } from '../crear-mazo/crearMazo.constants';
 import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 
 import './revision-palabras.css';
 
-// Nombre de cada lista tal como se mostrará en el aviso si su actualización falla.
+// Clave de traducción del nombre de cada lista, tal como se mostrará en el aviso
+// si su actualización falla (se traduce al mostrarlo).
 const NOMBRES_LISTAS = {
-  pendientes: 'nuevos términos',
-  aprobadas: 'historial',
-  coautorias: 'coautorías',
+  pendientes: 'reviewPage.lists.pending',
+  aprobadas: 'reviewPage.lists.approved',
+  coautorias: 'reviewPage.lists.coauthorships',
 };
 
 export function RevisionPalabras() {
+  const { t, i18n } = useTranslation();
   const [tabActivo, setTabActivo] = useState('nuevos');
   const [pendientes, setPendientes] = useState([]);
   const [aprobadas, setAprobadas] = useState([]);
@@ -44,8 +48,8 @@ export function RevisionPalabras() {
 
   // El título y subtítulo de la página los pinta el layout.
   useEncabezadoPagina(
-    'Revisión de Vocabulario y Coautorías',
-    'Valida las propuestas de términos y coautorías sometidas por los estudiantes del curso.'
+    t('reviewPage.title'),
+    t('reviewPage.subtitle')
   );
 
   const cargarPendientes = useCallback(() => {
@@ -158,8 +162,7 @@ export function RevisionPalabras() {
 
       setAviso({
         tipo: 'exito',
-        mensaje:
-          'Tarjeta aprobada con su contexto lingüístico y habilitada para el quiz.'
+        mensaje: t('reviewPage.success.approved')
       });
 
       setIdEnEdicion(null);
@@ -168,10 +171,10 @@ export function RevisionPalabras() {
       cargarPendientes();
       cargarAprobadas();
     } catch (error) {
+      // error.message viene del backend y puede estar en español (pendiente de revisar).
       setAviso({
         tipo: 'error',
-        mensaje:
-          `No se pudo completar la aprobación: ${error.message}`
+        mensaje: t('reviewPage.errors.approvalFailed', { message: error.message })
       });
     } finally {
       setGuardandoAprobacion(false);
@@ -190,23 +193,23 @@ export function RevisionPalabras() {
 
       setAviso({
         tipo: 'exito',
-        mensaje: 'Coautoría aprobada.'
+        mensaje: t('reviewPage.success.coauthorshipApproved')
       });
 
       setIdCoautoriaEnEdicion(null);
       cargarCoautorias();
     } catch (error) {
+      // error.message viene del backend y puede estar en español (pendiente de revisar).
       setAviso({
         tipo: 'error',
-        mensaje:
-          `No se pudo aprobar la coautoría: ${error.message}`
+        mensaje: t('reviewPage.errors.coauthorshipFailed', { message: error.message })
       });
     }
   }
 
-
+  // La hora se formatea según el idioma activo (en inglés: "09:41 AM").
   const horaActualizacion = ultimaActualizacion
-    ? ultimaActualizacion.toLocaleTimeString('es-CO', {
+    ? ultimaActualizacion.toLocaleTimeString(i18n.language, {
         hour: '2-digit',
         minute: '2-digit'
       })
@@ -214,10 +217,17 @@ export function RevisionPalabras() {
 
   const mensajeErrorActualizacion =
     listasConError.length > 0
-      ? `No se pudo actualizar: ${listasConError.join(
-          ', '
-        )}. Se muestran los datos anteriores.`
+      ? t('reviewPage.errors.refreshFailed', {
+          lists: listasConError.map((clave) => t(clave)).join(', ')
+        })
       : null;
+
+  // Registro y variante se guardan en español en la base de datos;
+  // aquí solo se traduce lo que se muestra (si el valor no se conoce, se muestra tal cual).
+  const textoRegistro = (valor) =>
+    REGISTRO_CLAVES[valor] ? t(REGISTRO_CLAVES[valor]) : valor;
+  const textoVariante = (valor) =>
+    VARIANTE_REGIONAL_CLAVES[valor] ? t(VARIANTE_REGIONAL_CLAVES[valor]) : valor;
 
   return (
     <div className="revision-palabras">
@@ -227,7 +237,7 @@ export function RevisionPalabras() {
           className="revision-actualizar__hora"
           aria-live="polite"
         >
-          Última actualización:{' '}
+          {t('reviewPage.lastUpdated')}{' '}
           {horaActualizacion ?? '—'}
         </span>
 
@@ -238,15 +248,15 @@ export function RevisionPalabras() {
           disabled={actualizando}
         >
           {actualizando
-            ? 'Actualizando…'
-            : 'Actualizar'}
+            ? t('reviewPage.refreshing')
+            : t('reviewPage.refresh')}
         </button>
       </div>
 
       <div
         className="tabs"
         role="tablist"
-        aria-label="Secciones de revisión"
+        aria-label={t('reviewPage.sectionsLabel')}
       >
         {TABS.map((tab) => (
           <button
@@ -264,7 +274,7 @@ export function RevisionPalabras() {
               setTabActivo(tab.id)
             }
           >
-            {tab.label}
+            {t(tab.labelKey)}
 
             {tab.id === 'nuevos' &&
               pendientes.length > 0 && (
@@ -296,7 +306,7 @@ export function RevisionPalabras() {
       {tabActivo === 'nuevos' && (
         pendientes.length === 0 ? (
           <p className="empty-state">
-            No hay palabras pendientes de revisión.
+            {t('reviewPage.empty.pending')}
           </p>
         ) : (
           <div className="revision-grid">
@@ -338,7 +348,7 @@ export function RevisionPalabras() {
       {tabActivo === 'coautoria' && (
         coautorias.length === 0 ? (
           <p className="empty-state">
-            No hay coautorías pendientes de revisión.
+            {t('reviewPage.empty.coauthorships')}
           </p>
         ) : (
           <div className="revision-grid">
@@ -382,7 +392,7 @@ export function RevisionPalabras() {
       {tabActivo === 'historial' && (
         aprobadas.length === 0 ? (
           <p className="empty-state">
-            Todavía no hay tarjetas aprobadas.
+            {t('reviewPage.empty.history')}
           </p>
         ) : (
           <div className="revision-grid">
@@ -398,7 +408,7 @@ export function RevisionPalabras() {
                     </strong>
 
                     <span className="badge badge-abierto">
-                      Publicada
+                      {t('reviewPage.history.published')}
                     </span>
                   </div>
 
@@ -408,18 +418,18 @@ export function RevisionPalabras() {
 
                   {tarjeta.registro && (
                     <span className="tag-contexto">
-                      {tarjeta.registro}
+                      {textoRegistro(tarjeta.registro)}
                     </span>
                   )}
 
                   {tarjeta.variante_regional && (
                     <span className="tag-contexto">
-                      {tarjeta.variante_regional}
+                      {textoVariante(tarjeta.variante_regional)}
                     </span>
                   )}
 
                   <p className="card-aprobada__autor">
-                    Aporte: {tarjeta.estudiante}
+                    {t('reviewPage.history.contributedBy', { name: tarjeta.estudiante })}
                   </p>
                 </div>
               </div>

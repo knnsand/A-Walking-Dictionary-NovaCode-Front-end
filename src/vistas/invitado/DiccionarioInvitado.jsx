@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { listarMazos } from '../../cliente-api/mazosApi';
+import { VARIANTE_REGIONAL_CLAVES } from '../docente/crear-mazo/crearMazo.constants';
 import './DiccionarioInvitado.css';
 
 export function DiccionarioInvitado() {
+  const { t } = useTranslation();
   const [mazos, setMazos] = useState([]);
   const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState('');
+  // { mensaje } con el texto del backend (se muestra tal cual; puede estar en español)
+  // o { mensaje: null } para usar el texto propio traducido.
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function cargarMazos() {
@@ -13,9 +18,7 @@ export function DiccionarioInvitado() {
         const datos = await listarMazos();
         setMazos(Array.isArray(datos) ? datos : []);
       } catch (errorCarga) {
-        setError(
-          errorCarga.message || 'No fue posible cargar las lecturas.',
-        );
+        setError({ mensaje: errorCarga.message || null });
       } finally {
         setCargando(false);
       }
@@ -24,24 +27,29 @@ export function DiccionarioInvitado() {
     cargarMazos();
   }, []);
 
+  // La variante se guarda en español en la base de datos; aquí solo se traduce
+  // lo que se muestra (si el valor no se conoce, se muestra tal cual).
+  const textoVariante = (valor) =>
+    VARIANTE_REGIONAL_CLAVES[valor] ? t(VARIANTE_REGIONAL_CLAVES[valor]) : valor;
+
   return (
     <section className="diccionario-invitado">
-        <h1>Diccionario demostrativo</h1>
+        <h1>{t('guestDictionary.title')}</h1>
 
         <p className="diccionario-invitado__descripcion">
-        Consulta las lecturas disponibles en modo invitado.
+        {t('guestDictionary.description')}
         </p>
 
-        {cargando && <p>Cargando contenido...</p>}
+        {cargando && <p>{t('guestDictionary.loading')}</p>}
 
         {error && (
         <p role="alert">
-            {error}
+            {error.mensaje || t('guestDictionary.errors.loadFailed')}
         </p>
         )}
 
         {!cargando && !error && mazos.length === 0 && (
-        <p>No hay lecturas disponibles.</p>
+        <p>{t('guestDictionary.empty')}</p>
         )}
 
         {!cargando && !error && mazos.length > 0 && (
@@ -54,18 +62,20 @@ export function DiccionarioInvitado() {
                 <h2>{mazo.nombre_lectura}</h2>
 
                 <p>
-                <strong>Autor:</strong>{' '}
-                {mazo.autor || 'No especificado'}
+                <strong>{t('guestDictionary.author')}</strong>{' '}
+                {mazo.autor || t('guestDictionary.notSpecified')}
                 </p>
 
                 <p>
-                <strong>Variante:</strong>{' '}
-                {mazo.variante_regional_predeterminada || 'No especificada'}
+                <strong>{t('guestDictionary.variant')}</strong>{' '}
+                {mazo.variante_regional_predeterminada
+                  ? textoVariante(mazo.variante_regional_predeterminada)
+                  : t('guestDictionary.notSpecified')}
                 </p>
 
                 <p>
-                <strong>Semana:</strong>{' '}
-                {mazo.semana || 'No especificada'}
+                <strong>{t('guestDictionary.week')}</strong>{' '}
+                {mazo.semana || t('guestDictionary.notSpecified')}
                 </p>
             </article>
             ))}

@@ -2,6 +2,7 @@ import { NavLink, Link } from 'react-router-dom';
 import './sidebar-perfil-pendiente.css';
 import './LayoutInvitado.css';
 import { useTheme } from '../../contexto/useTheme';
+import { useTranslation, Trans } from 'react-i18next';
 
 /**
  * Menú lateral. Es EL MISMO componente para Docente, Estudiante e
@@ -29,51 +30,51 @@ import { useTheme } from '../../contexto/useTheme';
 const MENU_POR_ROL = {
   docente: [
     {
-      grupo: null,
+      grupoKey: null,
       items: [
-        { to: '/docente/diccionario', label: 'Diccionario Global' },
-        { to: '/docente/mazos', label: 'Mazos de Estudio' },
+        { to: '/docente/diccionario', labelKey: 'sidebar.menu.globalDictionary' },
+        { to: '/docente/mazos', labelKey: 'sidebar.menu.studyDecks' },
       ],
     },
     {
-      grupo: 'Gestión Docente Letras',
+      grupoKey: 'sidebar.groups.teacherManagement',
       items: [
-        { to: '/docente/revision-palabras', label: 'Revisión de Palabras', badgeKey: 'pendientes' },
-        { to: '/docente/cursos', label: 'Cursos & Estudiantes' },
-        { to: '/docente/quices', label: 'Quices & Complejidad' },
-        { to: '/docente/participacion', label: 'Analítica de Participación' },
+        { to: '/docente/revision-palabras', labelKey: 'sidebar.menu.wordReview', badgeKey: 'pendientes' },
+        { to: '/docente/cursos', labelKey: 'sidebar.menu.coursesAndStudents' },
+        { to: '/docente/quices', labelKey: 'sidebar.menu.quizzesAndDifficulty' },
+        { to: '/docente/participacion', labelKey: 'sidebar.menu.participationAnalytics' },
       ],
     },
   ],
   estudiante: [
     {
-      grupo: null,
+      grupoKey: null,
       items: [
-        { to: '/estudiante/diccionario', label: 'Diccionario Global' },
-        { to: '/estudiante/mazos', label: 'Mazos de Estudio' },
+        { to: '/estudiante/diccionario', labelKey: 'sidebar.menu.globalDictionary' },
+        { to: '/estudiante/mazos', labelKey: 'sidebar.menu.studyDecks' },
       ],
     },
     {
-      grupo: 'Mi Aprendizaje',
+      grupoKey: 'sidebar.groups.myLearning',
       items: [
-        { to: '/estudiante/estudio', label: 'Modo Estudio' },
-        { to: '/estudiante/quices', label: 'Quices Quincenales' },
-        { to: '/estudiante/progreso', label: 'Progreso & Desempeño' },
+        { to: '/estudiante/estudio', labelKey: 'sidebar.menu.studyMode' },
+        { to: '/estudiante/quices', labelKey: 'sidebar.menu.quizzes' },
+        { to: '/estudiante/progreso', labelKey: 'sidebar.menu.progressAndPerformance' },
       ],
     },
     {
-      grupo: null,
+      grupoKey: null,
       items: [
-        { to: '/estudiante/configuracion-perfil', label: 'Configuración & Perfil' },
+        { to: '/estudiante/configuracion-perfil', labelKey: 'sidebar.menu.settingsAndProfile' },
       ],
     },
   ],
   invitado: [
     {
-      grupo: null,
+      grupoKey: null,
       items: [
-        { to: '/invitado/diccionario', label: 'Diccionario Global' },
-        { to: '/invitado/mazos', label: 'Mazos de Estudio' },
+        { to: '/invitado/diccionario', labelKey: 'sidebar.menu.globalDictionary' },
+        { to: '/invitado/mazos', labelKey: 'sidebar.menu.studyDecks' },
       ],
     },
   ],
@@ -110,6 +111,7 @@ export function Sidebar({
   onCerrarSesion,
 }) {
   const { tema, alternarTema } = useTheme();
+  const { t } = useTranslation();
   const secciones = MENU_POR_ROL[rol] ?? [];
 
   // HU-012: mientras el estudiante no complete su perfil académico
@@ -141,13 +143,13 @@ export function Sidebar({
       <div className="sidebar__brand">
         <img
           src="/logo-unicauca.svg"
-          alt="Escudo de la Universidad del Cauca"
+          alt={t('sidebar.brand.logoAlt')}
           className="sidebar__brand-logo"
         />
         <div>
           <p className="sidebar__brand-title">A Walking Dictionary</p>
-          <p className="sidebar__brand-subtitle">Literatura Anglófona</p>
-          <p className="sidebar__brand-subtitle">Universidad del Cauca</p>
+          <p className="sidebar__brand-subtitle">{t('sidebar.brand.subtitle')}</p>
+          <p className="sidebar__brand-subtitle">{t('sidebar.brand.institution')}</p>
         </div>
       </div>
 
@@ -157,7 +159,7 @@ export function Sidebar({
           type="button"
           onClick={onAbrirCrearMazo}
         >
-          + Crear Mazo de Estudio
+          {t('sidebar.actions.createDeck')}
         </button>
       )}
 
@@ -170,11 +172,11 @@ export function Sidebar({
           disabled={bloqueadoPorPerfil}
           title={
             bloqueadoPorPerfil
-              ? 'Completa tu perfil en Configuración & Perfil para habilitar esta opción'
+              ? t('sidebar.tooltips.completeProfile')
               : undefined
           }
         >
-          + Añadir Palabra al Mazo
+          {t('sidebar.actions.addWord')}
         </button>
       )}
 
@@ -185,21 +187,21 @@ export function Sidebar({
           type="button"
           onClick={manejarUnirseCurso}
         >
-          Unirme a un curso
+          {t('sidebar.actions.joinCourse')}
         </button>
       )}
 
       {rol === 'invitado' && (
         <div className="sidebar__demo" role="note">
-          Modo Consulta Pública
-          <small>(Demo)</small>
+          {t('sidebar.guest.modeTitle')}
+          <small>{t('sidebar.guest.modeDemo')}</small>
         </div>
       )}
 
       {secciones.map((seccion, indice) => (
-        <div key={seccion.grupo ?? `seccion-${indice}`}>
-          {seccion.grupo && (
-            <p className="sidebar__seccion-titulo">{seccion.grupo}</p>
+        <div key={seccion.grupoKey ?? `seccion-${indice}`}>
+          {seccion.grupoKey && (
+            <p className="sidebar__seccion-titulo">{t(seccion.grupoKey)}</p>
           )}
 
           <ul className="sidebar__nav">
@@ -222,11 +224,11 @@ export function Sidebar({
                       tabIndex={-1}
                       title={
                         deshabilitadoPorPerfil
-                          ? 'Completa tu perfil en Configuración & Perfil para habilitar esta opción'
-                          : 'Esta sección aún no está disponible'
+                          ? t('sidebar.tooltips.completeProfile')
+                          : t('sidebar.tooltips.notAvailable')
                       }
                     >
-                      <span>{item.label}</span>
+                      <span>{t(item.labelKey)}</span>
                     </a>
                   </li>
                 );
@@ -239,7 +241,7 @@ export function Sidebar({
                     onClick={onCerrar}
                     className={({ isActive }) => (isActive ? 'activo' : '')}
                   >
-                    <span>{item.label}</span>
+                    <span>{t(item.labelKey)}</span>
                     {item.badgeKey && contadores[item.badgeKey] > 0 && (
                       <span className="sidebar__badge">
                         {contadores[item.badgeKey]}
@@ -255,18 +257,17 @@ export function Sidebar({
 
       {bloqueadoPorPerfil && (
         <p className="sidebar__aviso-perfil" role="status">
-          Ingresa a{' '}
-          <Link to={RUTA_PERFIL_ESTUDIANTE}>
-            Configuración &amp; Perfil
-          </Link>{' '}
-          y completa tu perfil académico para desbloquear estas opciones.
+          <Trans
+            i18nKey="sidebar.profileNotice"
+            components={{ profilelink: <Link to={RUTA_PERFIL_ESTUDIANTE} /> }}
+          />
         </p>
       )}
 
       <div className="sidebar__footer">
         {rol === 'invitado' && (
           <Link to="/login" className="sidebar__iniciar">
-            Iniciar sesión
+            {t('sidebar.actions.logIn')}
           </Link>
         )}
 
@@ -275,16 +276,16 @@ export function Sidebar({
           type="button"
           onClick={alternarTema}
         >
-          {tema === 'claro' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}
+          {tema === 'claro' ? `🌙 ${t('sidebar.theme.dark')}` : `☀️ ${t('sidebar.theme.light')}`}
         </button>
 
         <div className="sidebar__usuario">
           <div className="sidebar__avatar" aria-hidden="true" />
           <div>
             <p className="sidebar__usuario-nombre">
-              {nombreUsuario ?? 'Invitado'}
+              {nombreUsuario ?? t('sidebar.guest.name')}
             </p>
-            <p className="sidebar__usuario-rol">{rol}</p>
+            <p className="sidebar__usuario-rol">{t(`roles.${rol}`, { defaultValue: rol })}</p>
             {correoUsuario && (
               <p className="sidebar__usuario-correo">{correoUsuario}</p>
             )}
@@ -312,7 +313,7 @@ export function Sidebar({
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            Cerrar sesión
+            {t('sidebar.actions.logOut')}
           </button>
         )}
       </div>

@@ -1,20 +1,23 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexto/useAuth';
 import { obtenerParticipacionMazo } from '../../../cliente-api/analiticasApi';
 import { listarMazos } from '../../../cliente-api/mazosApi';
 import { FilaEstudianteParticipacion } from './FilaEstudianteParticipacion';
-import { TEXTOS, COLUMNAS } from './participacionMazo.constants';
+import { TEXTOS_CLAVES, COLUMNAS } from './participacionMazo.constants';
 import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import './participacion-mazo.css';
 
 // Se usa solo si listarMazos() falla o devuelve vacío (p. ej. sin conexión al
-// backend), para que la vista no quede en blanco.
+// backend), para que la vista no quede en blanco. La etiqueta ("Week 3 · ...")
+// se arma al mostrarla, con la semana y el nombre por separado.
 const MAZOS_FALLBACK = [
-  { mazo_id: 1, nombre: 'Semana 3 · Their Eyes Were Watching God' },
+  { mazo_id: 1, semana: 3, nombre_lectura: 'Their Eyes Were Watching God' },
 ];
 
 // Mensajes exactos que devuelve el backend en rutas protegidas
 // (docs/CONTRATO_AUTENTICACION_FRONTEND.md, sección 4).
+// NO TRADUCIR: se comparan contra el texto en español que envía el backend.
 const ES_SESION_INVALIDA = (msg) =>
   /token de autenticación no proporcionado|token inválido o expirado/i.test(msg ?? '');
 const ES_SIN_PERMISO = (msg) => /no tiene permisos para acceder a este recurso/i.test(msg ?? '');
@@ -29,7 +32,7 @@ function mapearMazoApi(m) {
   return {
     mazo_id: m.id_mazo,
     semana: Number(m.semana),
-    nombre: `Semana ${m.semana} · ${m.nombre_lectura}`,
+    nombre_lectura: m.nombre_lectura,
   };
 }
 
@@ -44,9 +47,10 @@ function mapearMazoApi(m) {
  *   vista trae los mazos reales del backend.
  */
 export function ParticipacionMazo({ mazos: mazosProp }) {
+  const { t } = useTranslation();
   const { token, logout } = useAuth();
   // El título de la página lo pinta el layout (barra superior).
-  useEncabezadoPagina(TEXTOS.titulo, TEXTOS.descripcion);
+  useEncabezadoPagina(t(TEXTOS_CLAVES.titulo), t(TEXTOS_CLAVES.descripcion));
   const [mazosDisponibles, setMazosDisponibles] = useState(mazosProp ?? MAZOS_FALLBACK);
   const [mazoId, setMazoId] = useState(mazosProp?.[0]?.mazo_id ?? MAZOS_FALLBACK[0].mazo_id);
   const [sinAportes, setSinAportes] = useState(false);
@@ -117,58 +121,58 @@ export function ParticipacionMazo({ mazos: mazosProp }) {
       <div className="participacion-mazo__acciones">
         <select
           className="form-select"
-          aria-label="Mazo"
+          aria-label={t('participationPage.deckLabel')}
           value={mazoId}
           onChange={(e) => setMazoId(e.target.value)}
         >
           {mazosDisponibles.map((m) => (
             <option key={m.mazo_id} value={m.mazo_id}>
-              {m.nombre}
+              {m.nombre ?? t('participationPage.deckOption', { week: m.semana, name: m.nombre_lectura })}
             </option>
           ))}
         </select>
         <button type="button" className="btn btn-primary" onClick={cargar}>
-          {TEXTOS.botonActualizar}
+          {t(TEXTOS_CLAVES.botonActualizar)}
         </button>
       </div>
 
       {estado === 'listo' && (
         <div className="participacion-mazo__stats">
-          <div className="participacion-mazo__stat"><span>Estudiantes matriculados</span><strong>{total}</strong></div>
-          <div className="participacion-mazo__stat"><span>Con al menos un aporte</span><strong>{conAporte}</strong></div>
-          <div className="participacion-mazo__stat"><span>Palabras aportadas</span><strong>{totalPalabras}</strong></div>
-          <div className="participacion-mazo__stat"><span>Sin aportes</span><strong>{total - conAporte}</strong></div>
+          <div className="participacion-mazo__stat"><span>{t('participationPage.stats.enrolled')}</span><strong>{total}</strong></div>
+          <div className="participacion-mazo__stat"><span>{t('participationPage.stats.withContribution')}</span><strong>{conAporte}</strong></div>
+          <div className="participacion-mazo__stat"><span>{t('participationPage.stats.wordsContributed')}</span><strong>{totalPalabras}</strong></div>
+          <div className="participacion-mazo__stat"><span>{t('participationPage.stats.withoutContributions')}</span><strong>{total - conAporte}</strong></div>
         </div>
       )}
 
       <div className="participacion-mazo__panel">
         <div className="participacion-mazo__panel-toolbar">
-          <strong>Nómina de Aportes</strong>
+          <strong>{t('participationPage.roster')}</strong>
           <label className="participacion-mazo__filtro">
             <input
               type="checkbox"
               checked={sinAportes}
               onChange={(e) => setSinAportes(e.target.checked)}
             />
-            {TEXTOS.filtroSinAportes}
+            {t(TEXTOS_CLAVES.filtroSinAportes)}
           </label>
         </div>
 
-        {estado === 'cargando' && <div className="participacion-mazo__estado">{TEXTOS.cargando}</div>}
+        {estado === 'cargando' && <div className="participacion-mazo__estado">{t(TEXTOS_CLAVES.cargando)}</div>}
 
         {estado === 'error' && (
           <div className="participacion-mazo__estado es-error">
             ⚠️{' '}
             {ES_SESION_INVALIDA(error?.message)
-              ? 'Tu sesión venció. Vuelve a iniciar sesión.'
+              ? t('participationPage.errors.sessionExpired')
               : ES_SIN_PERMISO(error?.message)
-                ? 'Tu cuenta no tiene rol docente, así que no puede ver esta analítica.'
-                : (error?.message ?? TEXTOS.errorGenerico)}
+                ? t('participationPage.errors.notTeacher')
+                : (error?.message ?? t(TEXTOS_CLAVES.errorGenerico))}
           </div>
         )}
 
         {estado === 'listo' && filas.length === 0 && (
-          <div className="participacion-mazo__estado">{TEXTOS.sinResultadosFiltro}</div>
+          <div className="participacion-mazo__estado">{t(TEXTOS_CLAVES.sinResultadosFiltro)}</div>
         )}
 
         {estado === 'listo' && filas.length > 0 && (
@@ -176,9 +180,9 @@ export function ParticipacionMazo({ mazos: mazosProp }) {
             <thead>
               <tr>
                 {COLUMNAS.map((c) => (
-                  <th key={c.key}>{c.label}</th>
+                  <th key={c.key}>{t(c.labelKey)}</th>
                 ))}
-                <th>Observación</th>
+                <th>{t('participationPage.columns.remarks')}</th>
               </tr>
             </thead>
             <tbody>

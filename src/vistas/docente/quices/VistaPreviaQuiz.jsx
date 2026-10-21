@@ -1,4 +1,5 @@
-import { TEXTOS } from './generarQuiz.constants';
+import { useTranslation } from 'react-i18next';
+import { TEXTOS_CLAVES } from './generarQuiz.constants';
 
 const LETRAS = ['a', 'b', 'c', 'd'];
 
@@ -16,13 +17,15 @@ const LETRAS = ['a', 'b', 'c', 'd'];
  * }>} props.preguntas
  */
 export function VistaPreviaQuiz({ preguntas }) {
+  const { t } = useTranslation();
+
   if (!preguntas || preguntas.length === 0) return null;
 
   const ordenadas = [...preguntas].sort((x, y) => x.orden - y.orden);
 
   return (
     <div className="vista-previa-quiz">
-      <h2 className="vista-previa-quiz__titulo">{TEXTOS.vistaPreviaTitulo}</h2>
+      <h2 className="vista-previa-quiz__titulo">{t(TEXTOS_CLAVES.vistaPreviaTitulo)}</h2>
 
       <ol className="vista-previa-quiz__lista">
         {ordenadas.map((pregunta) => (
@@ -49,7 +52,7 @@ export function VistaPreviaQuiz({ preguntas }) {
                     {esCorrecta && (
                       <span className="vista-previa-quiz__marca">
                         {' '}
-                        ✓ {TEXTOS.respuestaCorrecta}
+                        ✓ {t(TEXTOS_CLAVES.respuestaCorrecta)}
                       </span>
                     )}
                   </li>

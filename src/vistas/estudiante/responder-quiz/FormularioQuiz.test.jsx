@@ -58,7 +58,7 @@ function montar(props = {}) {
 
 const radio = (texto) => screen.getByRole('radio', { name: new RegExp(texto) });
 const elegir = (texto) => fireEvent.click(radio(texto));
-const botonFinalizar = () => screen.getByRole('button', { name: 'Finalizar examen' });
+const botonFinalizar = () => screen.getByRole('button', { name: 'Finish exam' });
 const avanzar = (ms) => {
   act(() => {
     vi.advanceTimersByTime(ms);
@@ -80,7 +80,7 @@ describe('FormularioQuiz', () => {
     montar({ preguntas: [preguntaDos, preguntaUno] });
 
     expect(screen.getByRole('heading', { name: 'Quiz semana 3' })).toBeInTheDocument();
-    expect(screen.getByText('Contestadas: 0 de 2')).toBeInTheDocument();
+    expect(screen.getByText('Answered: 0 of 2')).toBeInTheDocument();
     // 4 opciones en la primera pregunta y 3 en la segunda (la cuarta viene null).
     expect(screen.getAllByRole('radio')).toHaveLength(7);
 
@@ -92,7 +92,7 @@ describe('FormularioQuiz', () => {
     montar({ respuestasIniciales: { 101: 'beber' } });
 
     expect(radio('beber')).toBeChecked();
-    expect(screen.getByText('Contestadas: 1 de 2')).toBeInTheDocument();
+    expect(screen.getByText('Answered: 1 of 2')).toBeInTheDocument();
   });
 
   it('al elegir una opción actualiza el progreso y guarda el borrador', () => {
@@ -101,7 +101,7 @@ describe('FormularioQuiz', () => {
     elegir('cocinar');
 
     expect(radio('cocinar')).toBeChecked();
-    expect(screen.getByText('Contestadas: 1 de 2')).toBeInTheDocument();
+    expect(screen.getByText('Answered: 1 of 2')).toBeInTheDocument();
     expect(leerBorrador(12)).toEqual({
       fechaInicio: FECHA_INICIO,
       respuestas: { 101: 'cocinar' },
@@ -116,7 +116,7 @@ describe('FormularioQuiz', () => {
 
     expect(radio('comer')).toBeChecked();
     expect(radio('cocinar')).not.toBeChecked();
-    expect(screen.getByText('Contestadas: 1 de 2')).toBeInTheDocument();
+    expect(screen.getByText('Answered: 1 of 2')).toBeInTheDocument();
   });
 
   it('con todo contestado, "Finalizar examen" envía el cuerpo sin pedir confirmación', () => {
@@ -134,7 +134,7 @@ describe('FormularioQuiz', () => {
         { pregunta_id: 102, respuesta_estudiante: 'pertenecer' },
       ],
     });
-    expect(screen.queryByText(/por contestar/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/left to answer/)).not.toBeInTheDocument();
   });
 
   it('si falta una pregunta pide confirmación y no envía; "Volver al quiz" la cierra', () => {
@@ -143,12 +143,12 @@ describe('FormularioQuiz', () => {
     elegir('comer');
     fireEvent.click(botonFinalizar());
 
-    expect(screen.getByText('Te falta 1 pregunta por contestar.')).toBeInTheDocument();
+    expect(screen.getByText('You have 1 question left to answer.')).toBeInTheDocument();
     expect(onEnviar).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Volver al quiz' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Back to the quiz' }));
 
-    expect(screen.queryByText(/por contestar/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/left to answer/)).not.toBeInTheDocument();
     expect(onEnviar).not.toHaveBeenCalled();
   });
 
@@ -156,9 +156,9 @@ describe('FormularioQuiz', () => {
     const { onEnviar } = montar();
 
     fireEvent.click(botonFinalizar());
-    expect(screen.getByText('Te faltan 2 preguntas por contestar.')).toBeInTheDocument();
+    expect(screen.getByText('You have 2 questions left to answer.')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Enviar de todas formas' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Submit anyway' }));
 
     expect(onEnviar).toHaveBeenCalledTimes(1);
     expect(onEnviar).toHaveBeenCalledWith({
@@ -168,7 +168,7 @@ describe('FormularioQuiz', () => {
         { pregunta_id: 102, respuesta_estudiante: null },
       ],
     });
-    expect(screen.queryByText(/por contestar/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/left to answer/)).not.toBeInTheDocument();
   });
 
   it('CA-3.2.1: al agotarse el tiempo envía lo contestado una sola vez, bloquea el formulario y no pide confirmación', () => {
@@ -188,9 +188,9 @@ describe('FormularioQuiz', () => {
         { pregunta_id: 102, respuesta_estudiante: null },
       ],
     });
-    expect(screen.getByText(/Se agotó el tiempo/)).toBeInTheDocument();
+    expect(screen.getByText(/Time is up/)).toBeInTheDocument();
     screen.getAllByRole('radio').forEach((opcion) => expect(opcion).toBeDisabled());
-    expect(screen.queryByText(/por contestar/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/left to answer/)).not.toBeInTheDocument();
 
     avanzar(10_000);
     expect(onEnviar).toHaveBeenCalledTimes(1);
@@ -205,13 +205,13 @@ describe('FormularioQuiz', () => {
     fireEvent.click(botonFinalizar());
 
     expect(onEnviar).toHaveBeenCalledTimes(2);
-    expect(screen.queryByText(/por contestar/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/left to answer/)).not.toBeInTheDocument();
   });
 
   it('mientras se envía deshabilita el botón y las opciones', () => {
     montar({ enviando: true });
 
-    expect(screen.getByRole('button', { name: 'Enviando…' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Submitting…' })).toBeDisabled();
     screen.getAllByRole('radio').forEach((opcion) => expect(opcion).toBeDisabled());
   });
 

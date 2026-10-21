@@ -12,12 +12,13 @@
 //   <EstudiarTarjetas inscripcionId={inscripcionId} onSalir={volverAlPanel} />
 
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './estudiar-tarjetas.css';
 import { iniciarSesionRepaso, registrarValoracion } from '../../../cliente-api/estudioApi';
 import {
-  MENSAJE_SIN_INSCRIPCION,
-  TEXTO_MODO,
-  TITULO_POR_DEFECTO,
+  MENSAJE_SIN_INSCRIPCION_CLAVE,
+  TEXTO_MODO_CLAVE,
+  TITULO_POR_DEFECTO_CLAVE,
   VALORACIONES,
   VALORACIONES_UI,
 } from './estudiarTarjetas.constants';
@@ -32,7 +33,7 @@ const conteosIniciales = () =>
 
 const estadoInicial = {
   fase: 'cargando', // cargando | error | vacio | estudiando | terminada
-  error: null,
+  error: null, // { clave, mensaje }: clave de traducción propia o mensaje que devuelve el backend
   total: 0,
   cola: [],
   todas: [], // mazo completo, para reiniciar la vuelta cuando se acaban las tarjetas
@@ -43,7 +44,7 @@ const estadoInicial = {
   turno: 0, // cambia con cada valoración guardada; sirve para manejar el foco
   guardando: false,
   errorGuardado: null,
-  mensaje: '',
+  mensaje: null, // { clave, valores }: descriptor del mensaje de guardado (se traduce al mostrarlo)
   conteos: conteosIniciales(),
   repetidas: [],
   inicio: null,
@@ -68,7 +69,11 @@ function reductor(estado, accion) {
     }
 
     case 'CARGA_ERROR':
-      return { ...estadoInicial, fase: 'error', error: accion.mensaje };
+      return {
+        ...estadoInicial,
+        fase: 'error',
+        error: { clave: accion.clave ?? null, mensaje: accion.mensaje ?? null },
+      };
 
     case 'VOLTEAR':
       return { ...estado, volteada: !estado.volteada, vista: estado.vista || !estado.volteada };
@@ -123,10 +128,6 @@ function reductor(estado, accion) {
   }
 }
 
-function pluralizar(n, singular, plural) {
-  return `${n} ${n === 1 ? singular : plural}`;
-}
-
 function formatearDuracion(ms) {
   const segundos = Math.max(0, Math.round(ms / 1000));
   const minutos = Math.floor(segundos / 60);
@@ -134,14 +135,15 @@ function formatearDuracion(ms) {
   return minutos > 0 ? `${minutos} min ${resto} s` : `${resto} s`;
 }
 
+// Devuelve un descriptor { clave, valores } que se traduce al mostrarlo.
 function construirMensaje(valoracion, progreso) {
   if (valoracion === VALORACIONES.REPETIR) {
-    return 'Guardado. Esta tarjeta volverá al final de la sesión.';
+    return { clave: 'studySession.feedback.repeat' };
   }
   const dias = Number(progreso?.intervalo_dias);
   return Number.isFinite(dias) && dias > 0
-    ? `Guardado. Próximo repaso en ${pluralizar(dias, 'día', 'días')}.`
-    : 'Guardado.';
+    ? { clave: 'studySession.feedback.nextReview', valores: { count: dias } }
+    : { clave: 'studySession.feedback.saved' };
 }
 
 const IconoVolver = () => (
@@ -174,6 +176,7 @@ export function EstudiarTarjetas({
   onSalir,
   servicio = servicioPorDefecto,
 }) {
+  const { t } = useTranslation();
   const [estado, dispatch] = useReducer(reductor, estadoInicial);
   const [recarga, setRecarga] = useState(0);
 
@@ -185,14 +188,16 @@ export function EstudiarTarjetas({
   // de la tarjeta actual (o el título por defecto) y la semana junto al modo.
   const mazoActual = actual ? mazosPorId?.[actual.mazo_id] : undefined;
   useEncabezadoPagina(
-    mazoActual?.nombre ?? TITULO_POR_DEFECTO,
-    mazoActual?.semana ? `Semana ${mazoActual.semana} · ${TEXTO_MODO}` : TEXTO_MODO
+    mazoActual?.nombre ?? t(TITULO_POR_DEFECTO_CLAVE),
+    mazoActual?.semana
+      ? t('studySession.weekAndMode', { week: mazoActual.semana, mode: t(TEXTO_MODO_CLAVE) })
+      : t(TEXTO_MODO_CLAVE)
   );
 
   // ---------- Carga de la sesión ----------
   useEffect(() => {
     if (!inscripcionId) {
-      dispatch({ tipo: 'CARGA_ERROR', mensaje: MENSAJE_SIN_INSCRIPCION });
+      dispatch({ tipo: 'CARGA_ERROR', clave: MENSAJE_SIN_INSCRIPCION_CLAVE });
       return undefined;
     }
 
@@ -280,7 +285,7 @@ export function EstudiarTarjetas({
 
   const botonSalir = onSalir && (
     <button type="button" className="estudiar-boton" onClick={onSalir}>
-      Volver a los mazos
+      {t('studySession.backToDecks')}
     </button>
   );
 
@@ -290,7 +295,7 @@ export function EstudiarTarjetas({
     return (
       <section className="estudiar estudiar--centrado" aria-busy="true">
         <p className="estudiar-texto" role="status">
-          Preparando tus tarjetas…
+          {t('studySession.loading')}
         </p>
       </section>
     );
@@ -299,9 +304,11 @@ export function EstudiarTarjetas({
   if (estado.fase === 'error') {
     return (
       <section className="estudiar estudiar--centrado">
-        <h2 className="estudiar-titulo">No pudimos cargar tu repaso</h2>
+        <h2 className="estudiar-titulo">{t('studySession.errors.title')}</h2>
         <p className="estudiar-texto" role="alert">
-          {estado.error}
+          {estado.error?.clave
+            ? t(estado.error.clave)
+            : estado.error?.mensaje || t('studySession.errors.unknown')}
         </p>
         <div className="estudiar-acciones">
           <button
@@ -309,7 +316,7 @@ export function EstudiarTarjetas({
             className="estudiar-boton estudiar-boton--primario"
             onClick={recargar}
           >
-            Reintentar
+            {t('studySession.errors.retry')}
           </button>
           {botonSalir}
         </div>
@@ -320,10 +327,9 @@ export function EstudiarTarjetas({
   if (estado.fase === 'vacio') {
     return (
       <section className="estudiar estudiar--centrado">
-        <h2 className="estudiar-titulo">No tienes tarjetas para repasar ahora</h2>
+        <h2 className="estudiar-titulo">{t('studySession.empty.title')}</h2>
         <p className="estudiar-texto">
-          Aparecerán aquí cuando venza el próximo repaso de alguna palabra o cuando la docente
-          apruebe palabras nuevas en los mazos abiertos.
+          {t('studySession.empty.text')}
         </p>
         <div className="estudiar-acciones">
           <button
@@ -331,7 +337,7 @@ export function EstudiarTarjetas({
             className="estudiar-boton estudiar-boton--primario"
             onClick={recargar}
           >
-            Volver a cargar
+            {t('studySession.empty.reload')}
           </button>
           {botonSalir}
         </div>
@@ -350,11 +356,13 @@ export function EstudiarTarjetas({
         aria-labelledby="estudiar-resumen-titulo"
       >
         <h2 className="estudiar-titulo" id="estudiar-resumen-titulo">
-          Sesión completada
+          {t('studySession.summary.title')}
         </h2>
         <p className="estudiar-texto">
-          Repasaste {pluralizar(estado.valoradas.length, 'tarjeta', 'tarjetas')} en{' '}
-          {formatearDuracion(estado.fin - estado.inicio)}.
+          {t('studySession.summary.reviewed', {
+            count: estado.valoradas.length,
+            duration: formatearDuracion(estado.fin - estado.inicio),
+          })}
         </p>
 
         <div className="estudiar-distribucion" aria-hidden="true">
@@ -371,12 +379,12 @@ export function EstudiarTarjetas({
 
         <ul
           className="estudiar-resumen"
-          aria-label={`${totalValoraciones} valoraciones registradas`}
+          aria-label={t('studySession.summary.ratingsRecorded', { count: totalValoraciones })}
         >
-          {VALORACIONES_UI.map(({ id, valor, etiqueta }) => (
+          {VALORACIONES_UI.map(({ id, valor, etiquetaKey }) => (
             <li key={id}>
               <span className={`estudiar-muestra estudiar-color--${id}`} aria-hidden="true" />
-              <span className="estudiar-resumen__etiqueta">{etiqueta}</span>
+              <span className="estudiar-resumen__etiqueta">{t(etiquetaKey)}</span>
               <strong>{estado.conteos[valor]}</strong>
             </li>
           ))}
@@ -389,7 +397,7 @@ export function EstudiarTarjetas({
               className="estudiar-boton estudiar-boton--primario"
               onClick={onSalir}
             >
-              Volver a los mazos
+              {t('studySession.backToDecks')}
             </button>
           )}
         </div>
@@ -405,14 +413,14 @@ export function EstudiarTarjetas({
   const repetida = estado.repetidas.includes(actual.id_tarjeta);
 
   return (
-    <section className="estudiar" aria-label="Modo estudio">
+    <section className="estudiar" aria-label={t('studySession.ariaLabel')}>
       <header className="estudiar-encabezado">
         <div className="estudiar-encabezado__izq">
           {onSalir && (
             <button
               type="button"
               className="estudiar-volver"
-              aria-label="Volver a los mazos"
+              aria-label={t('studySession.backToDecks')}
               onClick={onSalir}
             >
               <IconoVolver />
@@ -421,15 +429,15 @@ export function EstudiarTarjetas({
         </div>
 
         <div className="estudiar-progreso">
-          <p className="estudiar-progreso__etiqueta">Progreso de la sesión</p>
+          <p className="estudiar-progreso__etiqueta">{t('studySession.progress.label')}</p>
           <div className="estudiar-progreso__fila">
             <p className="estudiar-progreso__valor">
-              Tarjeta {posicion} de {estado.total}
+              {t('studySession.progress.cardOf', { current: posicion, total: estado.total })}
             </p>
             <div
               className="estudiar-progreso__pista"
               role="progressbar"
-              aria-label="Progreso de la sesión"
+              aria-label={t('studySession.progress.label')}
               aria-valuemin={0}
               aria-valuemax={estado.total}
               aria-valuenow={posicion}
@@ -444,7 +452,7 @@ export function EstudiarTarjetas({
         <div className="estudiar-fila">
           <p className="estudiar-termino">
             <span>
-              Término {posicion}/{estado.total}
+              {t('studySession.progress.term', { current: posicion, total: estado.total })}
             </span>
             {actual.categoria_gramatical && (
               <span className="estudiar-chip estudiar-chip--categoria">
@@ -454,7 +462,7 @@ export function EstudiarTarjetas({
           </p>
 
           {etiquetas.length > 0 && (
-            <ul className="estudiar-etiquetas" aria-label="Etiquetas de contexto">
+            <ul className="estudiar-etiquetas" aria-label={t('studySession.contextTags')}>
               {etiquetas.map((etiqueta) => (
                 <li key={etiqueta} className="estudiar-chip estudiar-chip--etiqueta">
                   {etiqueta}
@@ -482,13 +490,12 @@ export function EstudiarTarjetas({
         />
 
         <p className="estudiar-estado" role="status">
-          {estado.mensaje}
+          {estado.mensaje ? t(estado.mensaje.clave, estado.mensaje.valores) : ''}
         </p>
 
         {estado.errorGuardado && (
           <p className="estudiar-error" role="alert">
-            No se pudo guardar tu valoración: {estado.errorGuardado} Elige una opción para
-            intentarlo de nuevo.
+            {t('studySession.errors.saveFailed', { message: estado.errorGuardado })}
           </p>
         )}
 
@@ -499,7 +506,7 @@ export function EstudiarTarjetas({
             onClick={terminar}
             disabled={estado.guardando}
           >
-            Terminar sesión de repaso
+            {t('studySession.endSession')}
           </button>
         </div>
       </div>

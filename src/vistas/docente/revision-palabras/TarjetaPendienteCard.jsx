@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Tarjeta individual de la pestaña "Nuevos Términos" (HU-004).
@@ -31,6 +32,8 @@ export function TarjetaPendienteCard({
   onCancelarEdicion,
   onAprobar
 }) {
+  const { t } = useTranslation();
+
   // Estado local editable para cada campo, inicializado con los
   // valores originales de la tarjeta (o cadena vacía si vinieran
   // undefined). Son 3 useState separados (en vez de un solo objeto
@@ -56,12 +59,12 @@ export function TarjetaPendienteCard({
   return (
     <div className="tarjeta-pendiente mazo-pila__cara">
       <div className="tarjeta-pendiente__encabezado">
-        <span className="badge badge-abierto">Pendiente</span>
+        <span className="badge badge-abierto">{t('pendingCard.badge')}</span>
         <h3 className="tarjeta-pendiente__palabra">{tarjeta.palabra}</h3>
       </div>
 
       <div className="tarjeta-pendiente__meta">
-        Sometido por: <strong>{tarjeta.estudiante}</strong>
+        {t('pendingCard.submittedBy')} <strong>{tarjeta.estudiante}</strong>
       </div>
 
       {/* Modo lectura: solo texto, sin inputs. Se muestra cuando
@@ -71,10 +74,10 @@ export function TarjetaPendienteCard({
         <>
           <div>
             <p className="tarjeta-pendiente__meta">
-              <strong>Traducción:</strong> {tarjeta.traduccion}
+              <strong>{t('pendingCard.translationColon')}</strong> {tarjeta.traduccion}
             </p>
             <p className="tarjeta-pendiente__meta">
-              <strong>Definición:</strong> {tarjeta.definicion}
+              <strong>{t('pendingCard.definitionColon')}</strong> {tarjeta.definicion}
             </p>
           </div>
 
@@ -93,7 +96,7 @@ export function TarjetaPendienteCard({
               className="btn btn-secondary"
               onClick={onIniciarEdicion}
             >
-              Editar
+              {t('pendingCard.actions.edit')}
             </button>
             {/* Aprobar sin pasar por edición: se envía un objeto
                 vacío porque no hay correcciones que aplicar; el
@@ -103,7 +106,7 @@ export function TarjetaPendienteCard({
               className="btn btn-primary"
               onClick={() => onAprobar({})}
             >
-              Aprobar
+              {t('pendingCard.actions.approve')}
             </button>
           </div>
         </>
@@ -114,7 +117,7 @@ export function TarjetaPendienteCard({
         <form onSubmit={handleGuardarAprobar}>
           <div className="form-group">
             <label className="form-label" htmlFor={`traduccion-${tarjeta.id_tarjeta}`}>
-              Traducción
+              {t('pendingCard.fields.translation')}
             </label>
             <input
               id={`traduccion-${tarjeta.id_tarjeta}`}
@@ -128,7 +131,7 @@ export function TarjetaPendienteCard({
 
           <div className="form-group">
             <label className="form-label" htmlFor={`definicion-${tarjeta.id_tarjeta}`}>
-              Definición
+              {t('pendingCard.fields.definition')}
             </label>
             <textarea
               id={`definicion-${tarjeta.id_tarjeta}`}
@@ -142,7 +145,7 @@ export function TarjetaPendienteCard({
 
           <div className="form-group">
             <label className="form-label" htmlFor={`ejemplo-${tarjeta.id_tarjeta}`}>
-              Ejemplo de uso
+              {t('pendingCard.fields.example')}
             </label>
             {/* Sin `required`: el ejemplo sigue siendo opcional
                 también en modo edición, consistente con HU-002. */}
@@ -161,7 +164,7 @@ export function TarjetaPendienteCard({
               className="btn btn-secondary"
               onClick={onCancelarEdicion}
             >
-              Cancelar
+              {t('pendingCard.actions.cancel')}
             </button>
             {/* type="submit": dispara handleGuardarAprobar() vía el
                 onSubmit del <form>, no un onClick directo. */}
@@ -169,7 +172,7 @@ export function TarjetaPendienteCard({
               type="submit"
               className="btn btn-primary"
             >
-              Guardar y Aprobar
+              {t('pendingCard.actions.saveAndApprove')}
             </button>
           </div>
         </form>

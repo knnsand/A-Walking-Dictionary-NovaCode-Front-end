@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { listarCursos } from '../../../cliente-api/cursosApi';
 import { inscribirEstudiante } from '../../../cliente-api/inscripcionesApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
@@ -6,6 +7,7 @@ import { FORM_INICIAL } from './inscribirEstudiante.constants';
 import { validarCamposObligatorios, validarFormatoEmail } from './inscribirEstudiante.validation';
 
 export function InscribirEstudianteForm({ onCerrar, onInscripcionCreada }) {
+  const { t } = useTranslation();
   const [cursos, setCursos] = useState([]);
   const [form, setForm] = useState(FORM_INICIAL);
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
@@ -24,22 +26,28 @@ export function InscribirEstudianteForm({ onCerrar, onInscripcionCreada }) {
     evento.preventDefault();
 
     if (!validarCamposObligatorios(form)) {
-      setAviso({ tipo: 'error', mensaje: 'Selecciona un curso e ingresa el correo del estudiante.' });
+      setAviso({ tipo: 'error', mensaje: t('enrollStudentForm.errors.required') });
       return;
     }
     if (!validarFormatoEmail(form.email)) {
-      setAviso({ tipo: 'error', mensaje: 'Ingresa un correo con un formato válido.' });
+      setAviso({ tipo: 'error', mensaje: t('enrollStudentForm.errors.invalidEmail') });
       return;
     }
 
     setEnviando(true);
     try {
       const inscripcion = await inscribirEstudiante(Number(form.curso_id), form.email);
-      setAviso({ tipo: 'exito', mensaje: `${inscripcion.nombre_estudiante || 'El estudiante'} quedó inscrito correctamente.` });
+      setAviso({
+        tipo: 'exito',
+        mensaje: t('enrollStudentForm.success', {
+          name: inscripcion.nombre_estudiante || t('enrollStudentForm.theStudent'),
+        }),
+      });
       setForm((anterior) => ({ ...anterior, email: '' }));
       onInscripcionCreada?.(inscripcion);
     } catch (error) {
-      setAviso({ tipo: 'error', mensaje: error.message || 'No fue posible inscribir al estudiante. Intenta nuevamente.' });
+      // error.message viene del backend y puede estar en español (pendiente de revisar).
+      setAviso({ tipo: 'error', mensaje: error.message || t('enrollStudentForm.errors.enrollFailed') });
     } finally {
       setEnviando(false);
     }
@@ -49,25 +57,25 @@ export function InscribirEstudianteForm({ onCerrar, onInscripcionCreada }) {
     <form className="card-mazo" onSubmit={handleSubmit} noValidate>
       <div className="card-mazo__header">
         <div>
-          <h2 className="card-mazo__title">Inscribir estudiante</h2>
-          <p className="card-mazo__subtitle">Vincula a un estudiante existente con uno de tus cursos.</p>
+          <h2 className="card-mazo__title">{t('enrollStudentForm.title')}</h2>
+          <p className="card-mazo__subtitle">{t('enrollStudentForm.subtitle')}</p>
         </div>
-        <button type="button" className="card-mazo__close" onClick={onCerrar} aria-label="Cerrar">×</button>
+        <button type="button" className="card-mazo__close" onClick={onCerrar} aria-label={t('enrollStudentForm.close')}>×</button>
       </div>
 
       <div className="card-mazo__body">
         <Aviso tipo={aviso.tipo} mensaje={aviso.mensaje} />
         <div className="form-group">
-          <label className="form-label" htmlFor="curso_id">Curso</label>
+          <label className="form-label" htmlFor="curso_id">{t('enrollStudentForm.course')}</label>
           <select id="curso_id" className="form-select" name="curso_id" value={form.curso_id} onChange={handleChange}>
-            <option value="">Selecciona un curso</option>
+            <option value="">{t('enrollStudentForm.selectCourse')}</option>
             {cursos.map((curso) => (
               <option key={curso.id_curso} value={curso.id_curso}>{curso.nombre}</option>
             ))}
           </select>
         </div>
         <div className="form-group">
-          <label className="form-label" htmlFor="email">Correo del estudiante</label>
+          <label className="form-label" htmlFor="email">{t('enrollStudentForm.studentEmail')}</label>
           <input
             id="email"
             className="form-input"
@@ -75,15 +83,15 @@ export function InscribirEstudianteForm({ onCerrar, onInscripcionCreada }) {
             name="email"
             value={form.email}
             onChange={handleChange}
-            placeholder="estudiante@correo.edu"
+            placeholder={t('enrollStudentForm.emailPlaceholder')}
           />
         </div>
       </div>
 
       <div className="card-mazo__footer">
-        <button type="button" className="btn btn-secondary" onClick={onCerrar}>Cancelar</button>
+        <button type="button" className="btn btn-secondary" onClick={onCerrar}>{t('enrollStudentForm.actions.cancel')}</button>
         <button type="submit" className="btn btn-primary" disabled={enviando}>
-          {enviando ? 'Inscribiendo...' : 'Inscribir'}
+          {enviando ? t('enrollStudentForm.actions.enrolling') : t('enrollStudentForm.actions.enroll')}
         </button>
       </div>
     </form>

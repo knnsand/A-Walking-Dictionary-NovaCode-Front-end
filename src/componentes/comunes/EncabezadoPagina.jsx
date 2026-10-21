@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EncabezadoContext } from '../../contexto/EncabezadoContext';
 
 /**
@@ -8,6 +9,7 @@ import { EncabezadoContext } from '../../contexto/EncabezadoContext';
  * y solo con el botón ☰ en móvil.
  */
 export function EncabezadoPagina({ onAbrirMenu }) {
+  const { t } = useTranslation();
   const { encabezado } = useContext(EncabezadoContext);
 
   return (
@@ -15,7 +17,7 @@ export function EncabezadoPagina({ onAbrirMenu }) {
       <button
         className="topbar__menu-btn"
         type="button"
-        aria-label="Abrir menú"
+        aria-label={t('header.openMenu')}
         onClick={onAbrirMenu}
       >
         ☰

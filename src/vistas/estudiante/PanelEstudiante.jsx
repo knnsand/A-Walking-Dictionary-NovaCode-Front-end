@@ -1,14 +1,16 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ModalRegistrarTarjeta } from './registrar-tarjeta/ModalRegistrarTarjeta';
 import { ModalUnirseCurso } from './unirse-curso/ModalUnirseCurso';
 import { useEncabezadoPagina } from '../../contexto/useEncabezadoPagina';
 
 export function PanelEstudiante() {
+  const { t } = useTranslation();
   const [mostrarFormularioTarjeta, setMostrarFormularioTarjeta] = useState(false);
   const [mostrarFormularioUnirse, setMostrarFormularioUnirse] = useState(false);
 
   // El título de la página lo pinta el layout (barra superior).
-  useEncabezadoPagina('Mis aportes', 'Registra nuevas palabras en los mazos disponibles.');
+  useEncabezadoPagina(t('studentPanel.title'), t('studentPanel.subtitle'));
 
   return (
     <div className="panel-estudiante">
@@ -18,7 +20,7 @@ export function PanelEstudiante() {
           className="btn btn-primary"
           onClick={() => setMostrarFormularioTarjeta(true)}
         >
-          Registrar palabra
+          {t('studentPanel.actions.registerWord')}
         </button>
 
         <button
@@ -26,7 +28,7 @@ export function PanelEstudiante() {
           className="btn btn-secondary"
           onClick={() => setMostrarFormularioUnirse(true)}
         >
-          Unirme a un curso
+          {t('studentPanel.actions.joinCourse')}
         </button>
       </div>
 

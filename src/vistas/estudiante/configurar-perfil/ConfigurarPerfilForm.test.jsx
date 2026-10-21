@@ -28,16 +28,16 @@ const datosInicialesVacios = {
 describe('ConfigurarPerfilForm', () => {
   it('muestra un error si se envía sin nivel MCER ni código estudiantil', async () => {
     render(<ConfigurarPerfilForm datosIniciales={datosInicialesVacios} />);
-    fireEvent.click(screen.getByRole('button', { name: /guardar cambios/i }));
-    expect(await screen.findByRole('alert')).toHaveTextContent(/nivel mcer.*código estudiantil/i);
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(/cefr level.*student code/i);
   });
 
   it('actualiza el perfil correctamente cuando los datos son válidos', async () => {
     render(<ConfigurarPerfilForm datosIniciales={datosInicialesVacios} />);
     fireEvent.click(screen.getByRole('radio', { name: /^b1/i }));
-    fireEvent.change(screen.getByLabelText(/código estudiantil/i), { target: { value: '20221234' } });
-    fireEvent.click(screen.getByRole('button', { name: /guardar cambios/i }));
-    expect(await screen.findByRole('alert')).toHaveTextContent(/perfil actualizado correctamente/i);
+    fireEvent.change(screen.getByLabelText(/student code/i), { target: { value: '20221234' } });
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(/profile updated successfully/i);
     expect(actualizarPerfil).toHaveBeenCalledWith(expect.objectContaining({
       nivel_ingles: 'B1',
       codigo_estudiantil: '20221234',
@@ -45,11 +45,12 @@ describe('ConfigurarPerfilForm', () => {
   });
 
   it('muestra el mensaje de error que devuelve la API si la actualización falla', async () => {
+    // El mensaje del backend se muestra tal cual (puede estar en español).
     actualizarPerfil.mockRejectedValueOnce(new Error('No se pudo actualizar el perfil. Intenta nuevamente.'));
     render(<ConfigurarPerfilForm datosIniciales={datosInicialesVacios} />);
     fireEvent.click(screen.getByRole('radio', { name: /^b1/i }));
-    fireEvent.change(screen.getByLabelText(/código estudiantil/i), { target: { value: '20221234' } });
-    fireEvent.click(screen.getByRole('button', { name: /guardar cambios/i }));
+    fireEvent.change(screen.getByLabelText(/student code/i), { target: { value: '20221234' } });
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/no se pudo actualizar el perfil/i);
   });
 
@@ -68,21 +69,21 @@ describe('ConfigurarPerfilForm', () => {
     fireEvent.click(screen.getByRole('radio', { name: /^b1/i }));
 
     fireEvent.change(
-      screen.getByLabelText(/código estudiantil/i),
+      screen.getByLabelText(/student code/i),
       { target: { value: '20221234' } }
     );
 
     fireEvent.change(
-      screen.getByLabelText(/intereses/i),
+      screen.getByLabelText(/interests/i),
       { target: { value: 'música, programación, videojuegos' } }
     );
 
     fireEvent.click(
-      screen.getByRole('button', { name: /guardar cambios/i })
+      screen.getByRole('button', { name: /save changes/i })
     );
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      /perfil actualizado correctamente/i
+      /profile updated successfully/i
     );
 
     expect(actualizarPerfil).toHaveBeenCalledWith(
@@ -109,7 +110,7 @@ describe('ConfigurarPerfilForm', () => {
     fireEvent.click(screen.getByRole('radio', { name: /^b1/i }));
 
     fireEvent.change(
-      screen.getByLabelText(/código estudiantil/i),
+      screen.getByLabelText(/student code/i),
       {
         target: {
           value: '123456789012345678901',
@@ -118,16 +119,17 @@ describe('ConfigurarPerfilForm', () => {
     );
 
     fireEvent.click(
-      screen.getByRole('button', { name: /guardar cambios/i })
+      screen.getByRole('button', { name: /save changes/i })
     );
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      /revisa los datos del perfil/i
+      /check your profile data/i
     );
 
     expect(actualizarPerfil).not.toHaveBeenCalled();
   });
-it('no permite un avatar en formato Base64 o data URI', async () => {
+
+  it('no permite un avatar en formato Base64 o data URI', async () => {
     render(
       <ConfigurarPerfilForm
         datosIniciales={{
@@ -140,22 +142,28 @@ it('no permite un avatar en formato Base64 o data URI', async () => {
     );
 
     fireEvent.click(
-      screen.getByRole('button', { name: /guardar cambios/i })
+      screen.getByRole('button', { name: /save changes/i })
     );
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      /revisa los datos del perfil/i
+      /check your profile data/i
     );
 
     expect(actualizarPerfil).not.toHaveBeenCalled();
   });
 
   it('precarga el formulario con los datos existentes del estudiante', () => {
-    render( <ConfigurarPerfilForm datosIniciales={{nivel_ingles: 'A2', codigo_estudiantil: '20189876', avatar: '', intereses: ['música', 'programación'],
+    render(
+      <ConfigurarPerfilForm
+        datosIniciales={{
+          nivel_ingles: 'A2',
+          codigo_estudiantil: '20189876',
+          avatar: '',
+          intereses: ['música', 'programación'],
         }}
       />
     );
     expect(screen.getByRole('radio', { name: /^a2/i })).toBeChecked();
-    expect(screen.getByLabelText(/código estudiantil/i)).toHaveValue('20189876');
+    expect(screen.getByLabelText(/student code/i)).toHaveValue('20189876');
   });
 });

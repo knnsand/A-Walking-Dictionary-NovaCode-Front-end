@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InscribirEstudianteForm } from './InscribirEstudianteForm';
 
 export function ModalInscribirEstudiante({ onCerrar, onInscripcionCreada }) {
+  const { t } = useTranslation();
+
   useEffect(() => {
     function handleEscape(evento) {
       if (evento.key === 'Escape') onCerrar();
@@ -15,7 +18,7 @@ export function ModalInscribirEstudiante({ onCerrar, onInscripcionCreada }) {
   }
 
   return (
-    <div className="modal-overlay" role="dialog" aria-modal="true" aria-label="Inscribir estudiante" onClick={handleClicFondo}>
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-label={t('enrollStudentModal.ariaLabel')} onClick={handleClicFondo}>
       <div className="modal-card">
         <InscribirEstudianteForm onCerrar={onCerrar} onInscripcionCreada={onInscripcionCreada} />
       </div>

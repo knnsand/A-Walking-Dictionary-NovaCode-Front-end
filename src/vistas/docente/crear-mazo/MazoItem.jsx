@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 // import { Link } from 'react-router-dom';
 import { actualizarEstadoMazo } from '../../../cliente-api/mazosApi';
 import { exportarMazoPdf } from '../../../cliente-api/exportacionesApi';
 import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
+import { VARIANTE_REGIONAL_CLAVES } from './crearMazo.constants';
 
 const CANTIDAD_COLORES = 5;
 
@@ -14,11 +16,21 @@ const CANTIDAD_COLORES = 5;
  * - invitado: solo lectura (sin acciones).
  */
 export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
+  const { t } = useTranslation();
   const [guardando, setGuardando] = useState(false);
+  // Guarda la CLAVE de traducción del error (no el texto); se traduce al mostrarlo.
   const [error, setError] = useState(null);
 
   const abierto = mazo.estado === 'abierto';
   const color = (Number(mazo.semana) || 0) % CANTIDAD_COLORES;
+
+  // La variante se guarda en español en la base de datos; aquí solo se traduce
+  // lo que se muestra. Si llegara un valor desconocido, se muestra tal cual.
+  const claveVariante =
+    VARIANTE_REGIONAL_CLAVES[mazo.variante_regional_predeterminada];
+  const variante = claveVariante
+    ? t(claveVariante)
+    : mazo.variante_regional_predeterminada;
 
   async function handleCambiarEstado() {
     const nuevoEstado = abierto ? 'cerrado' : 'abierto';
@@ -33,7 +45,7 @@ export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
       onEstadoActualizado?.(mazoActualizado);
     } catch (e) {
       console.error(e);
-      setError('No se pudo cambiar el estado del mazo.');
+      setError('deckCard.errors.changeStateFailed');
     } finally {
       setGuardando(false);
     }
@@ -45,23 +57,26 @@ export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
         className={`mazo-pila__cara mazo-card${abierto ? '' : ' mazo-card--cerrado'}`}
       >
         <div className="mazo-card__cabecera">
-          <span className="mazo-card__semana">Semana {mazo.semana}</span>
+          <span className="mazo-card__semana">
+            {t('deckCard.week', { week: mazo.semana })}
+          </span>
         </div>
 
         <h3 className="mazo-card__titulo">{mazo.nombre_lectura}</h3>
         <p className="mazo-card__autor">{mazo.autor}</p>
 
         {mazo.variante_regional_predeterminada && (
-          <ul className="mazo-card__etiquetas" aria-label="Variante regional">
-            <li className="mazo-card__etiqueta">
-              {mazo.variante_regional_predeterminada}
-            </li>
+          <ul
+            className="mazo-card__etiquetas"
+            aria-label={t('deckCard.regionalVariant')}
+          >
+            <li className="mazo-card__etiqueta">{variante}</li>
           </ul>
         )}
 
         <div className="mazo-card__pie">
           <span className="mazo-card__estado-texto">
-            {abierto ? 'Mazo abierto para aportes' : 'Mazo cerrado'}
+            {abierto ? t('deckCard.status.open') : t('deckCard.status.closed')}
           </span>
 
           {rol === 'docente' && (
@@ -71,16 +86,24 @@ export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
                 className="btn btn-secondary"
                 onClick={handleCambiarEstado}
                 disabled={guardando}
-                aria-label={`${abierto ? 'Cerrar' : 'Abrir'} el mazo ${mazo.nombre_lectura}`}
+                aria-label={
+                  abierto
+                    ? t('deckCard.aria.close', { name: mazo.nombre_lectura })
+                    : t('deckCard.aria.open', { name: mazo.nombre_lectura })
+                }
               >
-                {guardando ? 'Guardando...' : abierto ? 'Cerrar mazo' : 'Abrir mazo'}
+                {guardando
+                  ? t('deckCard.actions.saving')
+                  : abierto
+                    ? t('deckCard.actions.close')
+                    : t('deckCard.actions.open')}
               </button>
 
               {/* HU-3.3 (CA-3.3.1): solo la docente exporta; el backend responde 403 a otros roles. */}
               <BotonExportarPdf
                 onExportar={() => exportarMazoPdf(mazo.id_mazo)}
-                etiqueta="Exportar a PDF"
-                ariaLabel={`Exportar a PDF el mazo ${mazo.nombre_lectura}`}
+                etiqueta={t('exportActions.deckPdf')}
+                ariaLabel={t('exportActions.deckPdfAria', { name: mazo.nombre_lectura })}
               />
             </div>
           )}
@@ -90,16 +113,16 @@ export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
               className="btn btn-secondary"
               type="button"
               disabled
-              aria-label={`Estudiar las palabras del mazo ${mazo.nombre_lectura}`}
+              aria-label={t('deckCard.aria.study', { name: mazo.nombre_lectura })}
             >
-              Ver palabras del mazo
+              {t('deckCard.actions.viewWords')}
             </button>
           )}
         </div>
 
         {error && (
           <p className="mazo-card__error" role="alert">
-            {error}
+            {t(error)}
           </p>
         )}
       </div>

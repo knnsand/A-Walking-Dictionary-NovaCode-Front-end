@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   FORM_INICIAL,
@@ -15,10 +16,21 @@ import { listarMazos } from '../../../cliente-api/mazosApi';
 import { verificarDuplicado, registrarTarjeta } from '../../../cliente-api/tarjetasApi';
 import { useAuth } from '../../../contexto/useAuth';
 
+// Descriptor de error para fallos de la API: si el backend trae mensaje se muestra tal cual
+// (puede estar en español, pendiente de revisar); si no, se usa el mensaje propio.
+function errorDeApi(e) {
+  return e.message
+    ? { mensaje: e.message }
+    : { clave: 'registerWordForm.errors.processFailed' };
+}
+
 export function RegistrarTarjetaForm({ onCerrar }) {
+  const { t } = useTranslation();
   const { inscripcionId } = useAuth();
   const [form, setForm] = useState(FORM_INICIAL);
-  const [error, setError] = useState('');
+  // Descriptor del error: { clave, valores } (texto propio, se traduce al mostrarlo)
+  // o { mensaje } (texto del backend, se muestra tal cual).
+  const [error, setError] = useState(null);
   const [exito, setExito] = useState('');
   const [mazos, setMazos] = useState([]);
   const [mazosCargados, setMazosCargados] = useState(false);
@@ -31,9 +43,9 @@ export function RegistrarTarjetaForm({ onCerrar }) {
         const datos = await listarMazos();
         setMazos(datos.filter((mazo) => mazoAceptaPalabras(mazo)));
         setMazosCargados(true);
-      } catch (error) {
-        console.error(error);
-        setError('No fue posible cargar los mazos disponibles.');
+      } catch (e) {
+        console.error(e);
+        setError({ clave: 'registerWordForm.errors.loadDecks' });
       }
     }
 
@@ -48,7 +60,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       [name]: value,
     }));
 
-    setError('');
+    setError(null);
     setExito('');
     setConfirmacion(null);
   }
@@ -56,25 +68,24 @@ export function RegistrarTarjetaForm({ onCerrar }) {
   async function handleSubmit(evento) {
     evento.preventDefault();
 
-    setError('');
+    setError(null);
     setExito('');
 
     if (!validarCamposObligatorios(form)) {
-      setError(
-        'Completa los campos obligatorios: palabra, traducción y definición.'
-      );
+      setError({ clave: 'registerWordForm.errors.requiredFields' });
       return;
     }
 
     if (!validarEjemplo(form.ejemplo)) {
-      setError(
-        `El ejemplo no puede superar los ${LIMITE_EJEMPLO} caracteres.`
-      );
+      setError({
+        clave: 'registerWordForm.errors.exampleTooLong',
+        valores: { max: LIMITE_EJEMPLO },
+      });
       return;
     }
 
     if (!form.mazo_id) {
-      setError('Selecciona un mazo para continuar.');
+      setError({ clave: 'registerWordForm.errors.selectDeck' });
       return;
     }
 
@@ -92,9 +103,9 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       }
 
       await enviarTarjeta();
-    } catch (error) {
-      console.error(error);
-      setError(error.message || 'No fue posible procesar la palabra. Intenta nuevamente.');
+    } catch (e) {
+      console.error(e);
+      setError(errorDeApi(e));
     }
   }
 
@@ -111,24 +122,18 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       });
 
       if (registro.resultado === 'coautoria') {
-        setExito(
-          'Se te registró como coautor: esta palabra ya existía en el mazo con la misma información.'
-        );
+        setExito(t('registerWordForm.success.coauthor'));
       } else if (registro.resultado === 'acepcion_nueva') {
-        setExito(
-          'Acepción adicional registrada correctamente para revisión docente.'
-        );
+        setExito(t('registerWordForm.success.newMeaning'));
       } else {
-        setExito(
-          'Palabra enviada correctamente para revisión docente.'
-        );
+        setExito(t('registerWordForm.success.submitted'));
       }
 
       setForm(FORM_INICIAL);
       setConfirmacion(null);
-    } catch (error) {
-      console.error(error);
-      setError(error.message || 'No fue posible procesar la palabra. Intenta nuevamente.');
+    } catch (e) {
+      console.error(e);
+      setError(errorDeApi(e));
     }
   }
 
@@ -136,7 +141,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
     <form className="form-tarjeta" onSubmit={handleSubmit}>
       <div className="form-tarjeta__header">
         <div>
-          <h2>Añadir Nueva Palabra al Mazo</h2>
+          <h2>{t('registerWordForm.title')}</h2>
         </div>
 
         {onCerrar && (
@@ -144,7 +149,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
             type="button"
             className="btn-cerrar"
             onClick={onCerrar}
-            aria-label="Cerrar"
+            aria-label={t('registerWordForm.close')}
           >
             ×
           </button>
@@ -153,7 +158,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
 
       {error && (
         <p className="form-error" role="alert">
-          {error}
+          {error.clave ? t(error.clave, error.valores) : error.mensaje}
         </p>
       )}
 
@@ -164,26 +169,20 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       )}
 
       <p className="form-leyenda-obligatorio">
-        Los campos marcados con * son obligatorios.
+        {t('registerWordForm.requiredLegend')}
       </p>
 
       {confirmacion && (
         <div className="form-tarjeta__notice" role="alert">
           {confirmacion === 'coautoria' ? (
             <>
-              <strong>⚠️ Esta palabra ya existe en el mazo, con la misma definición.</strong>
-              <p>
-                Se te sumará como coautor del aporte existente; no se creará
-                una tarjeta nueva.
-              </p>
+              <strong>{t('registerWordForm.duplicate.sameTitle')}</strong>
+              <p>{t('registerWordForm.duplicate.sameText')}</p>
             </>
           ) : (
             <>
-              <strong>⚠️ Esta palabra ya existe en el mazo, con una definición distinta.</strong>
-              <p>
-                Tu aporte se guardará como una acepción adicional, sin
-                sobrescribir la existente.
-              </p>
+              <strong>{t('registerWordForm.duplicate.differentTitle')}</strong>
+              <p>{t('registerWordForm.duplicate.differentText')}</p>
             </>
           )}
 
@@ -193,14 +192,14 @@ export function RegistrarTarjetaForm({ onCerrar }) {
               className="btn btn-secondary"
               onClick={() => setConfirmacion(null)}
             >
-              Cancelar
+              {t('registerWordForm.duplicate.cancel')}
             </button>
             <button
               type="button"
               className="btn btn-primary"
               onClick={enviarTarjeta}
             >
-              Confirmar y enviar
+              {t('registerWordForm.duplicate.confirm')}
             </button>
           </div>
         </div>
@@ -209,13 +208,13 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       <section className="form-tarjeta__section">
         <div className="form-tarjeta__section-header">
           <span>1.</span>
-          <h3>Información léxica</h3>
+          <h3>{t('registerWordForm.lexical.title')}</h3>
         </div>
 
         <div className="form-tarjeta__grid">
           <div className="form-field">
             <label htmlFor="palabra" className="form-label--obligatorio">
-              Palabra
+              {t('registerWordForm.lexical.word')}
             </label>
             <input
               id="palabra"
@@ -223,13 +222,13 @@ export function RegistrarTarjetaForm({ onCerrar }) {
               type="text"
               value={form.palabra}
               onChange={handleChange}
-              placeholder="Ej: Doppelgänger, Sublime..."
+              placeholder={t('registerWordForm.lexical.wordPlaceholder')}
             />
           </div>
 
           <div className="form-field">
             <label htmlFor="traduccion" className="form-label--obligatorio">
-              Traducción
+              {t('registerWordForm.lexical.translation')}
             </label>
             <input
               id="traduccion"
@@ -237,41 +236,44 @@ export function RegistrarTarjetaForm({ onCerrar }) {
               type="text"
               value={form.traduccion}
               onChange={handleChange}
-              placeholder="Ej: Doble"
+              placeholder={t('registerWordForm.lexical.translationPlaceholder')}
             />
           </div>
         </div>
 
         <div className="form-field">
-          <label htmlFor="traduccion" className="form-label--obligatorio">
-            Traducción
+          <label htmlFor="definicion" className="form-label--obligatorio">
+            {t('registerWordForm.lexical.definition')}
           </label>
           <textarea
             id="definicion"
             name="definicion"
             value={form.definicion}
             onChange={handleChange}
-            placeholder="Explicación precisa del significado..."
+            placeholder={t('registerWordForm.lexical.definitionPlaceholder')}
             rows="4"
           />
         </div>
 
         <div className="form-field">
           <label htmlFor="ejemplo">
-            Ejemplo
+            {t('registerWordForm.lexical.example')}
           </label>
           <textarea
             id="ejemplo"
             name="ejemplo"
             value={form.ejemplo}
             onChange={handleChange}
-            placeholder="Escribe una oración que muestre el uso de la palabra..."
+            placeholder={t('registerWordForm.lexical.examplePlaceholder')}
             maxLength={LIMITE_EJEMPLO}
             rows="3"
           />
 
           <small className="form-field__counter">
-            {form.ejemplo.length}/{LIMITE_EJEMPLO} caracteres
+            {t('registerWordForm.lexical.characterCount', {
+              current: form.ejemplo.length,
+              max: LIMITE_EJEMPLO,
+            })}
           </small>
         </div>
       </section>
@@ -279,16 +281,16 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       <section className="form-tarjeta__section">
         <div className="form-tarjeta__section-header">
           <span>2.</span>
-          <h3>Asignación al mazo de lectura</h3>
+          <h3>{t('registerWordForm.assignment.title')}</h3>
         </div>
 
         <p className="form-tarjeta__helper">
-          La palabra se incorporará al mazo seleccionado.
+          {t('registerWordForm.assignment.helper')}
         </p>
 
         <div className="form-field">
-          <label htmlFor="mazo_id"className="form-label--obligatorio">
-            Mazo de lectura 
+          <label htmlFor="mazo_id" className="form-label--obligatorio">
+            {t('registerWordForm.assignment.deck')}
           </label>
           <select
             id="mazo_id"
@@ -296,7 +298,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
             value={form.mazo_id}
             onChange={handleChange}
           >
-            <option value="">Selecciona un mazo</option>
+            <option value="">{t('registerWordForm.assignment.selectDeck')}</option>
 
             {mazos.map((mazo) => (
               <option key={mazo.id_mazo} value={mazo.id_mazo}>
@@ -307,19 +309,15 @@ export function RegistrarTarjetaForm({ onCerrar }) {
 
           {mazosCargados && mazos.length === 0 && (
             <p className="form-tarjeta__helper" role="status">
-              No hay mazos abiertos en tus cursos. Si todavía no estás inscrito, únete a un
-              curso con el código de acceso que te dé tu docente.
+              {t('registerWordForm.assignment.noOpenDecks')}
             </p>
           )}
         </div>
       </section>
 
       <div className="form-tarjeta__notice">
-        <strong>ℹ️ Aporte para revisión docente</strong>
-        <p>
-          Tu propuesta será enviada al panel de Seguimiento Docente
-          para su revisión y aprobación académica.
-        </p>
+        <strong>{t('registerWordForm.reviewNotice.title')}</strong>
+        <p>{t('registerWordForm.reviewNotice.text')}</p>
       </div>
 
       <div className="form-tarjeta__footer">
@@ -329,12 +327,12 @@ export function RegistrarTarjetaForm({ onCerrar }) {
             className="btn btn-secondary"
             onClick={onCerrar}
           >
-            Cancelar
+            {t('registerWordForm.actions.cancel')}
           </button>
         )}
 
         <button type="submit" className="btn btn-primary">
-          Enviar palabra para aprobación
+          {t('registerWordForm.actions.submit')}
         </button>
       </div>
     </form>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { listarCursos } from '../../../cliente-api/cursosApi';
 import { listarMazos } from '../../../cliente-api/mazosApi';
 import { generarQuiz } from '../../../cliente-api/quizzesApi';
@@ -7,7 +8,7 @@ import { Aviso } from '../../../componentes/comunes/Aviso';
 import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
 import { useAuth } from '../../../contexto/useAuth';
 import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
-import { TEXTOS, TITULO_MAX } from './generarQuiz.constants';
+import { TEXTOS_CLAVES, TITULO_MAX } from './generarQuiz.constants';
 import { validarFormularioQuiz } from './generarQuiz.validation';
 import { construirPayloadQuiz } from './generarQuiz.payload';
 import { VistaPreviaQuiz } from './VistaPreviaQuiz';
@@ -24,6 +25,7 @@ const FORM_INICIAL = {
 
 // Mensajes exactos que devuelve el backend en rutas protegidas
 // (docs/CONTRATO_AUTENTICACION_FRONTEND.md, sección 4).
+// NO TRADUCIR: se comparan contra el texto en español que envía el backend.
 const ES_SESION_INVALIDA = (msg) =>
   /token de autenticación no proporcionado|token inválido o expirado/i.test(msg ?? '');
 const ES_SIN_PERMISO = (msg) => /no tiene permisos para acceder a este recurso/i.test(msg ?? '');
@@ -32,15 +34,13 @@ const ES_SIN_PERMISO = (msg) => /no tiene permisos para acceder a este recurso/i
 // en el cierre) puede dejar de aplicar.
 const CAMPOS_QUE_AFECTAN_EL_CIERRE = ['fecha_apertura', 'tiempo_limite_min'];
 
-function etiquetaMazo(mazo) {
-  return `Semana ${mazo.semana} · ${mazo.nombre_lectura}`;
-}
-
+// "mensaje" es la clave de traducción de un error de validación.
 function ErrorCampo({ mensaje }) {
+  const { t } = useTranslation();
   if (!mensaje) return null;
   return (
     <p className="generar-quiz__error" role="alert">
-      {mensaje}
+      {t(mensaje, { max: TITULO_MAX })}
     </p>
   );
 }
@@ -50,23 +50,25 @@ function ErrorCampo({ mensaje }) {
  * Contrato: docs/contrato-quiz.md y docs/CONTRATO_FRONTEND_HU-3.1.md (backend).
  */
 export function GenerarQuiz() {
+  const { t } = useTranslation();
   const { logout } = useAuth();
   // El título de la página lo pinta el layout (barra superior).
-  useEncabezadoPagina(TEXTOS.titulo, TEXTOS.descripcion);
+  useEncabezadoPagina(t(TEXTOS_CLAVES.titulo), t(TEXTOS_CLAVES.descripcion));
 
   const [cursos, setCursos] = useState([]);
   const [cursoId, setCursoId] = useState('');
   const [cargandoCursos, setCargandoCursos] = useState(true);
-  const [errorCursos, setErrorCursos] = useState(null);
+  const [errorCursos, setErrorCursos] = useState(null); // clave de traducción
 
   const [mazos, setMazos] = useState([]);
   const [mazosSeleccionados, setMazosSeleccionados] = useState([]);
   const [cargandoMazos, setCargandoMazos] = useState(true);
-  const [errorMazos, setErrorMazos] = useState(null);
+  const [errorMazos, setErrorMazos] = useState(null); // clave de traducción
 
   const [form, setForm] = useState(FORM_INICIAL);
-  const [errores, setErrores] = useState({});
+  const [errores, setErrores] = useState({}); // valores: claves de traducción
   const [enviando, setEnviando] = useState(false);
+  // { clave } para un texto propio (se traduce) o { mensaje } para un texto del backend (tal cual).
   const [errorEnvio, setErrorEnvio] = useState(null);
   const [resultado, setResultado] = useState(null);
 
@@ -78,7 +80,7 @@ export function GenerarQuiz() {
         if (!cancelado) setCursos(Array.isArray(datos) ? datos : []);
       })
       .catch(() => {
-        if (!cancelado) setErrorCursos(TEXTOS.errorCursos);
+        if (!cancelado) setErrorCursos(TEXTOS_CLAVES.errorCursos);
       })
       .finally(() => {
         if (!cancelado) setCargandoCursos(false);
@@ -98,7 +100,7 @@ export function GenerarQuiz() {
         if (!cancelado) setMazos(Array.isArray(datos) ? datos : []);
       })
       .catch(() => {
-        if (!cancelado) setErrorMazos(TEXTOS.errorMazos);
+        if (!cancelado) setErrorMazos(TEXTOS_CLAVES.errorMazos);
       })
       .finally(() => {
         if (!cancelado) setCargandoMazos(false);
@@ -112,6 +114,9 @@ export function GenerarQuiz() {
   const mazosDelCurso = mazos
     .filter((m) => String(m.curso_id) === String(cursoId))
     .sort((a, b) => Number(a.semana) - Number(b.semana) || a.id_mazo - b.id_mazo);
+
+  const etiquetaMazo = (mazo) =>
+    t('quizGenerator.deckOption', { week: mazo.semana, name: mazo.nombre_lectura });
 
   // Quita del estado de errores los campos indicados, para que el aviso
   // desaparezca en cuanto la docente corrige ese campo.
@@ -168,35 +173,43 @@ export function GenerarQuiz() {
     } catch (error) {
       const mensaje = error?.message ?? '';
       if (ES_SESION_INVALIDA(mensaje)) {
-        setErrorEnvio(TEXTOS.sesionVencida);
+        setErrorEnvio({ clave: TEXTOS_CLAVES.sesionVencida });
         logout();
       } else if (ES_SIN_PERMISO(mensaje)) {
-        setErrorEnvio(TEXTOS.sinPermiso);
+        setErrorEnvio({ clave: TEXTOS_CLAVES.sinPermiso });
       } else {
-        setErrorEnvio(mensaje || TEXTOS.errorGenerico);
+        // "mensaje" viene del backend y puede estar en español (pendiente de revisar).
+        setErrorEnvio(mensaje ? { mensaje } : { clave: TEXTOS_CLAVES.errorGenerico });
       }
     } finally {
       setEnviando(false);
     }
   }
 
-    const totalPreguntas = resultado?.preguntas.length ?? 0;
+  const textoErrorEnvio = errorEnvio
+    ? (errorEnvio.clave ? t(errorEnvio.clave) : errorEnvio.mensaje)
+    : null;
+
+  const totalPreguntas = resultado?.preguntas.length ?? 0;
+  const claveEstado = resultado
+    ? TEXTOS_CLAVES.estadoEfectivo[resultado.quiz.estado_efectivo]
+    : null;
   const mensajeExito = resultado
-    ? `${TEXTOS.exitoTitulo}: «${resultado.quiz.titulo}» con ${totalPreguntas} ${
-        totalPreguntas === 1 ? 'pregunta' : 'preguntas'
-      }. Estado: ${
-        TEXTOS.estadoEfectivo[resultado.quiz.estado_efectivo] ?? resultado.quiz.estado_efectivo
-      }.`
+    ? t('quizGenerator.success', {
+        count: totalPreguntas,
+        title: resultado.quiz.titulo,
+        status: claveEstado ? t(claveEstado) : resultado.quiz.estado_efectivo,
+      })
     : null;
 
   return (
     <section className="generar-quiz">
       <form className="generar-quiz__form" noValidate onSubmit={handleSubmit}>
-        <Aviso tipo="error" mensaje={errorCursos} />
+        <Aviso tipo="error" mensaje={errorCursos ? t(errorCursos) : null} />
 
         <div className="form-group">
           <label className="form-label form-label--obligatorio" htmlFor="curso_id">
-            {TEXTOS.etiquetaCurso}
+            {t(TEXTOS_CLAVES.etiquetaCurso)}
           </label>
           <select
             id="curso_id"
@@ -206,7 +219,7 @@ export function GenerarQuiz() {
             disabled={cargandoCursos}
           >
             <option value="">
-              {cargandoCursos ? TEXTOS.cargandoCursos : TEXTOS.placeholderCurso}
+              {cargandoCursos ? t(TEXTOS_CLAVES.cargandoCursos) : t(TEXTOS_CLAVES.placeholderCurso)}
             </option>
             {cursos.map((curso) => (
               <option key={curso.id_curso} value={curso.id_curso}>
@@ -220,16 +233,16 @@ export function GenerarQuiz() {
         {cursoId && (
           <div className="form-group">
             <span className="form-label form-label--obligatorio">
-              {TEXTOS.etiquetaMazos}
+              {t(TEXTOS_CLAVES.etiquetaMazos)}
             </span>
-            <small>{TEXTOS.ayudaMazos}</small>
+            <small>{t(TEXTOS_CLAVES.ayudaMazos)}</small>
 
-            <Aviso tipo="error" mensaje={errorMazos} />
+            <Aviso tipo="error" mensaje={errorMazos ? t(errorMazos) : null} />
 
-            {cargandoMazos && <p>{TEXTOS.cargandoMazos}</p>}
+            {cargandoMazos && <p>{t(TEXTOS_CLAVES.cargandoMazos)}</p>}
 
             {!cargandoMazos && !errorMazos && mazosDelCurso.length === 0 && (
-              <p className="empty-state">{TEXTOS.sinMazosCurso}</p>
+              <p className="empty-state">{t(TEXTOS_CLAVES.sinMazosCurso)}</p>
             )}
 
             {mazosDelCurso.length > 0 && (
@@ -254,7 +267,7 @@ export function GenerarQuiz() {
 
         <div className="form-group">
           <label className="form-label form-label--obligatorio" htmlFor="titulo">
-            {TEXTOS.etiquetaTitulo}
+            {t(TEXTOS_CLAVES.etiquetaTitulo)}
           </label>
           <input
             id="titulo"
@@ -262,7 +275,7 @@ export function GenerarQuiz() {
             type="text"
             name="titulo"
             maxLength={TITULO_MAX}
-            placeholder={TEXTOS.placeholderTitulo}
+            placeholder={t(TEXTOS_CLAVES.placeholderTitulo)}
             value={form.titulo}
             onChange={handleChange}
           />
@@ -272,7 +285,7 @@ export function GenerarQuiz() {
         <div className="form-row">
           <div className="form-group">
             <label className="form-label form-label--obligatorio" htmlFor="fecha_apertura">
-              {TEXTOS.etiquetaApertura}
+              {t(TEXTOS_CLAVES.etiquetaApertura)}
             </label>
             <input
               id="fecha_apertura"
@@ -286,7 +299,7 @@ export function GenerarQuiz() {
           </div>
           <div className="form-group">
             <label className="form-label form-label--obligatorio" htmlFor="fecha_cierre">
-              {TEXTOS.etiquetaCierre}
+              {t(TEXTOS_CLAVES.etiquetaCierre)}
             </label>
             <input
               id="fecha_cierre"
@@ -303,7 +316,7 @@ export function GenerarQuiz() {
         <div className="form-row">
           <div className="form-group">
             <label className="form-label form-label--obligatorio" htmlFor="tiempo_limite_min">
-              {TEXTOS.etiquetaTiempo}
+              {t(TEXTOS_CLAVES.etiquetaTiempo)}
             </label>
             <input
               id="tiempo_limite_min"
@@ -319,7 +332,7 @@ export function GenerarQuiz() {
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="cantidad_preguntas">
-              {TEXTOS.etiquetaCantidad}
+              {t(TEXTOS_CLAVES.etiquetaCantidad)}
             </label>
             <input
               id="cantidad_preguntas"
@@ -331,17 +344,17 @@ export function GenerarQuiz() {
               value={form.cantidad_preguntas}
               onChange={handleChange}
             />
-            <small>{TEXTOS.ayudaCantidad}</small>
+            <small>{t(TEXTOS_CLAVES.ayudaCantidad)}</small>
             <ErrorCampo mensaje={errores.cantidad_preguntas} />
           </div>
         </div>
 
-        <Aviso tipo="error" mensaje={errorEnvio} />
+        <Aviso tipo="error" mensaje={textoErrorEnvio} />
         <Aviso tipo="exito" mensaje={mensajeExito} />
 
         <div className="generar-quiz__acciones">
           <button type="submit" className="btn btn-primary" disabled={enviando}>
-            {enviando ? TEXTOS.botonGenerando : TEXTOS.botonGenerar}
+            {enviando ? t(TEXTOS_CLAVES.botonGenerando) : t(TEXTOS_CLAVES.botonGenerar)}
           </button>
         </div>
       </form>
@@ -352,8 +365,8 @@ export function GenerarQuiz() {
           <div className="generar-quiz__exportar">
             <BotonExportarPdf
               onExportar={() => exportarQuizPdf(resultado.quiz.id_quiz)}
-              etiqueta={TEXTOS.botonExportarQuiz}
-              ariaLabel={`${TEXTOS.botonExportarQuiz} del quiz ${resultado.quiz.titulo}`}
+              etiqueta={t(TEXTOS_CLAVES.botonExportarQuiz)}
+              ariaLabel={t('exportActions.quizPrintableAria', { title: resultado.quiz.titulo })}
             />
           </div>
 

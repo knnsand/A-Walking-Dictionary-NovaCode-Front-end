@@ -1,25 +1,26 @@
 // vistas/estudiante/responder-quiz/responderQuiz.constants.js
-// Textos de la pantalla de HU-3.2 (responder quiz y recibir nota).
+// Claves de traducción de los textos de la pantalla de HU-3.2 (responder quiz y recibir nota).
+// El texto vive en src/i18n/locales/en.json.
 
-export const TEXTOS = {
-  tituloPagina: 'Responder quiz',
-  descripcionPagina: 'Resuelve el quiz asignado antes de que se agote el tiempo.',
+export const TEXTOS_CLAVES = {
+  tituloPagina: 'quizSession.page.title',
+  descripcionPagina: 'quizSession.page.description',
 
   // Portada del quiz
-  etiquetaTiempo: 'Tiempo límite',
-  etiquetaApertura: 'Apertura',
-  etiquetaCierre: 'Cierre',
-  etiquetaEstado: 'Estado',
-  botonIniciar: 'Iniciar',
-  avisoInicio:
-    'Al pulsar «Iniciar» comienza el cronómetro. Solo puedes enviar el quiz una vez.',
-  disponibleEl: 'Disponible el',
-  cerroEl: 'Este quiz cerró el',
+  etiquetaTiempo: 'quizSession.cover.timeLimit',
+  etiquetaApertura: 'quizSession.cover.opening',
+  etiquetaCierre: 'quizSession.cover.closing',
+  etiquetaEstado: 'quizSession.cover.status',
+  botonIniciar: 'quizSession.cover.start',
+  avisoInicio: 'quizSession.cover.startNotice',
+  disponibleEl: 'quizSession.cover.availableOn', // usa {{date}}
+  cerroEl: 'quizSession.cover.closedOn', // usa {{date}}
 
+  // Las claves del objeto son los estados que devuelve el backend (no se traducen).
   estadoEfectivo: {
-    programado: 'Programado',
-    abierto: 'Abierto',
-    cerrado: 'Cerrado',
+    programado: 'quizGenerator.status.scheduled',
+    abierto: 'quizGenerator.status.open',
+    cerrado: 'quizGenerator.status.closed',
   },
 };
 
@@ -32,45 +33,42 @@ export const ESTADO = {
 
 
 // Formulario del quiz (preguntas, cronómetro y envío)
-export const TEXTOS_FORMULARIO = {
-  tiempoRestante: 'Tiempo restante',
-  contestadas: 'Contestadas',
-  botonFinalizar: 'Finalizar examen',
-  botonEnviando: 'Enviando…',
-  tiempoAgotado:
-    'Se agotó el tiempo. Se envían las respuestas contestadas hasta este momento.',
+export const TEXTOS_FORMULARIO_CLAVES = {
+  tiempoRestante: 'quizSession.form.timeRemaining',
+  contestadas: 'quizSession.form.answered', // usa {{answered}} y {{total}}
+  botonFinalizar: 'quizSession.form.finish',
+  botonEnviando: 'quizSession.form.sending',
+  tiempoAgotado: 'quizSession.form.timeUp',
 
-  // Confirmación cuando faltan preguntas por contestar
-  faltaUna: 'Te falta 1 pregunta por contestar.',
-  faltanVarias: 'Te faltan {n} preguntas por contestar.',
-  avisoSinContestar: 'Las preguntas sin contestar cuentan como incorrectas.',
-  botonVolver: 'Volver al quiz',
-  botonEnviarIgual: 'Enviar de todas formas',
+  // Confirmación cuando faltan preguntas por contestar (plural: usa {{count}})
+  faltan: 'quizSession.form.missing',
+  avisoSinContestar: 'quizSession.form.unansweredNotice',
+  botonVolver: 'quizSession.form.back',
+  botonEnviarIgual: 'quizSession.form.submitAnyway',
 };
 
 
 // Pantalla de resultado (CA-3.2.2 y CA-3.2.3)
-export const TEXTOS_RESULTADO = {
-  titulo: 'Resultado',
-  yaEnviado:
-    'Ya enviaste este quiz y no se permite un nuevo intento. Este es el resultado de tu envío.',
-  etiquetaCalificacion: 'Calificación',
-  etiquetaAciertos: 'Aciertos',
-  etiquetaErrores: 'Errores',
-  etiquetaTiempo: 'Tiempo empleado',
-  de: 'de',
-  detalleTitulo: 'Detalle por pregunta',
-  tuRespuesta: 'Tu respuesta',
-  correcta: 'Correcta',
-  incorrecta: 'Incorrecta',
-  sinContestar: 'Sin contestar',
-  sinDetalle: 'No se pudo cargar el detalle de las preguntas.',
-  botonVolver: 'Volver al panel',
+export const TEXTOS_RESULTADO_CLAVES = {
+  titulo: 'quizSession.result.title',
+  yaEnviado: 'quizSession.result.alreadySubmitted',
+  etiquetaCalificacion: 'quizSession.result.grade',
+  etiquetaAciertos: 'quizSession.result.correct',
+  etiquetaErrores: 'quizSession.result.incorrect',
+  etiquetaTiempo: 'quizSession.result.timeTaken',
+  deTotal: 'quizSession.result.outOf', // usa {{value}} y {{total}}
+  detalleTitulo: 'quizSession.result.detailTitle',
+  tuRespuesta: 'quizSession.result.yourAnswer', // usa {{answer}}
+  correcta: 'quizSession.result.correctStatus',
+  incorrecta: 'quizSession.result.incorrectStatus',
+  sinContestar: 'quizSession.result.unanswered',
+  sinDetalle: 'quizSession.result.noDetail',
+  botonVolver: 'quizSession.result.backToPanel',
 };
 
 // Contenedor de la pantalla (carga y errores)
-export const TEXTOS_CONTENEDOR = {
-  cargando: 'Cargando el quiz…',
-  reintentar: 'Reintentar',
-  errorGenerico: 'Ocurrió un error inesperado. Intenta de nuevo.',
+export const TEXTOS_CONTENEDOR_CLAVES = {
+  cargando: 'quizSession.container.loading',
+  reintentar: 'quizSession.container.retry',
+  errorGenerico: 'quizSession.container.genericError',
 };

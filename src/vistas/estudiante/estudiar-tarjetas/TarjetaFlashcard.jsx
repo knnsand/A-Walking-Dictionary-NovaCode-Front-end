@@ -10,6 +10,8 @@ import SugerenciasPalabras from './SugerenciasPalabras';
 // Campos opcionales de la tarjeta (el diseño los muestra; el back aún no los devuelve):
 //   fonetica, categoria_gramatical
 
+import { useTranslation } from 'react-i18next';
+
 const ICONO = {
   width: 16,
   height: 16,
@@ -51,7 +53,7 @@ function conComillas(texto) {
  * @param {Object}   props.tarjeta        Tarjeta actual (campos en español del back).
  * @param {boolean}  props.volteada       true = se ve el dorso.
  * @param {boolean}  [props.repetida]     true si el estudiante ya marcó "Repetir" en esta sesión.
- * @param {Array}    props.atajos         [{ tecla, etiqueta }] para la pastilla de teclado.
+ * @param {Array}    props.atajos         [{ tecla, etiquetaKey }] para la pastilla de teclado.
  * @param {Function} props.onVoltear
  * @param {Object}   [props.botonGiroRef] Ref del botón de giro (para manejar el foco).
  */
@@ -63,6 +65,8 @@ export function TarjetaFlashcard({
   onVoltear,
   botonGiroRef,
 }) {
+  const { t } = useTranslation();
+
   const escuchar = (evento) => {
     evento.stopPropagation();
     if (!puedeHablar()) return;
@@ -90,21 +94,21 @@ export function TarjetaFlashcard({
         type="button"
         ref={botonGiroRef}
         className={`estudiar-giro${volteada ? ' estudiar-giro--dorso' : ''}`}
-        aria-label="Girar tarjeta"
+        aria-label={t('studySession.card.flip')}
         aria-pressed={volteada}
         onClick={girar}
       >
         <IconoGirar />
-        <span>Clic para girar tarjeta</span>
+        <span>{t('studySession.card.clickToFlip')}</span>
       </button>
 
       <div className="estudiar-tarjeta__interior">
         {/* ---------- Frente ---------- */}
         <div className="estudiar-cara estudiar-cara--frente" aria-hidden={volteada}>
-          {repetida && <span className="estudiar-chip estudiar-chip--repetida">Otra vez</span>}
+          {repetida && <span className="estudiar-chip estudiar-chip--repetida">{t('studySession.card.again')}</span>}
 
           <div className="estudiar-cara__contenido estudiar-cara__contenido--frente">
-            <p className="estudiar-etiqueta">Término a recordar</p>
+            <p className="estudiar-etiqueta">{t('studySession.card.termToRemember')}</p>
             <p className="estudiar-palabra" lang="en">
               {tarjeta.palabra}
             </p>
@@ -113,7 +117,7 @@ export function TarjetaFlashcard({
               <button
                 type="button"
                 className="estudiar-audio"
-                aria-label={`Escuchar la pronunciación de ${tarjeta.palabra}`}
+                aria-label={t('studySession.card.listen', { word: tarjeta.palabra })}
                 tabIndex={volteada ? -1 : 0}
                 onClick={escuchar}
               >
@@ -130,11 +134,11 @@ export function TarjetaFlashcard({
 
           <p className="estudiar-atajos" aria-hidden="true">
             <span>
-              <strong>Espacio</strong> Girar
+              <strong>{t('studySession.card.shortcutSpace')}</strong> {t('studySession.card.shortcutFlip')}
             </span>
             {atajos.map((atajo) => (
               <span key={atajo.tecla}>
-                <strong>{atajo.tecla}</strong> {atajo.etiqueta}
+                <strong>{atajo.tecla}</strong> {t(atajo.etiquetaKey)}
               </span>
             ))}
           </p>
@@ -155,16 +159,16 @@ export function TarjetaFlashcard({
               )}
             </div>
 
-            <p className="estudiar-etiqueta">Traducción:</p>
+            <p className="estudiar-etiqueta">{t('studySession.card.translation')}</p>
             <p className="estudiar-traduccion">{tarjeta.traduccion}</p>
 
-            <p className="estudiar-etiqueta">Definición académica:</p>
+            <p className="estudiar-etiqueta">{t('studySession.card.definition')}</p>
             <p className="estudiar-definicion">{tarjeta.definicion}</p>
 
             {tarjeta.ejemplo && (
               <aside className="estudiar-cita">
                 <p className="estudiar-etiqueta estudiar-etiqueta--chica">
-                  Cita literaria &amp; contexto textual
+                  {t('studySession.card.quoteContext')}
                 </p>
                 <p className="estudiar-cita__texto">{conComillas(tarjeta.ejemplo)}</p>
               </aside>
