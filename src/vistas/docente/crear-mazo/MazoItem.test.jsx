@@ -23,7 +23,7 @@ const MAZO = {
   variante_regional_predeterminada: 'Jamaicano',
 };
 
-const NOMBRE_BOTON = 'Exportar a PDF el mazo Wide Sargasso Sea';
+const NOMBRE_BOTON = 'Export the deck Wide Sargasso Sea to PDF';
 
 function renderizar(rol) {
   return render(
@@ -52,7 +52,7 @@ describe('MazoItem — exportar a PDF (HU-3.3)', () => {
   it('conserva el botón de abrir/cerrar el mazo junto al de exportar', () => {
     renderizar('docente');
 
-    expect(screen.getByRole('button', { name: 'Cerrar el mazo Wide Sargasso Sea' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Close deck Wide Sargasso Sea' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: NOMBRE_BOTON })).toBeInTheDocument();
   });
 
@@ -60,6 +60,6 @@ describe('MazoItem — exportar a PDF (HU-3.3)', () => {
     renderizar(rol);
 
     expect(screen.queryByRole('button', { name: NOMBRE_BOTON })).not.toBeInTheDocument();
-    expect(screen.queryByText('Exportar a PDF')).not.toBeInTheDocument();
+    expect(screen.queryByText('Export to PDF')).not.toBeInTheDocument();
   });
 });
