@@ -541,6 +541,64 @@
     "noContributions": "No contributions",
     "participating": "Participating"
   },
+    "quizGenerator": {
+    "title": "Generate Cumulative Quiz",
+    "description": "Select the decks you want to assess and define the application window. The quiz is built from the approved cards (reviewed by the teacher) of those decks.",
+    "fields": {
+      "course": "Course",
+      "selectCourse": "Select a course",
+      "decks": "Decks to assess",
+      "decksHelp": "Choose one or more decks from the course. You can select several weeks for a cumulative quiz.",
+      "noDecks": "This course has no decks yet.",
+      "quizTitle": "Quiz title",
+      "titlePlaceholder": "E.g., Cumulative quiz weeks 1 to 4",
+      "opening": "Opening date and time",
+      "closing": "Closing date and time",
+      "timeLimit": "Time limit (minutes)",
+      "questionCount": "Number of questions (optional)",
+      "questionCountHelp": "If left empty, one question is generated for each approved card."
+    },
+    "deckOption": "Week {{week}} · {{name}}",
+    "actions": {
+      "generate": "Generate Quiz",
+      "generating": "Generating…"
+    },
+    "loading": {
+      "courses": "Loading courses…",
+      "decks": "Loading decks…"
+    },
+    "errors": {
+      "loadCourses": "Could not load the courses.",
+      "loadDecks": "Could not load the decks.",
+      "generic": "An unexpected error occurred. Please try again.",
+      "sessionExpired": "Your session expired. Please log in again.",
+      "notTeacher": "Your account does not have the teacher role, so it cannot generate quizzes."
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "open": "Open",
+      "closed": "Closed"
+    },
+    "success_one": "Quiz generated: “{{title}}” with {{count}} question. Status: {{status}}.",
+    "success_other": "Quiz generated: “{{title}}” with {{count}} questions. Status: {{status}}.",
+    "preview": {
+      "title": "Preview (teacher only)",
+      "correctAnswer": "Correct answer"
+    }
+  },
+  "quizValidation": {
+    "course": "Select a course.",
+    "decks": "Select at least one deck.",
+    "titleEmpty": "Enter a title for the quiz.",
+    "titleTooLong": "The title cannot exceed {{max}} characters.",
+    "openingEmpty": "Enter the opening date and time.",
+    "openingPast": "The opening must be later than the current time.",
+    "closingEmpty": "Enter the closing date and time.",
+    "closingBeforeOpening": "The closing must be later than the opening.",
+    "timeInvalid": "The time limit must be an integer greater than or equal to 1.",
+    "windowTooShort": "The window between opening and closing must be at least as long as the time limit.",
+    "countInvalid": "The number of questions must be an integer greater than or equal to 1."
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
