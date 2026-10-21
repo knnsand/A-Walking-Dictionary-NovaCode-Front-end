@@ -347,6 +347,105 @@
       "processFailed": "Could not process the word. Please try again."
     }
   },
+    "reviewPage": {
+    "title": "Vocabulary and Co-authorship Review",
+    "subtitle": "Validate the term and co-authorship proposals submitted by the course students.",
+    "lastUpdated": "Last updated:",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "sectionsLabel": "Review sections",
+    "tabs": {
+      "newTerms": "New Terms",
+      "coauthorship": "Co-authorship",
+      "history": "Approved History"
+    },
+    "lists": {
+      "pending": "new terms",
+      "approved": "history",
+      "coauthorships": "co-authorships"
+    },
+    "empty": {
+      "pending": "There are no words pending review.",
+      "coauthorships": "There are no co-authorships pending review.",
+      "history": "There are no approved cards yet."
+    },
+    "history": {
+      "published": "Published",
+      "contributedBy": "Contributed by: {{name}}"
+    },
+    "success": {
+      "approved": "Card approved with its linguistic context and enabled for the quiz.",
+      "coauthorshipApproved": "Co-authorship approved."
+    },
+    "errors": {
+      "refreshFailed": "Could not refresh: {{lists}}. The previous data is being shown.",
+      "approvalFailed": "Could not complete the approval: {{message}}",
+      "coauthorshipFailed": "Could not approve the co-authorship: {{message}}"
+    }
+  },
+  "pendingCard": {
+    "badge": "Pending",
+    "submittedBy": "Submitted by:",
+    "translationColon": "Translation:",
+    "definitionColon": "Definition:",
+    "fields": {
+      "translation": "Translation",
+      "definition": "Definition",
+      "example": "Usage example"
+    },
+    "actions": {
+      "edit": "Edit",
+      "approve": "Approve",
+      "cancel": "Cancel",
+      "saveAndApprove": "Save and Approve"
+    }
+  },
+  "coauthorCard": {
+    "badges": {
+      "coauthorship": "Co-authorship",
+      "newMeaning": "Additional meaning"
+    },
+    "existingDefinition": "Existing definition in the deck:",
+    "existingTranslation": "Existing translation: {{value}}",
+    "newContribution": "New contribution:",
+    "translationColon": "Translation:",
+    "definitionColon": "Definition:",
+    "fields": {
+      "translation": "Contributed translation",
+      "definition": "Contributed definition",
+      "example": "Contributed example"
+    },
+    "actions": {
+      "saveAndApprove": "Save and approve",
+      "cancel": "Cancel",
+      "approve": "Approve",
+      "edit": "Edit"
+    }
+  },
+  "contextModal": {
+    "ariaLabel": "Context for {{word}}",
+    "title": "Linguistic context of \"{{word}}\"",
+    "subtitle": "Final step before approving and enabling for the quiz",
+    "info": "This card will be approved only after you confirm the linguistic context below.",
+    "register": "Register",
+    "regionalVariant": "Regional variant",
+    "selectVariant": "Select a variant",
+    "errors": {
+      "required": "Select a register and a regional variant before approving."
+    },
+    "actions": {
+      "cancel": "Cancel (do not approve)",
+      "confirm": "Confirm and approve",
+      "confirming": "Approving..."
+    }
+  },
+  "registers": {
+    "formal": "Formal",
+    "informal": "Informal",
+    "slang": "Slang",
+    "colloquial": "Colloquial",
+    "archaic": "Archaic"
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
