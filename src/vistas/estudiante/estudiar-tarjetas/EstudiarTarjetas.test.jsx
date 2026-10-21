@@ -12,6 +12,12 @@ vi.mock('../../../contexto/useEncabezadoPagina', () => ({
   useEncabezadoPagina: vi.fn(),
 }));
 
+// SugerenciasPalabras (HU-011) consulta la API de enriquecimiento: se simula para que la
+// prueba no dependa de un backend (en CI no existe y mostraría un role="alert" propio).
+vi.mock('../../../cliente-api/enriquecimientoApi', () => ({
+  obtenerFamiliaPalabras: vi.fn().mockResolvedValue({ sugerencias: [] }),
+}));
+
 const tarjeta = (id, palabra, extra = {}) => ({
   id_tarjeta: id,
   mazo_id: 1,

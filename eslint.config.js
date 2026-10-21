@@ -17,6 +17,12 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Regla nueva de eslint-plugin-react-hooks v7. Hay 5 incumplimientos que ya
+      // existían (AuthProvider, DetalleCurso, ParticipacionMazo, SugerenciasPalabras
+      // y MazosEstudio). Se deja como advertencia hasta reescribir esos efectos.
+      'react-hooks/set-state-in-effect': 'warn',
+    },
   },
   // Pruebas E2E: corren en Node (Playwright), no en el navegador.
   {
