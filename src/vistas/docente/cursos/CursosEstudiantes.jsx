@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { listarCursos, generarCodigoAcceso } from '../../../cliente-api/cursosApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
@@ -8,6 +9,7 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import { ModalInscribirEstudiante } from '../inscribir-estudiante/ModalInscribirEstudiante';
 
 export function CursosEstudiantes() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [cursos, setCursos] = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -17,8 +19,8 @@ export function CursosEstudiantes() {
 
   // El título de la página lo pinta el layout (barra superior).
   useEncabezadoPagina(
-    'Cursos Académicos y Estudiantes',
-    'Administra tus cursos y estudiantes inscritos.'
+    t('coursesPage.title'),
+    t('coursesPage.subtitle')
   );
 
   useEffect(() => {
@@ -29,9 +31,7 @@ export function CursosEstudiantes() {
     // Si ya hay código, regenerar invalida el anterior: pedimos confirmación.
     if (
       curso.codigo_acceso &&
-      !window.confirm(
-        'Ya existe un código para este curso. Si generas uno nuevo, el anterior dejará de funcionar. ¿Continuar?'
-      )
+      !window.confirm(t('coursesPage.confirmRegenerate'))
     ) {
       return;
     }
@@ -46,9 +46,10 @@ export function CursosEstudiantes() {
         )
       );
     } catch (error) {
+      // error.message viene del backend y puede estar en español (pendiente de revisar).
       setAviso({
         tipo: 'error',
-        mensaje: error.message || 'No se pudo generar el código del curso.',
+        mensaje: error.message || t('coursesPage.errors.generateFailed'),
       });
     } finally {
       setGenerandoId(null);
@@ -61,7 +62,7 @@ export function CursosEstudiantes() {
       setCopiadoId(curso.id_curso);
       setTimeout(() => setCopiadoId(null), 1500);
     } catch {
-      setAviso({ tipo: 'error', mensaje: 'No se pudo copiar el código.' });
+      setAviso({ tipo: 'error', mensaje: t('coursesPage.errors.copyFailed') });
     }
   }
 
@@ -71,7 +72,7 @@ export function CursosEstudiantes() {
 
       {cursos.length === 0 ? (
         <p className="empty-state">
-          Todavía no hay cursos registrados.
+          {t('coursesPage.empty')}
         </p>
       ) : (
         <ul className="mazo-list mazo-list--tarjetas">
@@ -92,15 +93,15 @@ export function CursosEstudiantes() {
               <div className="mazo-list__info">
                 <strong>{curso.nombre}</strong>
                 <span className="mazo-list__meta">
-                  Grupo académico
+                  {t('coursesPage.academicGroup')}
                 </span>
               </div>
 
               <div className="mazo-list__info">
                 <span className="mazo-list__meta">
-                  Código del curso
+                  {t('coursesPage.courseCode')}
                 </span>
-                <strong>{curso.codigo_acceso || 'Sin código'}</strong>
+                <strong>{curso.codigo_acceso || t('coursesPage.noCode')}</strong>
               </div>
 
               <div className="mazo-list__info">
@@ -111,10 +112,10 @@ export function CursosEstudiantes() {
                   disabled={generandoId === curso.id_curso}
                 >
                   {generandoId === curso.id_curso
-                    ? 'Generando...'
+                    ? t('coursesPage.actions.generating')
                     : curso.codigo_acceso
-                      ? 'Regenerar código'
-                      : 'Generar código'}
+                      ? t('coursesPage.actions.regenerate')
+                      : t('coursesPage.actions.generate')}
                 </button>
 
                 {curso.codigo_acceso && (
@@ -123,7 +124,7 @@ export function CursosEstudiantes() {
                     className="btn btn-secondary"
                     onClick={(e) => { e.stopPropagation(); handleCopiar(curso); }}
                   >
-                    {copiadoId === curso.id_curso ? '¡Copiado!' : 'Copiar'}
+                    {copiadoId === curso.id_curso ? t('coursesPage.actions.copied') : t('coursesPage.actions.copy')}
                   </button>
                 )}
               </div>
@@ -133,7 +134,7 @@ export function CursosEstudiantes() {
                 className="btn btn-primary"
                 onClick={(e) => { e.stopPropagation(); setMostrarFormulario(true); }}
               >
-                Agregar estudiante al curso
+                {t('coursesPage.actions.addStudent')}
               </button>
             </li>
           ))}

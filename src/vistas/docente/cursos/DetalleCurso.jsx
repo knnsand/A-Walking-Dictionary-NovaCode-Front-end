@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { obtenerCurso, listarEstudiantesCurso } from '../../../cliente-api/cursosApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
@@ -8,6 +9,7 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import './detalle-curso.css';
 
 export function DetalleCurso() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [curso, setCurso] = useState(null);
   const [estudiantes, setEstudiantes] = useState([]);
@@ -15,8 +17,8 @@ export function DetalleCurso() {
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
 
   useEncabezadoPagina(
-    curso ? curso.nombre : 'Curso',
-    'Estudiantes inscritos en este curso.'
+    curso ? curso.nombre : t('courseDetail.titleFallback'),
+    t('courseDetail.subtitle')
   );
 
   useEffect(() => {
@@ -30,9 +32,10 @@ export function DetalleCurso() {
       })
       .catch((error) => {
         if (!activo) return;
+        // error.message viene del backend y puede estar en español (pendiente de revisar).
         setAviso({
           tipo: 'error',
-          mensaje: error.message || 'No se pudo cargar el curso.',
+          mensaje: error.message || t('courseDetail.errors.loadFailed'),
         });
       })
       .finally(() => {
@@ -41,31 +44,31 @@ export function DetalleCurso() {
     return () => {
       activo = false;
     };
-  }, [id]);
+  }, [id, t]);
 
   return (
     <div className="detalle-curso">
       <Link to=".." relative="path" className="detalle-curso__volver">
-        ← Volver a cursos
+        {t('courseDetail.back')}
       </Link>
 
       <Aviso tipo={aviso.tipo} mensaje={aviso.mensaje} />
 
       {cargando ? (
-        <p className="empty-state">Cargando estudiantes...</p>
+        <p className="empty-state">{t('courseDetail.loading')}</p>
       ) : estudiantes.length === 0 ? (
         <p className="empty-state">
-          Este curso todavía no tiene estudiantes inscritos.
+          {t('courseDetail.empty')}
         </p>
       ) : (
         <div className="detalle-curso__tabla-contenedor">
           <table className="detalle-curso__tabla">
             <thead>
               <tr>
-                <th>Nombre</th>
-                <th>Palabras aportadas</th>
-                <th>Nivel de inglés</th>
-                <th>Código estudiantil</th>
+                <th>{t('courseDetail.columns.name')}</th>
+                <th>{t('courseDetail.columns.words')}</th>
+                <th>{t('courseDetail.columns.level')}</th>
+                <th>{t('courseDetail.columns.code')}</th>
               </tr>
             </thead>
             <tbody>

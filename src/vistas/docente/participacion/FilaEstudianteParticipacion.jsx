@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { sinAportesCriterio } from './participacionMazo.constants';
 
 /**
@@ -5,6 +6,7 @@ import { sinAportesCriterio } from './participacionMazo.constants';
  * respuesta del backend (ver doc/CONTRATO_FRONTEND_HU-2.3.md).
  */
 export function FilaEstudianteParticipacion({ fila }) {
+  const { t } = useTranslation();
   const sinAportes = sinAportesCriterio(fila);
 
   return (
@@ -31,7 +33,7 @@ export function FilaEstudianteParticipacion({ fila }) {
       <td className="participacion-mazo__num">{fila.tarjetas_aprobadas}</td>
       <td>
         <span className={`participacion-mazo__badge ${sinAportes ? 'is-alerta' : 'is-ok'}`}>
-          {sinAportes ? 'Sin aportes' : 'Participando'}
+          {sinAportes ? t('participationRow.noContributions') : t('participationRow.participating')}
         </span>
       </td>
     </tr>

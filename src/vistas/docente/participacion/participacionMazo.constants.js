@@ -1,20 +1,20 @@
-export const TEXTOS = {
-  titulo: 'Resumen de Participación por Mazo',
-  descripcion:
-    'Consulta cuántas palabras y coautorías ha aportado cada estudiante en el mazo semanal seleccionado, y detecta a quienes aún no participan.',
-  filtroSinAportes: 'Solo sin aportes',
-  botonActualizar: 'Actualizar ahora',
-  cargando: 'Cargando participación…',
-  sinResultadosFiltro: 'No hay estudiantes que coincidan con este filtro — cumplimiento completo en este mazo.',
-  errorGenerico: 'Ocurrió un error inesperado. Intenta de nuevo.',
+// Claves de traducción de los textos de la vista (el texto vive en src/i18n/locales/en.json).
+export const TEXTOS_CLAVES = {
+  titulo: 'participationPage.title',
+  descripcion: 'participationPage.description',
+  filtroSinAportes: 'participationPage.onlyNoContributions',
+  botonActualizar: 'participationPage.refreshNow',
+  cargando: 'participationPage.loading',
+  sinResultadosFiltro: 'participationPage.noResults',
+  errorGenerico: 'participationPage.genericError',
 };
 
 export const COLUMNAS = [
-  { key: 'nombre_completo', label: 'Estudiante' },
-  { key: 'palabras_aportadas', label: 'Palabras aportadas' },
-  { key: 'coautorias', label: 'Coautorías' },
-  { key: 'tarjetas_pendientes', label: 'Pendientes' },
-  { key: 'tarjetas_aprobadas', label: 'Aprobadas' },
+  { key: 'nombre_completo', labelKey: 'participationPage.columns.student' },
+  { key: 'palabras_aportadas', labelKey: 'participationPage.columns.words' },
+  { key: 'coautorias', labelKey: 'participationPage.columns.coauthorships' },
+  { key: 'tarjetas_pendientes', labelKey: 'participationPage.columns.pending' },
+  { key: 'tarjetas_aprobadas', labelKey: 'participationPage.columns.approved' },
 ];
 
 // Mismo criterio que usa el backend para el filtro ?sinAportes=true (CA-2.3.2),

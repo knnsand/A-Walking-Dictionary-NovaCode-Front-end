@@ -446,6 +446,101 @@
     "colloquial": "Colloquial",
     "archaic": "Archaic"
   },
+    "coursesPage": {
+    "title": "Academic Courses and Students",
+    "subtitle": "Manage your courses and enrolled students.",
+    "empty": "There are no courses registered yet.",
+    "academicGroup": "Academic group",
+    "courseCode": "Course code",
+    "noCode": "No code",
+    "confirmRegenerate": "A code already exists for this course. If you generate a new one, the previous one will stop working. Continue?",
+    "actions": {
+      "generate": "Generate code",
+      "regenerate": "Regenerate code",
+      "generating": "Generating...",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "addStudent": "Add student to the course"
+    },
+    "errors": {
+      "generateFailed": "Could not generate the course code.",
+      "copyFailed": "Could not copy the code."
+    }
+  },
+  "courseDetail": {
+    "titleFallback": "Course",
+    "subtitle": "Students enrolled in this course.",
+    "back": "← Back to courses",
+    "loading": "Loading students...",
+    "empty": "This course has no enrolled students yet.",
+    "columns": {
+      "name": "Name",
+      "words": "Contributed words",
+      "level": "English level",
+      "code": "Student code"
+    },
+    "errors": {
+      "loadFailed": "Could not load the course."
+    }
+  },
+  "enrollStudentForm": {
+    "title": "Enroll student",
+    "subtitle": "Link an existing student to one of your courses.",
+    "close": "Close",
+    "course": "Course",
+    "selectCourse": "Select a course",
+    "studentEmail": "Student email",
+    "emailPlaceholder": "student@email.edu",
+    "theStudent": "The student",
+    "success": "{{name}} was enrolled successfully.",
+    "actions": {
+      "cancel": "Cancel",
+      "enroll": "Enroll",
+      "enrolling": "Enrolling..."
+    },
+    "errors": {
+      "required": "Select a course and enter the student's email.",
+      "invalidEmail": "Enter an email with a valid format.",
+      "enrollFailed": "Could not enroll the student. Please try again."
+    }
+  },
+  "enrollStudentModal": {
+    "ariaLabel": "Enroll student"
+  },
+  "participationPage": {
+    "title": "Participation Summary by Deck",
+    "description": "See how many words and co-authorships each student has contributed in the selected weekly deck, and spot those who are not participating yet.",
+    "onlyNoContributions": "Only without contributions",
+    "refreshNow": "Refresh now",
+    "loading": "Loading participation…",
+    "noResults": "No students match this filter — full compliance in this deck.",
+    "genericError": "An unexpected error occurred. Please try again.",
+    "deckLabel": "Deck",
+    "deckOption": "Week {{week}} · {{name}}",
+    "roster": "Contribution Roster",
+    "stats": {
+      "enrolled": "Enrolled students",
+      "withContribution": "With at least one contribution",
+      "wordsContributed": "Words contributed",
+      "withoutContributions": "Without contributions"
+    },
+    "columns": {
+      "student": "Student",
+      "words": "Contributed words",
+      "coauthorships": "Co-authorships",
+      "pending": "Pending",
+      "approved": "Approved",
+      "remarks": "Remarks"
+    },
+    "errors": {
+      "sessionExpired": "Your session expired. Please log in again.",
+      "notTeacher": "Your account does not have the teacher role, so it cannot view this analytics."
+    }
+  },
+  "participationRow": {
+    "noContributions": "No contributions",
+    "participating": "Participating"
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
