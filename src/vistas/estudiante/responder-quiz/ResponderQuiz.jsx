@@ -10,6 +10,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   enviarRespuestasQuiz,
   obtenerPreguntasQuiz,
@@ -21,7 +22,11 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import { FormularioQuiz } from './FormularioQuiz';
 import { PortadaQuiz } from './PortadaQuiz';
 import { ResultadoQuiz } from './ResultadoQuiz';
-import { ESTADO, TEXTOS, TEXTOS_CONTENEDOR as C } from './responderQuiz.constants';
+import {
+  ESTADO,
+  TEXTOS_CLAVES,
+  TEXTOS_CONTENEDOR_CLAVES as C,
+} from './responderQuiz.constants';
 import {
   borrarBorrador,
   guardarBorrador,
@@ -41,19 +46,23 @@ const FASE = {
   RESULTADO: 'resultado',
 };
 
-const mensajeDe = (error) => error?.message || C.errorGenerico;
+// Descriptor de error: { mensaje } si lo trae el backend (se muestra tal cual; puede estar
+// en español, pendiente de revisar) o { clave } para el texto propio (se traduce al mostrarlo).
+const descriptorDeError = (error) =>
+  error?.message ? { mensaje: error.message } : { clave: C.errorGenerico };
 
 /**
  * @param {Object} [props]
  * @param {Object} [props.servicio] Reemplazo de la API (útil para pruebas).
  */
 export function ResponderQuiz({ servicio = servicioPorDefecto }) {
+  const { t } = useTranslation();
   const { idQuiz } = useParams();
   const navigate = useNavigate();
   const { estudianteId, logout } = useAuth();
 
   // El título de la página lo pinta el layout (barra superior).
-  useEncabezadoPagina(TEXTOS.tituloPagina, TEXTOS.descripcionPagina);
+  useEncabezadoPagina(t(TEXTOS_CLAVES.tituloPagina), t(TEXTOS_CLAVES.descripcionPagina));
 
   const [fase, setFase] = useState(FASE.CARGANDO);
   const [errorCarga, setErrorCarga] = useState(null);
@@ -71,6 +80,9 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
 
   // Evita un segundo envío mientras el primero sigue en curso (botón + autoenvío).
   const envioEnCursoRef = useRef(false);
+
+  const textoError = (descriptor) =>
+    descriptor ? (descriptor.clave ? t(descriptor.clave) : descriptor.mensaje) : null;
 
   // ---------- Carga inicial ----------
   useEffect(() => {
@@ -118,7 +130,7 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
       })
       .catch((error) => {
         if (cancelado) return;
-        setErrorCarga(mensajeDe(error));
+        setErrorCarga(descriptorDeError(error));
         setFase(FASE.ERROR);
       });
 
@@ -148,7 +160,7 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
       setIntento({ fechaInicio, respuestasIniciales: {} });
       setFase(FASE.FORMULARIO);
     } catch (error) {
-      setErrorInicio(mensajeDe(error));
+      setErrorInicio(descriptorDeError(error));
       if (error?.status === 401) logout();
     } finally {
       setIniciando(false);
@@ -176,7 +188,7 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
       setResumen(datos);
       setFase(FASE.RESULTADO);
     } catch (error) {
-      setErrorEnvio(mensajeDe(error));
+      setErrorEnvio(descriptorDeError(error));
       if (error?.status === 401) logout();
     } finally {
       envioEnCursoRef.current = false;
@@ -188,7 +200,7 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
   if (fase === FASE.CARGANDO) {
     return (
       <section className="responder-quiz__estado" aria-busy="true">
-        <p role="status">{C.cargando}</p>
+        <p role="status">{t(C.cargando)}</p>
       </section>
     );
   }
@@ -196,9 +208,9 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
   if (fase === FASE.ERROR) {
     return (
       <section className="responder-quiz__estado">
-        <Aviso tipo="error" mensaje={errorCarga} />
+        <Aviso tipo="error" mensaje={textoError(errorCarga)} />
         <button type="button" className="btn btn-primary" onClick={recargar}>
-          {C.reintentar}
+          {t(C.reintentar)}
         </button>
       </section>
     );
@@ -207,7 +219,7 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
   if (fase === FASE.PORTADA) {
     return (
       <div className="responder-quiz__columna">
-        <Aviso tipo="error" mensaje={errorInicio} />
+        <Aviso tipo="error" mensaje={textoError(errorInicio)} />
         <PortadaQuiz quiz={quiz} onIniciar={iniciar} />
       </div>
     );
@@ -222,7 +234,7 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
         respuestasIniciales={intento.respuestasIniciales}
         onEnviar={enviar}
         enviando={enviando}
-        errorEnvio={errorEnvio}
+        errorEnvio={textoError(errorEnvio)}
       />
     );
   }

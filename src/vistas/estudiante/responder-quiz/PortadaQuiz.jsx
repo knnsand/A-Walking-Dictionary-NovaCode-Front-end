@@ -4,7 +4,8 @@
 //
 // Solo presenta los datos que recibe; quien la use se encarga de consultarlos.
 
-import { ESTADO, TEXTOS } from './responderQuiz.constants';
+import { useTranslation } from 'react-i18next';
+import { ESTADO, TEXTOS_CLAVES } from './responderQuiz.constants';
 import { formatearFecha, textoMinutos } from './responderQuiz.format';
 import './responder-quiz.css';
 
@@ -14,8 +15,10 @@ import './responder-quiz.css';
  * @param {Function} props.onIniciar Se llama al pulsar "Iniciar".
  */
 export function PortadaQuiz({ quiz, onIniciar }) {
+  const { t } = useTranslation();
   const estado = quiz.estado_efectivo;
   const abierto = estado === ESTADO.ABIERTO;
+  const claveEstado = TEXTOS_CLAVES.estadoEfectivo[estado];
 
   return (
     <section className="portada-quiz" aria-labelledby="portada-quiz-titulo">
@@ -24,38 +27,38 @@ export function PortadaQuiz({ quiz, onIniciar }) {
           {quiz.titulo}
         </h2>
         <span className={`portada-quiz__estado portada-quiz__estado--${estado}`}>
-          {TEXTOS.estadoEfectivo[estado] ?? estado}
+          {claveEstado ? t(claveEstado) : estado}
         </span>
       </header>
 
       <dl className="portada-quiz__datos">
         <div>
-          <dt>{TEXTOS.etiquetaTiempo}</dt>
+          <dt>{t(TEXTOS_CLAVES.etiquetaTiempo)}</dt>
           <dd>{textoMinutos(quiz.tiempo_limite_min)}</dd>
         </div>
         <div>
-          <dt>{TEXTOS.etiquetaApertura}</dt>
+          <dt>{t(TEXTOS_CLAVES.etiquetaApertura)}</dt>
           <dd>{formatearFecha(quiz.fecha_apertura)}</dd>
         </div>
         <div>
-          <dt>{TEXTOS.etiquetaCierre}</dt>
+          <dt>{t(TEXTOS_CLAVES.etiquetaCierre)}</dt>
           <dd>{formatearFecha(quiz.fecha_cierre)}</dd>
         </div>
       </dl>
 
       {estado === ESTADO.PROGRAMADO && (
         <p className="portada-quiz__mensaje">
-          {`${TEXTOS.disponibleEl} ${formatearFecha(quiz.fecha_apertura)}.`}
+          {t(TEXTOS_CLAVES.disponibleEl, { date: formatearFecha(quiz.fecha_apertura) })}
         </p>
       )}
 
       {estado === ESTADO.CERRADO && (
         <p className="portada-quiz__mensaje">
-          {`${TEXTOS.cerroEl} ${formatearFecha(quiz.fecha_cierre)}.`}
+          {t(TEXTOS_CLAVES.cerroEl, { date: formatearFecha(quiz.fecha_cierre) })}
         </p>
       )}
 
-      {abierto && <p className="portada-quiz__aviso">{TEXTOS.avisoInicio}</p>}
+      {abierto && <p className="portada-quiz__aviso">{t(TEXTOS_CLAVES.avisoInicio)}</p>}
 
       <div className="portada-quiz__acciones">
         <button
@@ -64,7 +67,7 @@ export function PortadaQuiz({ quiz, onIniciar }) {
           disabled={!abierto}
           onClick={onIniciar}
         >
-          {TEXTOS.botonIniciar}
+          {t(TEXTOS_CLAVES.botonIniciar)}
         </button>
       </div>
     </section>

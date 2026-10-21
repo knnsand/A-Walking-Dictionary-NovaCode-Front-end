@@ -1,19 +1,21 @@
 // vistas/estudiante/responder-quiz/responderQuiz.format.js
 // Funciones puras de formato para la pantalla de HU-3.2.
 
-const formateadorFecha = new Intl.DateTimeFormat('es-CO', {
-  dateStyle: 'medium',
-  timeStyle: 'short',
-});
+import i18n from '../../../i18n';
 
 /**
- * Fecha y hora legibles en la zona horaria del navegador.
+ * Fecha y hora legibles en la zona horaria del navegador, según el idioma activo.
  * @param {string} iso - Fecha ISO 8601 (la que devuelve el backend).
  * @returns {string} Cadena vacía si la fecha no es válida.
  */
 export function formatearFecha(iso) {
   const fecha = new Date(iso);
-  return Number.isNaN(fecha.getTime()) ? '' : formateadorFecha.format(fecha);
+  if (Number.isNaN(fecha.getTime())) return '';
+
+  return new Intl.DateTimeFormat(i18n.language, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(fecha);
 }
 
 /**
@@ -28,7 +30,7 @@ export function formatearTiempo(totalSegundos) {
   return `${String(minutos).padStart(2, '0')}:${String(resto).padStart(2, '0')}`;
 }
 
-/** "1 minuto" / "10 minutos". */
+/** "1 minute" / "10 minutes" (plural según el idioma activo). */
 export function textoMinutos(cantidad) {
-  return `${cantidad} ${cantidad === 1 ? 'minuto' : 'minutos'}`;
+  return i18n.t('quizSession.minutes', { count: cantidad });
 }

@@ -10,11 +10,13 @@
 // No consulta nada por su cuenta: recibe el resultado y, si los tiene, los
 // enunciados de las preguntas.
 
-import { TEXTOS_RESULTADO as T } from './responderQuiz.constants';
+import { useTranslation } from 'react-i18next';
+import { TEXTOS_RESULTADO_CLAVES as T } from './responderQuiz.constants';
 import { formatearTiempo } from './responderQuiz.format';
 import { ordenarPreguntas } from './responderQuiz.payload';
 import './responder-quiz.css';
 
+// Clave de traducción de cada estado interno de una respuesta.
 const ETIQUETA_ESTADO = {
   correcta: T.correcta,
   incorrecta: T.incorrecta,
@@ -45,6 +47,7 @@ export function ResultadoQuiz({
   yaEnviado = false,
   onVolver,
 }) {
+  const { t } = useTranslation();
   const total = Number(resultado.puntaje_maximo);
   const aciertos = Number(resultado.puntaje_obtenido);
   const errores = Math.max(0, total - aciertos);
@@ -67,33 +70,33 @@ export function ResultadoQuiz({
     <section className="resultado-quiz" aria-labelledby="resultado-quiz-titulo">
       <header className="resultado-quiz__cabecera">
         <h2 id="resultado-quiz-titulo" className="resultado-quiz__titulo">
-          {T.titulo}
+          {t(T.titulo)}
         </h2>
         {titulo && <p className="resultado-quiz__quiz">{titulo}</p>}
       </header>
 
       {yaEnviado && (
         <p className="resultado-quiz__aviso" role="status">
-          {T.yaEnviado}
+          {t(T.yaEnviado)}
         </p>
       )}
 
       <div className="resultado-quiz__nota">
-        <span className="resultado-quiz__nota-etiqueta">{T.etiquetaCalificacion}</span>
+        <span className="resultado-quiz__nota-etiqueta">{t(T.etiquetaCalificacion)}</span>
         <span className="resultado-quiz__nota-valor">{textoNota}</span>
       </div>
 
       <dl className="resultado-quiz__datos">
         <div>
-          <dt>{T.etiquetaAciertos}</dt>
-          <dd>{`${aciertos} ${T.de} ${total}`}</dd>
+          <dt>{t(T.etiquetaAciertos)}</dt>
+          <dd>{t(T.deTotal, { value: aciertos, total })}</dd>
         </div>
         <div>
-          <dt>{T.etiquetaErrores}</dt>
-          <dd>{`${errores} ${T.de} ${total}`}</dd>
+          <dt>{t(T.etiquetaErrores)}</dt>
+          <dd>{t(T.deTotal, { value: errores, total })}</dd>
         </div>
         <div>
-          <dt>{T.etiquetaTiempo}</dt>
+          <dt>{t(T.etiquetaTiempo)}</dt>
           <dd>{textoTiempo}</dd>
         </div>
       </dl>
@@ -101,7 +104,7 @@ export function ResultadoQuiz({
       {detalle ? (
         <section aria-labelledby="resultado-quiz-detalle">
           <h3 id="resultado-quiz-detalle" className="resultado-quiz__subtitulo">
-            {T.detalleTitulo}
+            {t(T.detalleTitulo)}
           </h3>
           <ol className="resultado-quiz__lista">
             {detalle.map(({ pregunta, respuesta, estado }) => (
@@ -112,22 +115,22 @@ export function ResultadoQuiz({
                 <p className="resultado-quiz__enunciado">{pregunta.enunciado}</p>
                 {estado !== 'sin' && (
                   <p className="resultado-quiz__respuesta">
-                    {`${T.tuRespuesta}: ${respuesta.respuesta_estudiante}`}
+                    {t(T.tuRespuesta, { answer: respuesta.respuesta_estudiante })}
                   </p>
                 )}
-                <p className="resultado-quiz__estado">{ETIQUETA_ESTADO[estado]}</p>
+                <p className="resultado-quiz__estado">{t(ETIQUETA_ESTADO[estado])}</p>
               </li>
             ))}
           </ol>
         </section>
       ) : (
-        <p className="resultado-quiz__sin-detalle">{T.sinDetalle}</p>
+        <p className="resultado-quiz__sin-detalle">{t(T.sinDetalle)}</p>
       )}
 
       {onVolver && (
         <div className="resultado-quiz__acciones">
           <button type="button" className="btn btn-primary" onClick={onVolver}>
-            {T.botonVolver}
+            {t(T.botonVolver)}
           </button>
         </div>
       )}

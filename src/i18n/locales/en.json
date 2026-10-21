@@ -599,6 +599,57 @@
     "windowTooShort": "The window between opening and closing must be at least as long as the time limit.",
     "countInvalid": "The number of questions must be an integer greater than or equal to 1."
   },
+    "quizSession": {
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
+    "page": {
+      "title": "Take Quiz",
+      "description": "Solve the assigned quiz before time runs out."
+    },
+    "cover": {
+      "timeLimit": "Time limit",
+      "opening": "Opening",
+      "closing": "Closing",
+      "status": "Status",
+      "start": "Start",
+      "startNotice": "When you press “Start”, the timer begins. You can only submit the quiz once.",
+      "availableOn": "Available on {{date}}.",
+      "closedOn": "This quiz closed on {{date}}."
+    },
+    "form": {
+      "timeRemaining": "Time remaining",
+      "answered": "Answered: {{answered}} of {{total}}",
+      "finish": "Finish exam",
+      "sending": "Submitting…",
+      "timeUp": "Time is up. The answers given so far are being submitted.",
+      "missing_one": "You have {{count}} question left to answer.",
+      "missing_other": "You have {{count}} questions left to answer.",
+      "unansweredNotice": "Unanswered questions count as incorrect.",
+      "back": "Back to the quiz",
+      "submitAnyway": "Submit anyway"
+    },
+    "result": {
+      "title": "Result",
+      "alreadySubmitted": "You have already submitted this quiz and a new attempt is not allowed. This is the result of your submission.",
+      "grade": "Grade",
+      "correct": "Correct answers",
+      "incorrect": "Incorrect answers",
+      "timeTaken": "Time taken",
+      "outOf": "{{value}} of {{total}}",
+      "detailTitle": "Detail by question",
+      "yourAnswer": "Your answer: {{answer}}",
+      "correctStatus": "Correct",
+      "incorrectStatus": "Incorrect",
+      "unanswered": "Unanswered",
+      "noDetail": "Could not load the question details.",
+      "backToPanel": "Back to the panel"
+    },
+    "container": {
+      "loading": "Loading the quiz…",
+      "retry": "Retry",
+      "genericError": "An unexpected error occurred. Please try again."
+    }
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
