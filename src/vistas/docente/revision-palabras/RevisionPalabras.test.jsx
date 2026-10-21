@@ -32,7 +32,8 @@ const TARJETA_APROBADA = {
   estudiante: 'Juan Estudiante',
 };
 
-const HORA_VISIBLE = /Última actualización: \d{2}:\d{2}/;
+// La hora se formatea según el idioma activo (en inglés: "09:41 AM").
+const HORA_VISIBLE = /Last updated: \d{2}:\d{2}/;
 
 describe('RevisionPalabras: actualización manual', () => {
   beforeEach(() => {
@@ -52,8 +53,8 @@ describe('RevisionPalabras: actualización manual', () => {
     render(<RevisionPalabras />);
 
     expect(await screen.findByText(HORA_VISIBLE)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Actualizar' })).toBeEnabled();
-    expect(screen.queryByText(/No se pudo actualizar/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeEnabled();
+    expect(screen.queryByText(/Could not refresh/)).not.toBeInTheDocument();
   });
 
   it('vuelve a consultar las tres listas al pulsar Actualizar y bloquea el botón mientras carga', async () => {
@@ -68,9 +69,9 @@ describe('RevisionPalabras: actualización manual', () => {
       })
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Actualizar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
 
-    const botonOcupado = await screen.findByRole('button', { name: 'Actualizando…' });
+    const botonOcupado = await screen.findByRole('button', { name: 'Refreshing…' });
     expect(botonOcupado).toBeDisabled();
 
     // Un clic adicional mientras carga no debe lanzar otra consulta.
@@ -78,7 +79,7 @@ describe('RevisionPalabras: actualización manual', () => {
     expect(listarTarjetasPendientes).toHaveBeenCalledTimes(2);
 
     terminarConsulta([]);
-    expect(await screen.findByRole('button', { name: 'Actualizar' })).toBeEnabled();
+    expect(await screen.findByRole('button', { name: 'Refresh' })).toBeEnabled();
 
     expect(listarTarjetasPendientes).toHaveBeenCalledTimes(2);
     expect(listarTarjetasAprobadas).toHaveBeenCalledTimes(2);
@@ -91,14 +92,14 @@ describe('RevisionPalabras: actualización manual', () => {
     render(<RevisionPalabras />);
 
     expect(
-      await screen.findByText('No se pudo actualizar: coautorías. Se muestran los datos anteriores.')
+      await screen.findByText('Could not refresh: co-authorships. The previous data is being shown.')
     ).toBeInTheDocument();
 
     // La hora avanza porque al menos una lista se actualizó.
     expect(screen.getByText(HORA_VISIBLE)).toBeInTheDocument();
 
     // El historial sí se cargó.
-    fireEvent.click(screen.getByRole('tab', { name: /Historial Aprobadas/ }));
+    fireEvent.click(screen.getByRole('tab', { name: /Approved History/ }));
     expect(screen.getByText('horse')).toBeInTheDocument();
   });
 
@@ -111,24 +112,24 @@ describe('RevisionPalabras: actualización manual', () => {
 
     expect(
       await screen.findByText(
-        'No se pudo actualizar: nuevos términos, historial, coautorías. Se muestran los datos anteriores.'
+        'Could not refresh: new terms, history, co-authorships. The previous data is being shown.'
       )
     ).toBeInTheDocument();
-    expect(screen.getByText(/Última actualización: —/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Actualizar' })).toBeEnabled();
+    expect(screen.getByText(/Last updated: —/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeEnabled();
   });
 
   it('conserva los datos anteriores de una lista cuando su actualización falla', async () => {
     render(<RevisionPalabras />);
     await screen.findByText(HORA_VISIBLE);
-    fireEvent.click(screen.getByRole('tab', { name: /Historial Aprobadas/ }));
+    fireEvent.click(screen.getByRole('tab', { name: /Approved History/ }));
     expect(screen.getByText('horse')).toBeInTheDocument();
 
     listarTarjetasAprobadas.mockRejectedValueOnce(new Error('Error 500'));
-    fireEvent.click(screen.getByRole('button', { name: 'Actualizar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
 
     expect(
-      await screen.findByText('No se pudo actualizar: historial. Se muestran los datos anteriores.')
+      await screen.findByText('Could not refresh: history. The previous data is being shown.')
     ).toBeInTheDocument();
     expect(screen.getByText('horse')).toBeInTheDocument();
   });
@@ -137,12 +138,12 @@ describe('RevisionPalabras: actualización manual', () => {
     listarCoautoriasPendientes.mockRejectedValueOnce(new Error('Error 500'));
 
     render(<RevisionPalabras />);
-    await screen.findByText(/No se pudo actualizar: coautorías/);
+    await screen.findByText(/Could not refresh: co-authorships/);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Actualizar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
 
     await waitFor(() =>
-      expect(screen.queryByText(/No se pudo actualizar/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/Could not refresh/)).not.toBeInTheDocument()
     );
     expect(screen.getByText(HORA_VISIBLE)).toBeInTheDocument();
   });

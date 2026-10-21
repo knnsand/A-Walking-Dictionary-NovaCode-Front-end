@@ -64,11 +64,11 @@ describe('ResultadoQuiz', () => {
   it('CA-3.2.2: muestra el título, la nota con dos decimales, aciertos, errores y tiempo', () => {
     montar();
 
-    expect(screen.getByRole('heading', { name: 'Resultado' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Result' })).toBeInTheDocument();
     expect(screen.getByText('Quiz semana 3')).toBeInTheDocument();
     expect(screen.getByText('1.67')).toBeInTheDocument();
-    expect(screen.getByText('1 de 3')).toBeInTheDocument();
-    expect(screen.getByText('2 de 3')).toBeInTheDocument();
+    expect(screen.getByText('1 of 3')).toBeInTheDocument();
+    expect(screen.getByText('2 of 3')).toBeInTheDocument();
     expect(screen.getByText('02:05')).toBeInTheDocument();
   });
 
@@ -84,7 +84,7 @@ describe('ResultadoQuiz', () => {
     });
 
     expect(screen.getByText('4.00')).toBeInTheDocument();
-    expect(screen.getByText('1 de 3')).toBeInTheDocument();
+    expect(screen.getByText('1 of 3')).toBeInTheDocument();
     expect(screen.getByText('01:05')).toBeInTheDocument();
   });
 
@@ -97,7 +97,7 @@ describe('ResultadoQuiz', () => {
   it('muestra el detalle por pregunta ordenado por `orden`', () => {
     montar({ preguntas: [preguntas[2], preguntas[0], preguntas[1]] });
 
-    expect(screen.getByRole('heading', { name: 'Detalle por pregunta' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Detail by question' })).toBeInTheDocument();
     const enunciados = screen.getAllByText(/^Enunciado /).map((el) => el.textContent);
     expect(enunciados).toEqual(['Enunciado uno', 'Enunciado dos', 'Enunciado tres']);
   });
@@ -107,50 +107,50 @@ describe('ResultadoQuiz', () => {
 
     const correcta = itemDe('Enunciado uno');
     expect(correcta).toHaveClass('resultado-quiz__item--correcta');
-    expect(within(correcta).getByText('Correcta')).toBeInTheDocument();
-    expect(within(correcta).getByText('Tu respuesta: cocinar')).toBeInTheDocument();
+    expect(within(correcta).getByText('Correct')).toBeInTheDocument();
+    expect(within(correcta).getByText('Your answer: cocinar')).toBeInTheDocument();
 
     const incorrecta = itemDe('Enunciado dos');
     expect(incorrecta).toHaveClass('resultado-quiz__item--incorrecta');
-    expect(within(incorrecta).getByText('Incorrecta')).toBeInTheDocument();
-    expect(within(incorrecta).getByText('Tu respuesta: Isla')).toBeInTheDocument();
+    expect(within(incorrecta).getByText('Incorrect')).toBeInTheDocument();
+    expect(within(incorrecta).getByText('Your answer: Isla')).toBeInTheDocument();
 
     const sin = itemDe('Enunciado tres');
     expect(sin).toHaveClass('resultado-quiz__item--sin');
-    expect(within(sin).getByText('Sin contestar')).toBeInTheDocument();
-    expect(within(sin).queryByText(/Tu respuesta/)).not.toBeInTheDocument();
+    expect(within(sin).getByText('Unanswered')).toBeInTheDocument();
+    expect(within(sin).queryByText(/Your answer/)).not.toBeInTheDocument();
   });
 
   it('una pregunta que no trae fila en `respuestas` se muestra como sin contestar', () => {
     montar({ respuestas: [fila(101, 'cocinar', true)] });
 
     const sin = itemDe('Enunciado dos');
-    expect(within(sin).getByText('Sin contestar')).toBeInTheDocument();
+    expect(within(sin).getByText('Unanswered')).toBeInTheDocument();
   });
 
   it('en el primer envío no muestra el aviso de reintento', () => {
     montar();
 
-    expect(screen.queryByText(/no se permite un nuevo intento/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/a new attempt is not allowed/)).not.toBeInTheDocument();
   });
 
   it('CA-3.2.3: si el quiz ya se había enviado, avisa que no hay nuevo intento y muestra el resumen previo', () => {
     montar({ yaEnviado: true });
 
     expect(screen.getByRole('status')).toHaveTextContent(
-      'Ya enviaste este quiz y no se permite un nuevo intento.'
+      'You have already submitted this quiz and a new attempt is not allowed.'
     );
     expect(screen.getByText('1.67')).toBeInTheDocument();
-    expect(screen.getByText('1 de 3')).toBeInTheDocument();
+    expect(screen.getByText('1 of 3')).toBeInTheDocument();
   });
 
   it('sin enunciados muestra la nota y los conteos con un aviso en lugar del detalle', () => {
     montar({ preguntas: null });
 
     expect(screen.getByText('1.67')).toBeInTheDocument();
-    expect(screen.getByText('No se pudo cargar el detalle de las preguntas.')).toBeInTheDocument();
+    expect(screen.getByText('Could not load the question details.')).toBeInTheDocument();
     expect(
-      screen.queryByRole('heading', { name: 'Detalle por pregunta' })
+      screen.queryByRole('heading', { name: 'Detail by question' })
     ).not.toBeInTheDocument();
   });
 
@@ -158,13 +158,13 @@ describe('ResultadoQuiz', () => {
     const { unmount } = render(
       <ResultadoQuiz resultado={resultado} respuestas={respuestas} preguntas={preguntas} />
     );
-    expect(screen.queryByRole('button', { name: 'Volver al panel' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Back to the panel' })).not.toBeInTheDocument();
     unmount();
 
     const onVolver = vi.fn();
     montar({ onVolver });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Volver al panel' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Back to the panel' }));
     expect(onVolver).toHaveBeenCalledTimes(1);
   });
 });
