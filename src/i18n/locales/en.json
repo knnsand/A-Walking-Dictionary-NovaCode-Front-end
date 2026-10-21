@@ -653,6 +653,19 @@
     "api": {
     "requestFailed": "Error {{status}} when calling {{path}}"
   },
+    "guestDictionary": {
+    "title": "Demo Dictionary",
+    "description": "Browse the readings available in guest mode.",
+    "loading": "Loading content...",
+    "empty": "There are no readings available.",
+    "author": "Author:",
+    "variant": "Variant:",
+    "week": "Week:",
+    "notSpecified": "Not specified",
+    "errors": {
+      "loadFailed": "Could not load the readings."
+    }
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
