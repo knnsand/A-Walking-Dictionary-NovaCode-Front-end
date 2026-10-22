@@ -86,14 +86,15 @@ const RUTA_PERFIL_ESTUDIANTE = '/estudiante/configuracion-perfil';
 // Secciones que aún no están implementadas.
 const RUTAS_DESHABILITADAS_POR_ROL = {
   docente: [
-    '/docente/diccionario',
+    
   ],
   estudiante: [
-    '/estudiante/diccionario',
+    
     '/estudiante/progreso',
   ],
   invitado: [
-    '/invitado/diccionario',
+    
+    
   ],
 };
 
