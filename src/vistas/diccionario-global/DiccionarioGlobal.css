@@ -494,7 +494,7 @@
   .global-dictionary__dialog-content {
     padding: 1rem;
   }
-
+}
   
 /* WordNet lexical enrichment */
 
@@ -675,6 +675,217 @@
 
 
 
+/* =====================================================
+   HU-016 - DARK MODE
+   Compatible with data-theme="oscuro"
+   ===================================================== */
 
+[data-theme='oscuro'] .global-dictionary,
+[data-theme='oscuro'] .global-dictionary__dialog {
+  --dictionary-navy: #405dc5;
+  --dictionary-red: #d4636f;
+  --dictionary-blue: #8ea4e0;
+  --dictionary-border: #40516c;
+  --dictionary-muted: #b7c5da;
 
+  --dictionary-surface: #1e293b;
+  --dictionary-quote-bg: #29364c;
+  --dictionary-quote-color: #e2e8f0;
+  --dictionary-tag-bg: #304368;
+  --dictionary-tag-color: #e2ebff;
+  --dictionary-link: #a9bfff;
+
+  color: #e2e8f0;
 }
+
+/* Search */
+
+[data-theme='oscuro'] .global-dictionary__search input {
+  background: #1e293b;
+  color: #f1f5fc;
+  border-color: #40516c;
+}
+
+[data-theme='oscuro'] .global-dictionary__search input::placeholder {
+  color: #a8b6cc;
+}
+
+[data-theme='oscuro'] .global-dictionary__search > button,
+[data-theme='oscuro'] .global-dictionary__dialog-footer button {
+  background: #405dc5;
+  color: #ffffff;
+}
+
+[data-theme='oscuro'] .global-dictionary__search > button:hover,
+[data-theme='oscuro'] .global-dictionary__dialog-footer button:hover {
+  background: #526ed8;
+}
+
+/* Alphabet */
+
+[data-theme='oscuro'] .global-dictionary__alphabet {
+  background: #1e293b;
+  border-color: #40516c;
+}
+
+[data-theme='oscuro'] .global-dictionary__alphabet button {
+  color: #cbd5e1;
+}
+
+[data-theme='oscuro'] .global-dictionary__alphabet button:hover {
+  background: #304368;
+  color: #ffffff;
+}
+
+[data-theme='oscuro'] .global-dictionary__alphabet button.active {
+  background: #405dc5;
+  color: #ffffff;
+}
+
+/* Clear filters */
+
+[data-theme='oscuro'] .global-dictionary__clear {
+  background: #26364c;
+  border-color: #40516c;
+  color: #e2e8f0;
+}
+
+/* Vocabulary cards */
+
+[data-theme='oscuro'] .global-dictionary__card {
+  background: #1e293b;
+  border-color: #40516c;
+  border-top-color: #405dc5;
+  color: #e2e8f0;
+  box-shadow:
+    4px 6px 0 rgba(4, 9, 25, 0.28),
+    0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme='oscuro'] .global-dictionary__card--1 {
+  border-top-color: #d4636f;
+}
+
+[data-theme='oscuro'] .global-dictionary__card--2 {
+  border-top-color: #8ea4e0;
+}
+
+[data-theme='oscuro'] .global-dictionary__card h3,
+[data-theme='oscuro'] .global-dictionary__definition {
+  color: #f1f5fc;
+}
+
+[data-theme='oscuro'] .global-dictionary__translation {
+  color: #b8c9e9;
+}
+
+[data-theme='oscuro'] .global-dictionary__separator {
+  background: #40516c;
+}
+
+/* Approved badge and week */
+
+[data-theme='oscuro'] .global-dictionary__badge {
+  background: #304368;
+  color: #dce7ff;
+}
+
+[data-theme='oscuro'] .global-dictionary__week {
+  background: #26364c;
+  border-color: #40516c;
+  color: #c6d4e8;
+}
+
+/* Example */
+
+[data-theme='oscuro'] .global-dictionary__example {
+  background: #29364c;
+  color: #e2e8f0;
+  border-left-color: #d4636f;
+}
+
+/* Context */
+
+[data-theme='oscuro'] .global-dictionary__mini-title {
+  color: #b7c5da;
+}
+
+[data-theme='oscuro'] .global-dictionary__mini-tags span,
+[data-theme='oscuro'] .global-dictionary__tags span {
+  background: #304368;
+  color: #e2ebff;
+}
+
+/* Card footer */
+
+[data-theme='oscuro'] .global-dictionary__card-footer {
+  border-top-color: #40516c;
+}
+
+[data-theme='oscuro'] .global-dictionary__card-footer button {
+  color: #a9bfff;
+}
+
+/* Loading, empty and error */
+
+[data-theme='oscuro'] .global-dictionary__status,
+[data-theme='oscuro'] .global-dictionary__empty {
+  background: #1e293b;
+  border-color: #40516c;
+  color: #e2e8f0;
+}
+
+[data-theme='oscuro'] .global-dictionary__error {
+  color: #fca5a5;
+}
+
+/* Word Details modal */
+
+[data-theme='oscuro'] .global-dictionary__dialog {
+  background: #1e293b;
+  border-color: #40516c;
+  color: #e2e8f0;
+}
+
+[data-theme='oscuro'] .global-dictionary__dialog-header,
+[data-theme='oscuro'] .global-dictionary__dialog-footer {
+  background: #1b2639;
+  border-color: #40516c;
+}
+
+[data-theme='oscuro'] .global-dictionary__dialog-word,
+[data-theme='oscuro'] .global-dictionary__detail-section h3,
+[data-theme='oscuro'] .global-dictionary__pos-section > h4,
+[data-theme='oscuro'] .global-dictionary__enrichment-heading h3 {
+  color: #f1f5fc;
+}
+
+[data-theme='oscuro'] .global-dictionary__detail-section--enrichment,
+[data-theme='oscuro'] .global-dictionary__lexical-enrichment {
+  border-top-color: #40516c;
+}
+
+/* Legacy lexical blocks, if present */
+
+[data-theme='oscuro'] .global-dictionary__lexical-box,
+[data-theme='oscuro'] .global-dictionary__relation-group {
+  background: #263852;
+  border-color: #405c8d;
+  border-left: 4px solid #7497ed;
+}
+
+[data-theme='oscuro'] .global-dictionary__lexical-box-title,
+[data-theme='oscuro'] .global-dictionary__relation-group h5 {
+  color: #dce7ff;
+}
+
+[data-theme='oscuro'] .global-dictionary__tag--lexical,
+[data-theme='oscuro'] .global-dictionary__relation-group .global-dictionary__tags span {
+  background: #304368;
+  border-color: #405c8d;
+  color: #e2ebff;
+}
+
+
+
+

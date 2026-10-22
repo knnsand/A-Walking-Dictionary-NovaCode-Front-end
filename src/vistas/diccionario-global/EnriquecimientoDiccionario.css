@@ -114,3 +114,35 @@
 .global-dictionary__enrichment-heading p {
   margin: 0;
 }
+
+
+/* =====================================================
+   HU-011 - WordNet Dark Mode
+   ===================================================== */
+
+[data-theme='oscuro'] .wordnet-relation-box {
+  background-color: #263852;
+  border: 1px solid #405c8d;
+  border-left: 4px solid #7497ed;
+}
+
+[data-theme='oscuro'] .wordnet-relation-box__title {
+  color: #dce7ff;
+}
+
+[data-theme='oscuro'] .wordnet-relation-box__tag {
+  background-color: #304368;
+  border-color: #405c8d;
+  color: #e2ebff;
+}
+
+[data-theme='oscuro'] .global-dictionary__load-enrichment {
+  background-color: #405dc5;
+  border-color: #405dc5;
+  color: #ffffff;
+}
+
+[data-theme='oscuro'] .global-dictionary__load-enrichment:hover:not(:disabled) {
+  background-color: #526ed8;
+  border-color: #526ed8;
+}
