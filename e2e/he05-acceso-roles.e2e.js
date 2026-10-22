@@ -8,8 +8,8 @@ test.describe('HU-5.4 — Iniciar sesión y control de roles', () => {
     await page.goto('/');
     await expect(page).toHaveURL(/\/login$/);
     await expect(page.getByRole('heading', { name: 'A Walking Dictionary' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Continuar como invitado' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Regístrate como estudiante' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Continue as guest' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Sign up as a student' })).toBeVisible();
   });
 
   test('CA-5.4.1 Con sesión de docente entra al dashboard docente con su nombre', async ({ page, context }) => {
@@ -17,7 +17,7 @@ test.describe('HU-5.4 — Iniciar sesión y control de roles', () => {
     await page.goto('/docente');
     await expect(page).toHaveURL(/\/docente\/mazos$/);
     await expect(page.getByRole('complementary').getByText('Ana Docente')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Revisión de Palabras' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Word Review' })).toBeVisible();
   });
 
   test('CA-5.4.1 Cerrar sesión vuelve al login y protege de nuevo las rutas', async ({ page }) => {
@@ -29,8 +29,8 @@ test.describe('HU-5.4 — Iniciar sesión y control de roles', () => {
     }, [firmarJwt(USUARIOS.ana), JSON.stringify(USUARIOS.ana)]);
 
     await page.goto('/docente/mazos');
-    await expect(page.getByRole('heading', { name: 'Mazos de estudio' })).toBeVisible();
-    await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+    await expect(page.getByRole('heading', { name: 'Study Decks' })).toBeVisible();
+    await page.getByRole('button', { name: 'Log out' }).click();
     await expect(page).toHaveURL(/\/login$/);
 
     await page.goto('/docente/revision-palabras');
@@ -46,7 +46,7 @@ test.describe('HU-5.4 — Iniciar sesión y control de roles', () => {
     await iniciarSesion(context, 'juan');
     await page.goto('/docente/revision-palabras');
     await expect(page).toHaveURL(/\/estudiante$/);
-    await expect(page.getByRole('heading', { name: 'Mis aportes' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My Contributions' })).toBeVisible();
   });
 
   test('CA-5.4.2 Una docente que abre una URL de estudiante es redirigida a su vista', async ({ page, context }) => {
@@ -57,12 +57,12 @@ test.describe('HU-5.4 — Iniciar sesión y control de roles', () => {
 
   test('CA-5.4.3 Invitado: ve los mazos en solo lectura, sin acciones de edición', async ({ page }) => {
     await page.goto('/login');
-    await page.getByRole('button', { name: 'Continuar como invitado' }).click();
+    await page.getByRole('button', { name: 'Continue as guest' }).click();
     await expect(page).toHaveURL(/\/invitado\/mazos$/);
 
     await expect(page.getByRole('heading', { name: 'Fear of Stones and Other Stories' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Crear Mazo/ })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /Cerrar el mazo/ })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Registrar palabra' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Create Study Deck/ })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Close deck/ })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Register word' })).toHaveCount(0);
   });
 });

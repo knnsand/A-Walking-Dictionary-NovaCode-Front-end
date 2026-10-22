@@ -10,8 +10,8 @@ test.describe('HU-1.1 — Crear mazos precargados por semana', () => {
   });
 
   test('CA-1.1.1 La docente crea un mazo y aparece en la lista como abierto', async ({ page }) => {
-    await page.getByRole('button', { name: '+ Crear Mazo de Estudio' }).click();
-    const modal = page.getByRole('dialog', { name: 'Crear nuevo mazo de estudio' });
+    await page.getByRole('button', { name: '+ Create Study Deck' }).click();
+    const modal = page.getByRole('dialog', { name: 'Create new study deck' });
 
     await modal.locator('#semana').selectOption('16');
     await modal.locator('#curso_id').selectOption({ label: 'Literatura Anglófona' });
@@ -19,36 +19,36 @@ test.describe('HU-1.1 — Crear mazos precargados por semana', () => {
     await modal.locator('#autor').fill('Chinua Achebe');
     await modal.locator('#fecha_apertura').fill('2026-11-20');
     await modal.locator('#fecha_cierre').fill('2026-11-27');
-    await modal.getByLabel('Nigeriano').check();
-    await modal.getByRole('button', { name: 'Crear mazo' }).click();
+    await modal.getByLabel('Nigerian').check();
+    await modal.getByRole('button', { name: 'Create deck' }).click();
 
     // Al crearse con éxito el modal se cierra y la lista se actualiza
     await expect(modal).toBeHidden();
     await page.reload();
     const tarjeta = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: 'Things Fall Apart (E2E)' }) });
-    await expect(tarjeta).toContainText('Semana 16');
-    await expect(tarjeta).toContainText('Mazo abierto para aportes');
+    await expect(tarjeta).toContainText('Week 16');
+    await expect(tarjeta).toContainText('Deck open for contributions');
   });
 
   test('CA-1.1.2 Sin los campos obligatorios no se crea el mazo y se muestra la validación', async ({ page }) => {
-    await page.getByRole('button', { name: '+ Crear Mazo de Estudio' }).click();
-    const modal = page.getByRole('dialog', { name: 'Crear nuevo mazo de estudio' });
-    await modal.getByRole('button', { name: 'Crear mazo' }).click();
-    await expect(modal.getByRole('alert')).toContainText('Completa todos los campos obligatorios');
+    await page.getByRole('button', { name: '+ Create Study Deck' }).click();
+    const modal = page.getByRole('dialog', { name: 'Create new study deck' });
+    await modal.getByRole('button', { name: 'Create deck' }).click();
+    await expect(modal.getByRole('alert')).toContainText('Complete all required fields');
   });
 
   test('CA-1.1.3 Al cerrar un mazo queda "cerrado" y deja de ofrecerse a los estudiantes', async ({ page, browser }) => {
-    await page.getByRole('button', { name: 'Cerrar el mazo The Composition' }).click();
+    await page.getByRole('button', { name: 'Close deck The Composition' }).click();
     const tarjeta = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: 'The Composition' }) });
-    await expect(tarjeta).toContainText('Mazo cerrado');
-    await expect(page.getByRole('button', { name: 'Abrir el mazo The Composition' })).toBeVisible();
+    await expect(tarjeta).toContainText('Deck closed');
+    await expect(page.getByRole('button', { name: 'Open deck The Composition' })).toBeVisible();
 
     // Del lado del estudiante, el mazo cerrado ya no se puede elegir al registrar una palabra
     const contextoEstudiante = await browser.newContext();
     await iniciarSesion(contextoEstudiante, 'juan');
     const estudiante = await contextoEstudiante.newPage();
     await estudiante.goto('/estudiante');
-    await estudiante.getByRole('button', { name: 'Registrar palabra' }).click();
+    await estudiante.getByRole('button', { name: 'Register word' }).click();
     const opciones = estudiante.locator('#mazo_id option');
     await expect(opciones.filter({ hasText: 'Fear of Stones' })).toHaveCount(1);
     await expect(opciones.filter({ hasText: 'The Composition' })).toHaveCount(0);
@@ -60,11 +60,11 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
   test.beforeEach(async ({ page, context }) => {
     await iniciarSesion(context, 'juan');
     await page.goto('/estudiante');
-    await page.getByRole('button', { name: 'Registrar palabra' }).click();
+    await page.getByRole('button', { name: 'Register word' }).click();
   });
 
   async function llenar(page, datos) {
-    const modal = page.getByRole('dialog', { name: 'Añadir nueva palabra al mazo' });
+    const modal = page.getByRole('dialog', { name: 'Add new word to the deck' });
     if (datos.palabra !== undefined) await modal.locator('#palabra').fill(datos.palabra);
     if (datos.traduccion !== undefined) await modal.locator('#traduccion').fill(datos.traduccion);
     if (datos.definicion !== undefined) await modal.locator('#definicion').fill(datos.definicion);
@@ -82,12 +82,12 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
       definicion: 'The land along the edge of a river.',
       ejemplo: 'They sat on the riverbank.',
     });
-    await expect(modal.getByRole('status').filter({ hasText: 'Palabra enviada correctamente' })).toBeVisible();
+    await expect(modal.getByRole('status').filter({ hasText: 'Word submitted successfully' })).toBeVisible();
   });
 
   test('CA-1.2.2 Si falta un campo obligatorio se indica y no se envía', async ({ page }) => {
     const modal = await llenar(page, { palabra: 'incomplete', traduccion: '', definicion: '' });
-    await expect(modal.getByRole('alert')).toContainText('Completa los campos obligatorios');
+    await expect(modal.getByRole('alert')).toContainText('Complete the required fields');
   });
 
   test('CA-1.3.4 + CA-1.3.1 Duplicado exacto: avisa antes de enviar y registra la coautoría', async ({ page }) => {
@@ -98,9 +98,9 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
       definicion: 'A small piece of rock.',
       ejemplo: 'The boy kept a smooth stone in his pocket.',
     });
-    await expect(modal.getByRole('alert')).toContainText('ya existe en el mazo, con la misma definición');
-    await modal.getByRole('button', { name: 'Confirmar y enviar' }).click();
-    await expect(modal.getByRole('status').filter({ hasText: 'Se te registró como coautor' })).toBeVisible();
+    await expect(modal.getByRole('alert')).toContainText('already exists in the deck, with the same definition');
+    await modal.getByRole('button', { name: 'Confirm and submit' }).click();
+    await expect(modal.getByRole('status').filter({ hasText: 'You were registered as a co-author' })).toBeVisible();
   });
 
   test('CA-1.3.4 + CA-1.3.2 Duplicado parcial: avisa y guarda una acepción adicional', async ({ page }) => {
@@ -109,8 +109,8 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
       traduccion: 'temor',
       definicion: 'To be worried that something bad will happen.',
     });
-    await expect(modal.getByRole('alert')).toContainText('con una definición distinta');
-    await modal.getByRole('button', { name: 'Confirmar y enviar' }).click();
-    await expect(modal.getByRole('status').filter({ hasText: 'Acepción adicional registrada' })).toBeVisible();
+    await expect(modal.getByRole('alert')).toContainText('with a different definition');
+    await modal.getByRole('button', { name: 'Confirm and submit' }).click();
+    await expect(modal.getByRole('status').filter({ hasText: 'Additional meaning registered' })).toBeVisible();
   });
 });

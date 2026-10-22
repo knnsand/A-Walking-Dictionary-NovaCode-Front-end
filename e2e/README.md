@@ -11,6 +11,8 @@ Un navegador real (Chromium) usa la aplicación como lo haría la docente o un e
 
 Los archivos se llaman `*.e2e.js` para que Vitest no los ejecute.
 
+**Idioma:** la interfaz está en inglés (react-i18next), así que los selectores buscan los textos de `src/i18n/locales/en.json`. Los datos de la base (nombres de mazos, cursos, estudiantes, valores como `Jamaicano`) no se traducen y se buscan tal cual. Los mensajes de error que vienen del backend siguen en español hasta que la API envíe el campo `code`.
+
 ## Ejecutar en local
 
 Con este repo clonado dentro de `walking-dictionary-infra`:
