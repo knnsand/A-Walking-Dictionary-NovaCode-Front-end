@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexto/useAuth';
 import { TEXTOS_EXPORTAR_PDF, clasificarErrorExportacion } from './exportarPdf.constants';
 import './boton-exportar-pdf.css';
@@ -13,20 +14,23 @@ import './boton-exportar-pdf.css';
  *
  * @param {Object} props
  * @param {() => Promise<void>} props.onExportar - Descarga el PDF; si falla, lanza un Error.
- * @param {string} props.etiqueta - Texto del botón en reposo.
- * @param {string} [props.etiquetaCargando] - Texto mientras se genera el PDF.
+ * @param {string} props.etiqueta - Texto del botón en reposo (ya traducido por quien lo usa).
+ * @param {string} [props.etiquetaCargando] - Texto mientras se genera el PDF (ya traducido;
+ *   por defecto, el texto estándar de `pdfExport.loading`).
  * @param {string} [props.ariaLabel] - Nombre accesible, útil cuando hay varios botones iguales.
  * @param {boolean} [props.disabled] - Deshabilita el botón desde afuera.
  */
 export function BotonExportarPdf({
   onExportar,
   etiqueta,
-  etiquetaCargando = TEXTOS_EXPORTAR_PDF.cargando,
+  etiquetaCargando,
   ariaLabel,
   disabled = false,
 }) {
+  const { t } = useTranslation();
   const { logout } = useAuth();
   const [exportando, setExportando] = useState(false);
+  // { clave } (texto del front, se traduce al mostrarlo) o { mensaje } (texto del backend, tal cual).
   const [error, setError] = useState(null);
 
   async function handleClick() {
@@ -38,8 +42,8 @@ export function BotonExportarPdf({
       await onExportar();
     } catch (e) {
       console.error(e);
-      const { mensaje, cerrarSesion } = clasificarErrorExportacion(e?.message);
-      setError(mensaje);
+      const { clave, mensaje, cerrarSesion } = clasificarErrorExportacion(e?.message);
+      setError(clave ? { clave } : { mensaje });
       if (cerrarSesion) logout();
     } finally {
       setExportando(false);
@@ -56,12 +60,12 @@ export function BotonExportarPdf({
         aria-label={ariaLabel}
         aria-busy={exportando}
       >
-        {exportando ? etiquetaCargando : etiqueta}
+        {exportando ? (etiquetaCargando ?? t(TEXTOS_EXPORTAR_PDF.cargando)) : etiqueta}
       </button>
 
       {error && (
         <p className="boton-exportar-pdf__error" role="alert">
-          {error}
+          {error.clave ? t(error.clave) : error.mensaje}
         </p>
       )}
     </div>

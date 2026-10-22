@@ -1,51 +1,54 @@
 // vistas/quices/listaQuices.constants.js
-// HU-009: textos y constantes de la lista de quices (docente y estudiante).
+// HU-009: constantes y claves de traducción de la lista de quices (docente y estudiante).
+// Los textos viven en src/i18n/locales/en.json (bloque "quizList").
 
+// Valores que devuelve el backend en `estado_efectivo`: NO se traducen.
 export const ESTADO = {
   PROGRAMADO: 'programado',
   ABIERTO: 'abierto',
   CERRADO: 'cerrado',
 };
 
-export const TEXTOS = {
-  cargando: 'Cargando quices…',
-  vacio: 'Todavía no hay quices disponibles.',
-  vacioDocente: 'Todavía no se ha generado ningún quiz.',
-  errorGenerico: 'No se pudieron cargar los quices.',
+export const TEXTOS_CLAVES = {
+  cargando: 'quizList.loading',
+  vacio: 'quizList.empty',
+  vacioDocente: 'quizList.emptyTeacher',
+  errorGenerico: 'quizList.loadFailed',
 
-  semanaCorte: 'Semana de corte',
-  apertura: 'Apertura',
-  cierre: 'Cierre',
-  tiempoLimite: 'Tiempo límite',
-  respondido: 'Respondido',
+  semanaCorte: 'quizList.cutoffWeek',
+  apertura: 'quizList.opening',
+  cierre: 'quizList.closing',
+  tiempoLimite: 'quizList.timeLimit',
+  respondido: 'quizList.answered',
 
-  // Exportar a PDF (solo docente, HU-3.3)
-  botonExportarQuiz: 'Exportar versión impresa',
+  // Exportar a PDF (solo docente, HU-3.3): se reutilizan las claves compartidas.
+  botonExportarQuiz: 'exportActions.quizPrintable',
+  botonExportarQuizAria: 'exportActions.quizPrintableAria',
 
   // Acciones del estudiante: llevan a /estudiante/quices/:idQuiz
-  accionResponder: 'Responder quiz',
-  accionResultado: 'Ver resultado',
-  accionDetalle: 'Ver detalle',
+  accionResponder: 'quizList.actions.take',
+  accionResultado: 'quizList.actions.viewResult',
+  accionDetalle: 'quizList.actions.viewDetails',
 };
 
 // Título y subtítulo según quién mira la lista.
 export const TEXTOS_POR_ROL = {
   estudiante: {
-    titulo: 'Quices Quincenales',
-    descripcion: 'Selecciona un quiz para ver su portada o responderlo.',
+    titulo: 'quizList.student.title',
+    descripcion: 'quizList.student.description',
   },
   docente: {
-    titulo: 'Quices generados',
-    descripcion:
-      'Consulta los quices ya creados y descarga el PDF imprimible de cualquiera: la hoja de preguntas y, en página aparte, la hoja de respuestas.',
+    titulo: 'quizList.teacher.title',
+    descripcion: 'quizList.teacher.description',
   },
 };
 
 // Siempre se usa `estado_efectivo`, nunca `estado` (docs/contrato-quiz-estudiante.md).
+// Las claves del objeto son los estados del backend (no se traducen); los valores, claves de traducción.
 export const ETIQUETA_ESTADO = {
-  [ESTADO.PROGRAMADO]: 'Programado',
-  [ESTADO.ABIERTO]: 'Abierto',
-  [ESTADO.CERRADO]: 'Cerrado',
+  [ESTADO.PROGRAMADO]: 'quizList.status.scheduled',
+  [ESTADO.ABIERTO]: 'quizList.status.open',
+  [ESTADO.CERRADO]: 'quizList.status.closed',
 };
 
 // Clase del badge de cada estado: .badge-abierto y .badge-cerrado vienen de index.css;

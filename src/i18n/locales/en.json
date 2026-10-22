@@ -672,6 +672,53 @@
     "quizPrintable": "Export printable version",
     "quizPrintableAria": "Export printable version of the quiz {{title}}"
   },
+  "pdfExport": {
+    "loading": "Generating PDF…",
+    "errors": {
+      "sessionExpired": "Your session expired. Please log in again.",
+      "notTeacher": "Your account does not have the teacher role, so it cannot export to PDF.",
+      "generic": "Could not generate the PDF. Please try again."
+    }
+  },
+  "quizList": {
+    "student": {
+      "title": "Biweekly Quizzes",
+      "description": "Select a quiz to see its cover or take it."
+    },
+    "teacher": {
+      "title": "Generated quizzes",
+      "description": "Browse the quizzes already created and download the printable PDF of any of them: the question sheet and, on a separate page, the answer sheet."
+    },
+    "loading": "Loading quizzes…",
+    "empty": "There are no quizzes available yet.",
+    "emptyTeacher": "No quiz has been generated yet.",
+    "loadFailed": "Could not load the quizzes.",
+    "cutoffWeek": "Cutoff week",
+    "opening": "Opening",
+    "closing": "Closing",
+    "timeLimit": "Time limit",
+    "minutesShort": "{{count}} min",
+    "answered": "Answered",
+    "grade": "Grade {{grade}}",
+    "status": {
+      "scheduled": "Scheduled",
+      "open": "Open",
+      "closed": "Closed"
+    },
+    "actions": {
+      "take": "Take quiz",
+      "viewResult": "View result",
+      "viewDetails": "View details"
+    }
+  },
+  "wordSuggestions": {
+    "title": "Explore related words",
+    "subtitle": "Expand your vocabulary starting from “{{word}}”.",
+    "loading": "Looking for related words…",
+    "error": "Could not load the suggestions. Please try again.",
+    "empty": "There are no suggestions available for this word.",
+    "note": "The suggestions are an aid for exploring the lexicon; check their meaning in the context of the reading."
+  },
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",

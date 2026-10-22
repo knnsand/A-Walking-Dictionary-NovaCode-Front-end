@@ -6,8 +6,7 @@ import { beforeEach, describe, it, expect, vi } from 'vitest';
 import i18n from '../../../i18n';
 import { GenerarQuiz } from './GenerarQuiz';
 import { TEXTOS_CLAVES, ERRORES_VALIDACION } from './generarQuiz.constants';
-// ListaQuices (vista compartida) aún no está migrada: sus textos siguen en español.
-import { TEXTOS as TEXTOS_LISTA } from '../../quices/listaQuices.constants';
+import { TEXTOS_CLAVES as TEXTOS_LISTA } from '../../quices/listaQuices.constants';
 
 // Los textos de la pantalla y los errores de validación son claves de traducción:
 // las pruebas buscan el texto en inglés que ve el usuario.
@@ -302,7 +301,7 @@ describe('GenerarQuiz', () => {
     generarQuiz.mockResolvedValue(RESPUESTA);
     render(<GenerarQuiz />);
 
-    expect(await screen.findByText(TEXTOS_LISTA.vacioDocente)).toBeInTheDocument();
+    expect(await screen.findByText(t(TEXTOS_LISTA.vacioDocente))).toBeInTheDocument();
 
     await completarFormularioValido();
     pulsarGenerar();
@@ -310,6 +309,6 @@ describe('GenerarQuiz', () => {
     // El nombre del quiz aparece en la lista (el mensaje de éxito es un texto más largo).
     expect(await screen.findByText('Quiz acumulativo')).toBeInTheDocument();
     expect(listarQuices).toHaveBeenCalledTimes(2);
-    expect(screen.queryByText(TEXTOS_LISTA.vacioDocente)).not.toBeInTheDocument();
+    expect(screen.queryByText(t(TEXTOS_LISTA.vacioDocente))).not.toBeInTheDocument();
   });
 });

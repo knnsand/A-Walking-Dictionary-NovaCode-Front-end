@@ -7,7 +7,6 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { ListaQuices } from './ListaQuices';
-import { TEXTOS } from './listaQuices.constants';
 
 vi.mock('../../contexto/useAuth', () => ({
   useAuth: () => ({ logout: vi.fn() }),
@@ -65,11 +64,11 @@ describe('ListaQuices', () => {
       expect(items).toHaveLength(2);
 
       expect(within(items[0]).getByText('Quiz semanas 5-8')).toBeInTheDocument();
-      expect(within(items[0]).getByText('Abierto')).toBeInTheDocument();
+      expect(within(items[0]).getByText('Open')).toBeInTheDocument();
       expect(within(items[0]).getByText('8')).toBeInTheDocument();
 
       expect(within(items[1]).getByText('Quiz semanas 1-4')).toBeInTheDocument();
-      expect(within(items[1]).getByText('Cerrado')).toBeInTheDocument();
+      expect(within(items[1]).getByText('Closed')).toBeInTheDocument();
     });
 
     it('muestra apertura, cierre y tiempo límite', async () => {
@@ -77,8 +76,8 @@ describe('ListaQuices', () => {
       renderLista({ rol: 'docente' });
 
       const [item] = await screen.findAllByRole('listitem');
-      expect(within(item).getByText(`${TEXTOS.apertura}:`)).toBeInTheDocument();
-      expect(within(item).getByText(`${TEXTOS.cierre}:`)).toBeInTheDocument();
+      expect(within(item).getByText('Opening:')).toBeInTheDocument();
+      expect(within(item).getByText('Closing:')).toBeInTheDocument();
       expect(within(item).getByText(/30 min/)).toBeInTheDocument();
     });
 
@@ -89,7 +88,7 @@ describe('ListaQuices', () => {
 
       fireEvent.click(
         await screen.findByRole('button', {
-          name: `${TEXTOS.botonExportarQuiz} del quiz Quiz semanas 1-4`,
+          name: 'Export printable version of the quiz Quiz semanas 1-4',
         })
       );
 
@@ -109,7 +108,7 @@ describe('ListaQuices', () => {
       listarQuices.mockResolvedValue([]);
       renderLista({ rol: 'docente' });
 
-      expect(await screen.findByText(TEXTOS.vacioDocente)).toBeInTheDocument();
+      expect(await screen.findByText('No quiz has been generated yet.')).toBeInTheDocument();
       expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
@@ -117,8 +116,8 @@ describe('ListaQuices', () => {
       listarQuices.mockRejectedValue(new Error('fallo de red'));
       renderLista({ rol: 'docente' });
 
-      expect(await screen.findByText(TEXTOS.errorGenerico)).toBeInTheDocument();
-      expect(screen.queryByText(TEXTOS.vacioDocente)).not.toBeInTheDocument();
+      expect(await screen.findByText('Could not load the quizzes.')).toBeInTheDocument();
+      expect(screen.queryByText('No quiz has been generated yet.')).not.toBeInTheDocument();
     });
 
     it('vuelve a cargar la lista cuando cambia refrescarTrigger', async () => {
@@ -142,10 +141,10 @@ describe('ListaQuices', () => {
       listarQuices.mockResolvedValue(QUICES);
       renderLista({ rol: 'estudiante' });
 
-      const responder = await screen.findByRole('link', { name: TEXTOS.accionResponder });
+      const responder = await screen.findByRole('link', { name: 'Take quiz' });
       expect(responder).toHaveAttribute('href', '/estudiante/quices/2');
 
-      const detalle = screen.getByRole('link', { name: TEXTOS.accionDetalle });
+      const detalle = screen.getByRole('link', { name: 'View details' });
       expect(detalle).toHaveAttribute('href', '/estudiante/quices/1');
     });
 
@@ -155,12 +154,12 @@ describe('ListaQuices', () => {
       ]);
       renderLista({ rol: 'estudiante' });
 
-      expect(await screen.findByText(/Respondido · Nota 4\.5/)).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: TEXTOS.accionResultado })).toHaveAttribute(
+      expect(await screen.findByText(/Answered · Grade 4\.5/)).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'View result' })).toHaveAttribute(
         'href',
         '/estudiante/quices/2'
       );
-      expect(screen.queryByRole('link', { name: TEXTOS.accionResponder })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'Take quiz' })).not.toBeInTheDocument();
     });
 
     it('no ofrece exportar a PDF (solo la docente puede)', async () => {
@@ -175,7 +174,7 @@ describe('ListaQuices', () => {
       listarQuices.mockResolvedValue([]);
       renderLista({ rol: 'estudiante' });
 
-      expect(await screen.findByText(TEXTOS.vacio)).toBeInTheDocument();
+      expect(await screen.findByText('There are no quizzes available yet.')).toBeInTheDocument();
     });
 
     it('usa el servicio recibido por props en lugar de la API', async () => {
@@ -193,7 +192,7 @@ describe('ListaQuices', () => {
       listarQuices.mockResolvedValue(QUICES);
       renderLista({ rol: 'docente', embebida: true });
 
-      expect(await screen.findByRole('heading', { level: 2, name: 'Quices generados' })).toBeInTheDocument();
+      expect(await screen.findByRole('heading', { level: 2, name: 'Generated quizzes' })).toBeInTheDocument();
     });
 
     it('no pinta subtítulo propio cuando es la pantalla completa (el layout pone el título)', async () => {

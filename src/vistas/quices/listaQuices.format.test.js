@@ -15,8 +15,8 @@ describe('formatearFecha', () => {
 
 describe('textoNota', () => {
   it('muestra la nota con un decimal', () => {
-    expect(textoNota({ calificacion: 4.5 })).toBe(' · Nota 4.5');
-    expect(textoNota({ calificacion: '3' })).toBe(' · Nota 3.0');
+    expect(textoNota({ calificacion: 4.5 })).toBe(' · Grade 4.5');
+    expect(textoNota({ calificacion: '3' })).toBe(' · Grade 3.0');
   });
 
   it('no muestra nada si no hay calificación numérica', () => {
