@@ -26,3 +26,5 @@ reportes-e2e
 *.njsproj
 *.sln
 *.sw?
+
+coverage/
