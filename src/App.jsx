@@ -12,13 +12,14 @@ import { DetalleCurso } from './vistas/docente/cursos/DetalleCurso';
 import { ConfigurarPerfil } from './vistas/estudiante/configurar-perfil/ConfigurarPerfil';
 import { Login } from './vistas/autenticacion/Login';
 import { Registro } from './vistas/autenticacion/registro/Registro';
-import { DiccionarioInvitado } from './vistas/invitado/DiccionarioInvitado';
+
 import { ParticipacionMazo } from './vistas/docente/participacion/ParticipacionMazo';
 import { PaginaEstudio } from './vistas/estudiante/estudiar-tarjetas/PaginaEstudio';
 import { MazosEstudio } from './vistas/mazos-estudio/MazosEstudio';
 import { GenerarQuiz } from './vistas/docente/quices/GenerarQuiz';
 import { ListaQuices } from './vistas/quices/ListaQuices';
 import { ResponderQuiz } from './vistas/estudiante/responder-quiz/ResponderQuiz';
+import { DiccionarioGlobal } from './vistas/diccionario-global/DiccionarioGlobal';
 
 function RutaSoloEstudiante({ children }) {
   const { autenticado, rol } = useAuth();
@@ -92,6 +93,8 @@ export default function App() {
                 path="quices"
                 element={<GenerarQuiz />}
               />
+              <Route path="diccionario" element={<DiccionarioGlobal />} />
+
             </Route>
 
             <Route
@@ -120,6 +123,8 @@ export default function App() {
                 path="configuracion-perfil"
                 element={<ConfigurarPerfil />}
               />
+              <Route path="diccionario" element={<DiccionarioGlobal />} />
+
             </Route>
 
             <Route
@@ -128,7 +133,10 @@ export default function App() {
             >
               <Route index element={<Navigate to="mazos" replace />} />
               <Route path="mazos" element={<MazosEstudio rol="invitado" />} />
-              <Route path="diccionario" element={<DiccionarioInvitado />} />
+              
+              
+              <Route path="diccionario" element={<DiccionarioGlobal />} />
+
             </Route>
 
             <Route
