@@ -17,32 +17,32 @@ test.describe('HU-3.1 — Generar quices acumulativos', () => {
   });
 
   test('CA-3.1.1 + CA-3.1.3 La docente genera un quiz programado con las tarjetas aprobadas', async ({ page }) => {
-    await page.getByLabel('Curso').selectOption({ label: 'Literatura Anglófona' });
+    await page.getByLabel('Course').selectOption({ label: 'Literatura Anglófona' });
     await page.getByRole('checkbox', { name: /Stitch by Stitch/ }).check();
     await page.getByRole('checkbox', { name: /Just Ask!/ }).check();
-    await page.getByLabel('Título del quiz').fill('Quiz acumulativo semanas 1 y 2 (E2E)');
-    await page.getByLabel('Fecha y hora de apertura').fill(datetimeLocal(60 * 24));
-    await page.getByLabel('Fecha y hora de cierre').fill(datetimeLocal(60 * 26));
-    await page.getByLabel('Tiempo límite (minutos)').fill('30');
-    await page.getByLabel('Cantidad de preguntas (opcional)').fill('5');
-    await page.getByRole('button', { name: 'Generar Quiz' }).click();
+    await page.getByLabel('Quiz title').fill('Quiz acumulativo semanas 1 y 2 (E2E)');
+    await page.getByLabel('Opening date and time').fill(datetimeLocal(60 * 24));
+    await page.getByLabel('Closing date and time').fill(datetimeLocal(60 * 26));
+    await page.getByLabel('Time limit (minutes)').fill('30');
+    await page.getByLabel('Number of questions (optional)').fill('5');
+    await page.getByRole('button', { name: 'Generate Quiz' }).click();
 
-    await expect(page.getByText('Quiz generado')).toBeVisible();
-    await expect(page.getByText('Programado').first()).toBeVisible();
+    await expect(page.getByText('Quiz generated')).toBeVisible();
+    await expect(page.getByText('Scheduled').first()).toBeVisible();
     // CA-3.1.2: la vista previa de la docente muestra las preguntas con su respuesta correcta
-    await expect(page.getByRole('heading', { name: 'Vista previa (solo docente)' })).toBeVisible();
-    await expect(page.getByText('Respuesta correcta')).toHaveCount(5);
+    await expect(page.getByRole('heading', { name: 'Preview (teacher only)' })).toBeVisible();
+    await expect(page.getByText('Correct answer')).toHaveCount(5);
   });
 
   test('CA-3.1.3 Validación: el cierre debe ser posterior a la apertura', async ({ page }) => {
-    await page.getByLabel('Curso').selectOption({ label: 'Literatura Anglófona' });
+    await page.getByLabel('Course').selectOption({ label: 'Literatura Anglófona' });
     await page.getByRole('checkbox', { name: /Stitch by Stitch/ }).check();
-    await page.getByLabel('Título del quiz').fill('Quiz inválido');
-    await page.getByLabel('Fecha y hora de apertura').fill(datetimeLocal(120));
-    await page.getByLabel('Fecha y hora de cierre').fill(datetimeLocal(60));
-    await page.getByLabel('Tiempo límite (minutos)').fill('30');
-    await page.getByRole('button', { name: 'Generar Quiz' }).click();
-    await expect(page.getByText('El cierre debe ser posterior a la apertura.')).toBeVisible();
+    await page.getByLabel('Quiz title').fill('Quiz inválido');
+    await page.getByLabel('Opening date and time').fill(datetimeLocal(120));
+    await page.getByLabel('Closing date and time').fill(datetimeLocal(60));
+    await page.getByLabel('Time limit (minutes)').fill('30');
+    await page.getByRole('button', { name: 'Generate Quiz' }).click();
+    await expect(page.getByText('The closing must be later than the opening.')).toBeVisible();
   });
 });
 
@@ -76,7 +76,7 @@ test.describe('HU-3.2 — Responder quiz y recibir nota', () => {
     await iniciarSesion(context, 'juan');
     await page.goto(`/estudiante/quices/${quiz.id_quiz}`);
     await expect(page.getByRole('heading', { name: 'Quiz para responder (E2E)' })).toBeVisible();
-    await page.getByRole('button', { name: 'Iniciar' }).click();
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
 
     // CA-3.2.1: hay cronómetro visible
     await expect(page.getByRole('timer')).toBeVisible();
@@ -85,12 +85,12 @@ test.describe('HU-3.2 — Responder quiz y recibir nota', () => {
     for (const pregunta of preguntas) {
       await opcion(page, pregunta, pregunta.respuesta_correcta).check();
     }
-    await page.getByRole('button', { name: 'Finalizar examen' }).click();
+    await page.getByRole('button', { name: 'Finish exam' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Resultado' })).toBeVisible();
-    await expect(page.getByText('Calificación')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Result', exact: true })).toBeVisible();
+    await expect(page.getByText('Grade', { exact: true })).toBeVisible();
     await expect(page.getByText('5').first()).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Detalle por pregunta' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Detail by question' })).toBeVisible();
   });
 
   test('CA-3.2.1 Al agotarse el tiempo se envía solo lo contestado y se bloquea el formulario', async ({ page, context }) => {
@@ -108,7 +108,7 @@ test.describe('HU-3.2 — Responder quiz y recibir nota', () => {
     await page.clock.install();
     await iniciarSesion(context, 'juan');
     await page.goto(`/estudiante/quices/${corto.quiz.id_quiz}`);
-    await page.getByRole('button', { name: 'Iniciar' }).click();
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
     await expect(page.getByRole('timer')).toBeVisible();
 
     const primera = corto.preguntas[0];
@@ -116,46 +116,46 @@ test.describe('HU-3.2 — Responder quiz y recibir nota', () => {
 
     await page.clock.fastForward('01:05');
 
-    // Sin pulsar "Finalizar examen": el envío lo hace el temporizador
-    await expect(page.getByRole('heading', { name: 'Resultado' })).toBeVisible();
-    await expect(page.getByText('Sin contestar')).toHaveCount(corto.preguntas.length - 1);
+    // Sin pulsar "Finish exam": el envío lo hace el temporizador
+    await expect(page.getByRole('heading', { name: 'Result', exact: true })).toBeVisible();
+    await expect(page.getByText('Unanswered')).toHaveCount(corto.preguntas.length - 1);
   });
 
   test('CA-3.2.2 Si faltan preguntas, avisa antes de enviar y las cuenta como incorrectas', async ({ page, context }) => {
     await iniciarSesion(context, 'maria');
     await page.goto(`/estudiante/quices/${quiz.id_quiz}`);
-    await page.getByRole('button', { name: 'Iniciar' }).click();
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
 
     const primera = preguntas[0];
     await opcion(page, primera, primera.respuesta_correcta).check();
-    await page.getByRole('button', { name: 'Finalizar examen' }).click();
+    await page.getByRole('button', { name: 'Finish exam' }).click();
 
-    await expect(page.getByRole('alert')).toContainText(`Te faltan ${preguntas.length - 1} preguntas por contestar.`);
-    await page.getByRole('button', { name: 'Enviar de todas formas' }).click();
-    await expect(page.getByRole('heading', { name: 'Resultado' })).toBeVisible();
-    await expect(page.getByText('Sin contestar').first()).toBeVisible();
+    await expect(page.getByRole('alert')).toContainText(`You have ${preguntas.length - 1} questions left to answer.`);
+    await page.getByRole('button', { name: 'Submit anyway' }).click();
+    await expect(page.getByRole('heading', { name: 'Result', exact: true })).toBeVisible();
+    await expect(page.getByText('Unanswered').first()).toBeVisible();
   });
 
   test('CA-3.2.3 En el mismo navegador, al volver a entrar ve el resultado previo y no puede reintentar', async ({ page, context }) => {
     await iniciarSesion(context, 'carlos');
     await page.goto(`/estudiante/quices/${quiz.id_quiz}`);
-    await page.getByRole('button', { name: 'Iniciar' }).click();
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
     await opcion(page, preguntas[0], preguntas[0].respuesta_correcta).check();
-    await page.getByRole('button', { name: 'Finalizar examen' }).click();
-    await page.getByRole('button', { name: 'Enviar de todas formas' }).click();
-    await expect(page.getByRole('heading', { name: 'Resultado' })).toBeVisible();
+    await page.getByRole('button', { name: 'Finish exam' }).click();
+    await page.getByRole('button', { name: 'Submit anyway' }).click();
+    await expect(page.getByRole('heading', { name: 'Result', exact: true })).toBeVisible();
 
     await page.goto(`/estudiante/quices/${quiz.id_quiz}`);
-    await expect(page.getByText('Ya enviaste este quiz y no se permite un nuevo intento.')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Iniciar' })).toHaveCount(0);
+    await expect(page.getByText('You have already submitted this quiz and a new attempt is not allowed.')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Start', exact: true })).toHaveCount(0);
   });
 
   test('CA-3.2.3 Desde otro dispositivo también ve el resultado previo en vez de "Iniciar"', async ({ page, context }) => {
-    test.fail(true, 'ERROR CONOCIDO: ResponderQuiz.jsx solo recuerda el envío en localStorage y no consulta GET /quizzes/:id/result (ya existe en el backend, docs/contrato-quiz-estudiante.md 2.2). En otro navegador el estudiante ve "Iniciar"; el resumen solo aparece tras reintentar y recibir el 409.');
+    test.fail(true, 'ERROR CONOCIDO: ResponderQuiz.jsx solo recuerda el envío en localStorage y no consulta GET /quizzes/:id/result (ya existe en el backend, docs/contrato-quiz-estudiante.md 2.2). En otro navegador el estudiante ve "Start"; el resumen solo aparece tras reintentar y recibir el 409.');
     // Juan envió el quiz en la primera prueba; este es un navegador nuevo (sin su localStorage)
     await iniciarSesion(context, 'juan');
     await page.goto(`/estudiante/quices/${quiz.id_quiz}`);
-    await expect(page.getByText('Ya enviaste este quiz y no se permite un nuevo intento.')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('You have already submitted this quiz and a new attempt is not allowed.')).toBeVisible({ timeout: 5000 });
   });
 });
 
