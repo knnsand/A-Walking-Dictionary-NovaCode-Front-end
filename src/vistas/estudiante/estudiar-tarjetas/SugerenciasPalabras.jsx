@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { obtenerFamiliaPalabras } from '../../../cliente-api/enriquecimientoApi';
 import './sugerencias-palabras.css';
 
@@ -18,16 +19,17 @@ function aplanarSugerencias(sugerencias) {
 }
 
 export default function SugerenciasPalabras({ palabra }) {
+  const { t } = useTranslation();
   const [sugerencias, setSugerencias] = useState([]);
   const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState('');
+  const [hayError, setHayError] = useState(false);
 
   useEffect(() => {
     const palabraActual = palabra?.trim();
 
     if (!palabraActual) {
       setSugerencias([]);
-      setError('');
+      setHayError(false);
       setCargando(false);
       return;
     }
@@ -36,7 +38,7 @@ export default function SugerenciasPalabras({ palabra }) {
 
     async function cargarSugerencias() {
       setCargando(true);
-      setError('');
+      setHayError(false);
       setSugerencias([]);
 
       try {
@@ -83,11 +85,7 @@ export default function SugerenciasPalabras({ palabra }) {
             .slice(0, 10)
         );
       } catch {
-        if (!cancelado) {
-          setError(
-            'No fue posible cargar las sugerencias. Inténtalo nuevamente.'
-          );
-        }
+        if (!cancelado) setHayError(true);
       } finally {
         if (!cancelado) setCargando(false);
       }
@@ -117,33 +115,33 @@ export default function SugerenciasPalabras({ palabra }) {
 
         <div>
           <h3 id="titulo-sugerencias">
-            Explora palabras relacionadas
+            {t('wordSuggestions.title')}
           </h3>
           <p>
-            Amplía tu vocabulario a partir de «{palabra.trim()}».
+            {t('wordSuggestions.subtitle', { word: palabra.trim() })}
           </p>
         </div>
       </div>
 
       {cargando && (
         <p className="sugerencias-palabras__estado" role="status">
-          Buscando palabras relacionadas…
+          {t('wordSuggestions.loading')}
         </p>
       )}
 
-      {!cargando && error && (
+      {!cargando && hayError && (
         <p className="sugerencias-palabras__error" role="alert">
-          {error}
+          {t('wordSuggestions.error')}
         </p>
       )}
 
-      {!cargando && !error && sugerencias.length === 0 && (
+      {!cargando && !hayError && sugerencias.length === 0 && (
         <p className="sugerencias-palabras__vacio">
-          No hay sugerencias disponibles para esta palabra.
+          {t('wordSuggestions.empty')}
         </p>
       )}
 
-      {!cargando && !error && sugerencias.length > 0 && (
+      {!cargando && !hayError && sugerencias.length > 0 && (
         <>
           <div className="sugerencias-palabras__lista">
             {sugerencias.map((termino) => (
@@ -157,8 +155,7 @@ export default function SugerenciasPalabras({ palabra }) {
           </div>
 
           <p className="sugerencias-palabras__nota">
-            Las sugerencias son una ayuda para explorar el léxico;
-            revisa su significado en el contexto de la lectura.
+            {t('wordSuggestions.note')}
           </p>
         </>
       )}

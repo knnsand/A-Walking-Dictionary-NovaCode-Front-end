@@ -5,7 +5,7 @@
 // Dónde se usa:
 //   - docente:    dentro de GenerarQuiz (/docente/quices), justo debajo del formulario, con
 //                 la prop `embebida` (no pisa el encabezado de la pantalla). Cada tarjeta
-//                 trae su botón "Exportar versión impresa" (HU-3.3, CA-3.3.2).
+//                 trae su botón de exportar la versión impresa (HU-3.3, CA-3.3.2).
 //   - estudiante: pantalla propia /estudiante/quices. Cada tarjeta enlaza a
 //                 /estudiante/quices/:idQuiz (ResponderQuiz, HU-3.2).
 //
@@ -24,6 +24,7 @@
 // estado viven en lista-quices.css.
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { exportarQuizPdf } from '../../cliente-api/exportacionesApi';
 import { listarQuices } from '../../cliente-api/quizzesApi';
@@ -34,7 +35,7 @@ import {
   CLASE_BADGE_ESTADO,
   ESTADO,
   ETIQUETA_ESTADO,
-  TEXTOS,
+  TEXTOS_CLAVES,
   TEXTOS_POR_ROL,
 } from './listaQuices.constants';
 import { formatearFecha, textoNota } from './listaQuices.format';
@@ -43,7 +44,7 @@ import './lista-quices.css';
 const servicioPorDefecto = { listarQuices };
 
 /**
- * Pinta el título de la pantalla en el layout. Va en su propio componente para poder
+ * Pinta el título de la pantalla en el layout (recibe los textos ya traducidos). Va en su propio componente para poder
  * omitirlo cuando la lista está dentro de otra pantalla (que ya tiene su encabezado).
  */
 function EncabezadoLista({ titulo, descripcion }) {
@@ -66,11 +67,13 @@ export function ListaQuices({
   refrescarTrigger,
   servicio = servicioPorDefecto,
 }) {
+  const { t } = useTranslation();
   const esDocente = rol === 'docente';
   const textos = TEXTOS_POR_ROL[rol] ?? TEXTOS_POR_ROL.estudiante;
 
   const [quices, setQuices] = useState([]);
   const [cargando, setCargando] = useState(true);
+  // Clave de traducción del error (se traduce al mostrarlo).
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -84,7 +87,7 @@ export function ListaQuices({
         setError(null);
       })
       .catch(() => {
-        if (!cancelado) setError(TEXTOS.errorGenerico);
+        if (!cancelado) setError(TEXTOS_CLAVES.errorGenerico);
       })
       .finally(() => {
         if (!cancelado) setCargando(false);
@@ -102,19 +105,19 @@ export function ListaQuices({
     <section className={`lista-quices-vista${embebida ? ' lista-quices-vista--embebida' : ''}`}>
       {embebida ? (
         <div className="lista-quices-vista__encabezado">
-          <h2 className="lista-quices-vista__titulo">{textos.titulo}</h2>
-          <p className="lista-quices-vista__descripcion">{textos.descripcion}</p>
+          <h2 className="lista-quices-vista__titulo">{t(textos.titulo)}</h2>
+          <p className="lista-quices-vista__descripcion">{t(textos.descripcion)}</p>
         </div>
       ) : (
-        <EncabezadoLista titulo={textos.titulo} descripcion={textos.descripcion} />
+        <EncabezadoLista titulo={t(textos.titulo)} descripcion={t(textos.descripcion)} />
       )}
 
-      <Aviso tipo="error" mensaje={error} />
+      <Aviso tipo="error" mensaje={error ? t(error) : null} />
 
-      {cargando && <p role="status">{TEXTOS.cargando}</p>}
+      {cargando && <p role="status">{t(TEXTOS_CLAVES.cargando)}</p>}
 
       {!cargando && !error && ordenados.length === 0 && (
-        <p className="empty-state">{esDocente ? TEXTOS.vacioDocente : TEXTOS.vacio}</p>
+        <p className="empty-state">{t(esDocente ? TEXTOS_CLAVES.vacioDocente : TEXTOS_CLAVES.vacio)}</p>
       )}
 
       {ordenados.length > 0 && (
@@ -124,43 +127,44 @@ export function ListaQuices({
             // Solo el estudiante tiene resultado propio.
             const resultado = esDocente ? null : quiz.resultado ?? null;
 
-            let accion = TEXTOS.accionDetalle;
-            if (resultado) accion = TEXTOS.accionResultado;
-            else if (estado === ESTADO.ABIERTO) accion = TEXTOS.accionResponder;
+            let accion = TEXTOS_CLAVES.accionDetalle;
+            if (resultado) accion = TEXTOS_CLAVES.accionResultado;
+            else if (estado === ESTADO.ABIERTO) accion = TEXTOS_CLAVES.accionResponder;
 
             return (
               <li key={quiz.id_quiz} className={`mazo-pila mazo-pila--sola quiz-pila--${estado}`}>
                 <div className="tarjeta-pendiente mazo-pila__cara">
                   <div className="tarjeta-pendiente__encabezado">
                     <span className={`badge ${CLASE_BADGE_ESTADO[estado] ?? 'badge-cerrado'}`}>
-                      {ETIQUETA_ESTADO[estado] ?? estado}
+                      {ETIQUETA_ESTADO[estado] ? t(ETIQUETA_ESTADO[estado]) : estado}
                     </span>
                     <h3 className="tarjeta-pendiente__palabra">{quiz.titulo}</h3>
                   </div>
 
                   {quiz.semana_corte != null && (
                     <div className="tarjeta-pendiente__meta">
-                      {TEXTOS.semanaCorte}: <strong>{quiz.semana_corte}</strong>
+                      {t(TEXTOS_CLAVES.semanaCorte)}: <strong>{quiz.semana_corte}</strong>
                     </div>
                   )}
 
                   <div>
                     <p className="tarjeta-pendiente__meta">
-                      <strong>{TEXTOS.apertura}:</strong> {formatearFecha(quiz.fecha_apertura) || '—'}
+                      <strong>{t(TEXTOS_CLAVES.apertura)}:</strong> {formatearFecha(quiz.fecha_apertura) || '—'}
                     </p>
                     <p className="tarjeta-pendiente__meta">
-                      <strong>{TEXTOS.cierre}:</strong> {formatearFecha(quiz.fecha_cierre) || '—'}
+                      <strong>{t(TEXTOS_CLAVES.cierre)}:</strong> {formatearFecha(quiz.fecha_cierre) || '—'}
                     </p>
                     {quiz.tiempo_limite_min != null && (
                       <p className="tarjeta-pendiente__meta">
-                        <strong>{TEXTOS.tiempoLimite}:</strong> {quiz.tiempo_limite_min} min
+                        <strong>{t(TEXTOS_CLAVES.tiempoLimite)}:</strong>{' '}
+                        {t('quizList.minutesShort', { count: quiz.tiempo_limite_min })}
                       </p>
                     )}
                   </div>
 
                   {resultado && (
                     <p className="tarjeta-pendiente__meta quiz-respondido">
-                      {`${TEXTOS.respondido}${textoNota(resultado)}`}
+                      {`${t(TEXTOS_CLAVES.respondido)}${textoNota(resultado)}`}
                     </p>
                   )}
 
@@ -168,15 +172,15 @@ export function ListaQuices({
                     {esDocente ? (
                       <BotonExportarPdf
                         onExportar={() => exportarQuizPdf(quiz.id_quiz)}
-                        etiqueta={TEXTOS.botonExportarQuiz}
-                        ariaLabel={`${TEXTOS.botonExportarQuiz} del quiz ${quiz.titulo}`}
+                        etiqueta={t(TEXTOS_CLAVES.botonExportarQuiz)}
+                        ariaLabel={t(TEXTOS_CLAVES.botonExportarQuizAria, { title: quiz.titulo })}
                       />
                     ) : (
                       <Link
                         to={`/estudiante/quices/${quiz.id_quiz}`}
                         className={`btn ${resultado ? 'btn-secondary' : 'btn-primary'}`}
                       >
-                        {accion}
+                        {t(accion)}
                       </Link>
                     )}
                   </div>
