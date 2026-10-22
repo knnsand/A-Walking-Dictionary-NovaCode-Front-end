@@ -73,6 +73,7 @@ function formatContextTag(tag) {
 }
 
 
+
 function WordCard({ word, colorIndex, onViewDetails }) {
   const previewContext = Array.isArray(word.contexto)
     ? word.contexto.slice(0, 3)
