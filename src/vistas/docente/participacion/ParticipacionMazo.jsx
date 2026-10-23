@@ -109,7 +109,7 @@ export function ParticipacionMazo({ mazos: mazosProp }) {
   }, [mazoId, sinAportes, token, logout]);
 
   useEffect(() => {
-    cargar();
+    void cargar();
   }, [cargar]);
 
   const total = todasLasFilas.length;

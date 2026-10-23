@@ -49,7 +49,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       }
     }
 
-    cargarMazos();
+    void cargarMazos();
   }, []);
 
   function handleChange(evento) {

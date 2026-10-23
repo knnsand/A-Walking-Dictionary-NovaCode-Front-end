@@ -53,15 +53,15 @@ export function RevisionPalabras() {
   );
 
   const cargarPendientes = useCallback(() => {
-    listarTarjetasPendientes().then(setPendientes);
+    return listarTarjetasPendientes().then(setPendientes);
   }, []);
 
   const cargarAprobadas = useCallback(() => {
-    listarTarjetasAprobadas().then(setAprobadas);
+    return listarTarjetasAprobadas().then(setAprobadas);
   }, []);
 
   const cargarCoautorias = useCallback(() => {
-    listarCoautoriasPendientes().then(setCoautorias);
+    return listarCoautoriasPendientes().then(setCoautorias);
   }, []);
 
   // Consulta las tres listas en paralelo.
@@ -119,14 +119,14 @@ export function RevisionPalabras() {
   }, []);
 
   useEffect(() => {
-    consultarListas();
+    void consultarListas();
   }, [consultarListas]);
 
   function handleActualizar() {
     if (actualizando) return;
 
     setActualizando(true);
-    consultarListas();
+    void consultarListas();
   }
 
   function handleSolicitarAprobacion(tarjeta, datosEditados) {
@@ -168,8 +168,8 @@ export function RevisionPalabras() {
       setIdEnEdicion(null);
       setTarjetaParaAprobar(null);
 
-      cargarPendientes();
-      cargarAprobadas();
+      void cargarPendientes();
+      void cargarAprobadas();
     } catch (error) {
       // error.message viene del backend y puede estar en español (pendiente de revisar).
       setAviso({
@@ -197,7 +197,7 @@ export function RevisionPalabras() {
       });
 
       setIdCoautoriaEnEdicion(null);
-      cargarCoautorias();
+      void cargarCoautorias();
     } catch (error) {
       // error.message viene del backend y puede estar en español (pendiente de revisar).
       setAviso({

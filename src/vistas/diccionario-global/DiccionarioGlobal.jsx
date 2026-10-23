@@ -169,6 +169,7 @@ function WordDetails({
   return (
     <div
       className="global-dictionary__overlay"
+      role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -340,7 +341,7 @@ export function DiccionarioGlobal() {
       }
     }
 
-    loadVocabulary();
+    void loadVocabulary();
 
     return () => {
       active = false;

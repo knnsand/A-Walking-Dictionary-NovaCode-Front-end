@@ -46,7 +46,7 @@ export function Registro() {
         return;
       }
 
-      navigate('/estudiante/configuracion-perfil', { replace: true });
+      void navigate('/estudiante/configuracion-perfil', { replace: true });
     } catch (errorRegistro) {
       // El mensaje viene del backend vía apiRequest (p. ej. correo no
       // institucional, o cuenta ya existente) y puede estar en español

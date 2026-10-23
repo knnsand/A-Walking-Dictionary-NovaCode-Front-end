@@ -41,7 +41,7 @@ export function ConfigurarPerfil() {
       }
     }
 
-    cargarDatos();
+    void cargarDatos();
   }, [estudianteId]);
 
   if (cargando) return <p>{t('profilePage.loading')}</p>;

@@ -73,7 +73,7 @@ export function AuthProvider({ children }) {
   // Al montar (sesión restaurada) y cada vez que cambia el estudiante
   // autenticado (login, registro, logout).
   useEffect(() => {
-    refrescarPerfil();
+    void refrescarPerfil();
   }, [refrescarPerfil]);
 
   // Inscripción real del estudiante (id_inscripcion de GET /students/:id/context).

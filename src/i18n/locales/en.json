@@ -651,7 +651,8 @@
     }
   },
     "api": {
-    "requestFailed": "Error {{status}} when calling {{path}}"
+    "requestFailed": "Error {{status}} when calling {{path}}",
+    "invalidPath": "Invalid request path: {{path}}"
   },
     "guestDictionary": {
     "title": "Demo Dictionary",

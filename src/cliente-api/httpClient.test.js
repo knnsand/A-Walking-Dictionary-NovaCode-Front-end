@@ -104,4 +104,12 @@ describe('apiRequest', () => {
     expect(error.status).toBe(500);
     expect(error.cuerpo).toBeNull();
   });
+
+  it.each(['//evil.com/x', 'https://evil.com', 'decks', '/../admin', '/a\\b', '/a?next=http://x'])(
+    'rechaza la ruta no relativa %s sin llamar a fetch',
+    async (ruta) => {
+      await expect(apiRequest(ruta)).rejects.toThrow('Invalid request path');
+      expect(fetch).not.toHaveBeenCalled();
+    },
+  );
 });
