@@ -28,3 +28,6 @@ reportes-e2e
 *.sw?
 
 coverage/
+
+desktop.ini
+**/desktop.ini
