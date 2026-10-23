@@ -1,0 +1,419 @@
+diff --git a/src/cliente-api/descargarArchivo.test.js b/src/cliente-api/descargarArchivo.test.js
+index ce7e838..648edb0 100644
+--- a/src/cliente-api/descargarArchivo.test.js
++++ b/src/cliente-api/descargarArchivo.test.js
+@@ -86,7 +86,7 @@ describe('apiDescargarArchivo', () => {
+     });
+ 
+     await expect(apiDescargarArchivo('/decks/3/export-pdf', 'mazo-3.pdf')).rejects.toThrow(
+-      'Error 500 al llamar /decks/3/export-pdf'
++      'Error 500 when calling /decks/3/export-pdf'
+     );
+     expect(clickSpy).not.toHaveBeenCalled();
+   });
+diff --git a/src/cliente-api/httpClient.js b/src/cliente-api/httpClient.js
+index 1b29bca..c246a63 100644
+--- a/src/cliente-api/httpClient.js
++++ b/src/cliente-api/httpClient.js
+@@ -3,7 +3,19 @@ import i18n from '../i18n';
+ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+ const TOKEN_KEY = 'walking_dictionary_token';
+ 
++// Evita que una ruta construida con datos del usuario cambie el host destino
++// (p. ej. "//evil.com", "https://evil.com" o "/../"): solo se aceptan rutas
++// relativas a la API.
++function validarRuta(path) {
++  const texto = String(path);
++  const esRelativa = texto.startsWith('/') && !texto.startsWith('//');
++  if (!esRelativa || texto.includes('\\') || texto.includes('://') || texto.split(/[/?#]/).includes('..')) {
++    throw new Error(i18n.t('api.invalidPath', { path: texto }));
++  }
++}
++
+ export async function apiRequest(path, options = {}) {
++  validarRuta(path);
+   const token = localStorage.getItem(TOKEN_KEY);
+ 
+   const response = await fetch(`${BASE_URL}${path}`, {
+@@ -54,6 +66,7 @@ export async function apiRequest(path, options = {}) {
+  * @throws {Error} con `.message` listo para mostrar (el `error` del backend si lo hay).
+  */
+ export async function apiDescargarArchivo(path, nombreArchivo) {
++  validarRuta(path);
+   const token = localStorage.getItem(TOKEN_KEY);
+ 
+   const response = await fetch(`${BASE_URL}${path}`, {
+@@ -61,7 +74,7 @@ export async function apiDescargarArchivo(path, nombreArchivo) {
+   });
+ 
+   if (!response.ok) {
+-    let mensaje = `Error ${response.status} al llamar ${path}`;
++    let mensaje = i18n.t('api.requestFailed', { status: response.status, path });
+ 
+     try {
+       const cuerpo = await response.json();
+diff --git a/src/cliente-api/httpClient.test.js b/src/cliente-api/httpClient.test.js
+index 8733f01..8c9d70a 100644
+--- a/src/cliente-api/httpClient.test.js
++++ b/src/cliente-api/httpClient.test.js
+@@ -104,4 +104,12 @@ describe('apiRequest', () => {
+     expect(error.status).toBe(500);
+     expect(error.cuerpo).toBeNull();
+   });
++
++  it.each(['//evil.com/x', 'https://evil.com', 'decks', '/../admin', '/a\\b', '/a?next=http://x'])(
++    'rechaza la ruta no relativa %s sin llamar a fetch',
++    async (ruta) => {
++      await expect(apiRequest(ruta)).rejects.toThrow('Invalid request path');
++      expect(fetch).not.toHaveBeenCalled();
++    },
++  );
+ });
+diff --git a/src/componentes/comunes/LayoutPrincipal.jsx b/src/componentes/comunes/LayoutPrincipal.jsx
+index 756dcf9..d42ae8c 100644
+--- a/src/componentes/comunes/LayoutPrincipal.jsx
++++ b/src/componentes/comunes/LayoutPrincipal.jsx
+@@ -43,7 +43,7 @@ export function LayoutPrincipal({ contadores = {}, rolFijo }) {
+ 
+   function manejarCerrarSesion() {
+     logout();
+-    navigate('/login', { replace: true });
++    void navigate('/login', { replace: true });
+   }
+ 
+   return (
+@@ -78,7 +78,7 @@ export function LayoutPrincipal({ contadores = {}, rolFijo }) {
+               // Al crear el mazo desde cualquier pantalla, lleva al
+               // docente a "Mazos de estudio" para que vea el mazo recién
+               // creado (la marca de estado fuerza la recarga).
+-              navigate('/docente/mazos', { state: { refrescar: Date.now() } });
++              void navigate('/docente/mazos', { state: { refrescar: Date.now() } });
+             }}
+           />
+         )}
+diff --git a/src/contexto/AuthProvider.jsx b/src/contexto/AuthProvider.jsx
+index f669f29..27e1181 100644
+--- a/src/contexto/AuthProvider.jsx
++++ b/src/contexto/AuthProvider.jsx
+@@ -73,7 +73,7 @@ export function AuthProvider({ children }) {
+   // Al montar (sesión restaurada) y cada vez que cambia el estudiante
+   // autenticado (login, registro, logout).
+   useEffect(() => {
+-    refrescarPerfil();
++    void refrescarPerfil();
+   }, [refrescarPerfil]);
+ 
+   // Inscripción real del estudiante (id_inscripcion de GET /students/:id/context).
+diff --git a/src/i18n/index.js b/src/i18n/index.js
+index 7a18a95..55b4a68 100644
+--- a/src/i18n/index.js
++++ b/src/i18n/index.js
+@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
+ 
+ import en from './locales/en.json';
+ 
+-i18n.use(initReactI18next).init({
++void i18n.use(initReactI18next).init({
+   resources: { en: { translation: en } },
+   lng: 'en',
+   fallbackLng: 'en',
+diff --git a/src/i18n/locales/en.json b/src/i18n/locales/en.json
+index 7b916f1..02a68b5 100644
+--- a/src/i18n/locales/en.json
++++ b/src/i18n/locales/en.json
+@@ -651,7 +651,8 @@
+     }
+   },
+     "api": {
+-    "requestFailed": "Error {{status}} when calling {{path}}"
++    "requestFailed": "Error {{status}} when calling {{path}}",
++    "invalidPath": "Invalid request path: {{path}}"
+   },
+     "guestDictionary": {
+     "title": "Demo Dictionary",
+diff --git a/src/vistas/autenticacion/Login.jsx b/src/vistas/autenticacion/Login.jsx
+index da3e98d..754163d 100644
+--- a/src/vistas/autenticacion/Login.jsx
++++ b/src/vistas/autenticacion/Login.jsx
+@@ -29,7 +29,7 @@ export function Login() {
+       const respuesta = await loginWithGoogle(credentialResponse.credential);
+ 
+       if (respuesta.usuario.rol === 'docente') {
+-        navigate('/docente', { replace: true });
++        void navigate('/docente', { replace: true });
+       } else if (respuesta.usuario.rol === 'estudiante') {
+         // Si aún no ha completado su perfil, se le lleva a completarlo.
+         let perfilCompleto = null;
+@@ -41,7 +41,7 @@ export function Login() {
+           // Sin datos del perfil: se entra al panel normal.
+         }
+ 
+-        navigate(
++        void navigate(
+           perfilCompleto === false ? '/estudiante/configuracion-perfil' : '/estudiante',
+           { replace: true }
+         );
+@@ -97,7 +97,7 @@ export function Login() {
+               className="btn btn-secondary login__guest-button"
+               onClick={() => {
+                 logout();
+-                navigate('/invitado');
++                void navigate('/invitado');
+               }}
+             >
+               {t('login.continueAsGuest')}
+diff --git a/src/vistas/autenticacion/registro/Registro.jsx b/src/vistas/autenticacion/registro/Registro.jsx
+index 150ba53..14aac1e 100644
+--- a/src/vistas/autenticacion/registro/Registro.jsx
++++ b/src/vistas/autenticacion/registro/Registro.jsx
+@@ -46,7 +46,7 @@ export function Registro() {
+         return;
+       }
+ 
+-      navigate('/estudiante/configuracion-perfil', { replace: true });
++      void navigate('/estudiante/configuracion-perfil', { replace: true });
+     } catch (errorRegistro) {
+       // El mensaje viene del backend vía apiRequest (p. ej. correo no
+       // institucional, o cuenta ya existente) y puede estar en español
+diff --git a/src/vistas/diccionario-global/DiccionarioGlobal.jsx b/src/vistas/diccionario-global/DiccionarioGlobal.jsx
+index e87aad6..6649b3d 100644
+--- a/src/vistas/diccionario-global/DiccionarioGlobal.jsx
++++ b/src/vistas/diccionario-global/DiccionarioGlobal.jsx
+@@ -169,6 +169,7 @@ function WordDetails({
+   return (
+     <div
+       className="global-dictionary__overlay"
++      role="presentation"
+       onMouseDown={(event) => {
+         if (event.target === event.currentTarget) onClose();
+       }}
+@@ -340,7 +341,7 @@ export function DiccionarioGlobal() {
+       }
+     }
+ 
+-    loadVocabulary();
++    void loadVocabulary();
+ 
+     return () => {
+       active = false;
+diff --git a/src/vistas/docente/cursos/CursosEstudiantes.jsx b/src/vistas/docente/cursos/CursosEstudiantes.jsx
+index 3006048..e23eba5 100644
+--- a/src/vistas/docente/cursos/CursosEstudiantes.jsx
++++ b/src/vistas/docente/cursos/CursosEstudiantes.jsx
+@@ -24,7 +24,7 @@ export function CursosEstudiantes() {
+   );
+ 
+   useEffect(() => {
+-    listarCursos().then(setCursos);
++    void listarCursos().then(setCursos);
+   }, []);
+ 
+   async function handleGenerarCodigo(curso) {
+@@ -86,7 +86,7 @@ export function CursosEstudiantes() {
+               onKeyDown={(e) => {
+                 if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                   e.preventDefault();
+-                  navigate(String(curso.id_curso));
++                  void navigate(String(curso.id_curso));
+                 }
+               }}
+             >
+@@ -108,7 +108,7 @@ export function CursosEstudiantes() {
+                 <button
+                   type="button"
+                   className="btn btn-secondary"
+-                  onClick={(e) => { e.stopPropagation(); handleGenerarCodigo(curso); }}
++                  onClick={(e) => { e.stopPropagation(); void handleGenerarCodigo(curso); }}
+                   disabled={generandoId === curso.id_curso}
+                 >
+                   {generandoId === curso.id_curso
+@@ -122,7 +122,7 @@ export function CursosEstudiantes() {
+                   <button
+                     type="button"
+                     className="btn btn-secondary"
+-                    onClick={(e) => { e.stopPropagation(); handleCopiar(curso); }}
++                    onClick={(e) => { e.stopPropagation(); void handleCopiar(curso); }}
+                   >
+                     {copiadoId === curso.id_curso ? t('coursesPage.actions.copied') : t('coursesPage.actions.copy')}
+                   </button>
+diff --git a/src/vistas/docente/inscribir-estudiante/InscribirEstudianteForm.jsx b/src/vistas/docente/inscribir-estudiante/InscribirEstudianteForm.jsx
+index 9e86899..9db53aa 100644
+--- a/src/vistas/docente/inscribir-estudiante/InscribirEstudianteForm.jsx
++++ b/src/vistas/docente/inscribir-estudiante/InscribirEstudianteForm.jsx
+@@ -14,7 +14,7 @@ export function InscribirEstudianteForm({ onCerrar, onInscripcionCreada }) {
+   const [enviando, setEnviando] = useState(false);
+ 
+   useEffect(() => {
+-    listarCursos().then(setCursos);
++    void listarCursos().then(setCursos);
+   }, []);
+ 
+   function handleChange(evento) {
+diff --git a/src/vistas/docente/inscribir-estudiante/inscribirEstudiante.validation.js b/src/vistas/docente/inscribir-estudiante/inscribirEstudiante.validation.js
+index 708b341..fcb3ac4 100644
+--- a/src/vistas/docente/inscribir-estudiante/inscribirEstudiante.validation.js
++++ b/src/vistas/docente/inscribir-estudiante/inscribirEstudiante.validation.js
+@@ -7,5 +7,11 @@ export function validarCamposObligatorios(form) {
+ // Validación de formato únicamente -- si el correo existe de verdad lo resuelve el
+ // mock/backend, no el frontend.
+ export function validarFormatoEmail(email) {
+-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim());
++  const valor = String(email).trim();
++  if (/\s/.test(valor)) return false;
++  const partes = valor.split('@');
++  if (partes.length !== 2) return false;
++  const [local, dominio] = partes;
++  const punto = dominio.indexOf('.');
++  return local.length > 0 && punto > 0 && punto < dominio.length - 1;
+ }
+\ No newline at end of file
+diff --git a/src/vistas/docente/participacion/ParticipacionMazo.jsx b/src/vistas/docente/participacion/ParticipacionMazo.jsx
+index 02f7fce..366c5cd 100644
+--- a/src/vistas/docente/participacion/ParticipacionMazo.jsx
++++ b/src/vistas/docente/participacion/ParticipacionMazo.jsx
+@@ -109,7 +109,7 @@ export function ParticipacionMazo({ mazos: mazosProp }) {
+   }, [mazoId, sinAportes, token, logout]);
+ 
+   useEffect(() => {
+-    cargar();
++    void cargar();
+   }, [cargar]);
+ 
+   const total = todasLasFilas.length;
+diff --git a/src/vistas/docente/revision-palabras/RevisionPalabras.jsx b/src/vistas/docente/revision-palabras/RevisionPalabras.jsx
+index 359f1a8..82cb731 100644
+--- a/src/vistas/docente/revision-palabras/RevisionPalabras.jsx
++++ b/src/vistas/docente/revision-palabras/RevisionPalabras.jsx
+@@ -53,15 +53,15 @@ export function RevisionPalabras() {
+   );
+ 
+   const cargarPendientes = useCallback(() => {
+-    listarTarjetasPendientes().then(setPendientes);
++    return listarTarjetasPendientes().then(setPendientes);
+   }, []);
+ 
+   const cargarAprobadas = useCallback(() => {
+-    listarTarjetasAprobadas().then(setAprobadas);
++    return listarTarjetasAprobadas().then(setAprobadas);
+   }, []);
+ 
+   const cargarCoautorias = useCallback(() => {
+-    listarCoautoriasPendientes().then(setCoautorias);
++    return listarCoautoriasPendientes().then(setCoautorias);
+   }, []);
+ 
+   // Consulta las tres listas en paralelo.
+@@ -119,14 +119,14 @@ export function RevisionPalabras() {
+   }, []);
+ 
+   useEffect(() => {
+-    consultarListas();
++    void consultarListas();
+   }, [consultarListas]);
+ 
+   function handleActualizar() {
+     if (actualizando) return;
+ 
+     setActualizando(true);
+-    consultarListas();
++    void consultarListas();
+   }
+ 
+   function handleSolicitarAprobacion(tarjeta, datosEditados) {
+@@ -168,8 +168,8 @@ export function RevisionPalabras() {
+       setIdEnEdicion(null);
+       setTarjetaParaAprobar(null);
+ 
+-      cargarPendientes();
+-      cargarAprobadas();
++      void cargarPendientes();
++      void cargarAprobadas();
+     } catch (error) {
+       // error.message viene del backend y puede estar en español (pendiente de revisar).
+       setAviso({
+@@ -197,7 +197,7 @@ export function RevisionPalabras() {
+       });
+ 
+       setIdCoautoriaEnEdicion(null);
+-      cargarCoautorias();
++      void cargarCoautorias();
+     } catch (error) {
+       // error.message viene del backend y puede estar en español (pendiente de revisar).
+       setAviso({
+diff --git a/src/vistas/estudiante/configurar-perfil/ConfigurarPerfil.jsx b/src/vistas/estudiante/configurar-perfil/ConfigurarPerfil.jsx
+index 142dbb4..5e977d5 100644
+--- a/src/vistas/estudiante/configurar-perfil/ConfigurarPerfil.jsx
++++ b/src/vistas/estudiante/configurar-perfil/ConfigurarPerfil.jsx
+@@ -41,7 +41,7 @@ export function ConfigurarPerfil() {
+       }
+     }
+ 
+-    cargarDatos();
++    void cargarDatos();
+   }, [estudianteId]);
+ 
+   if (cargando) return <p>{t('profilePage.loading')}</p>;
+diff --git a/src/vistas/estudiante/estudiar-tarjetas/EstudiarTarjetas.jsx b/src/vistas/estudiante/estudiar-tarjetas/EstudiarTarjetas.jsx
+index d7395df..6ea8bf8 100644
+--- a/src/vistas/estudiante/estudiar-tarjetas/EstudiarTarjetas.jsx
++++ b/src/vistas/estudiante/estudiar-tarjetas/EstudiarTarjetas.jsx
+@@ -265,7 +265,7 @@ export function EstudiarTarjetas({
+       const valoracion = VALORACIONES_UI.find((item) => item.tecla === evento.key);
+       if (valoracion && estado.vista && !estado.guardando) {
+         evento.preventDefault();
+-        valorar(valoracion.valor);
++        void valorar(valoracion.valor);
+       }
+     };
+ 
+diff --git a/src/vistas/estudiante/estudiar-tarjetas/SugerenciasPalabras.jsx b/src/vistas/estudiante/estudiar-tarjetas/SugerenciasPalabras.jsx
+index 61d386a..1c201b3 100644
+--- a/src/vistas/estudiante/estudiar-tarjetas/SugerenciasPalabras.jsx
++++ b/src/vistas/estudiante/estudiar-tarjetas/SugerenciasPalabras.jsx
+@@ -91,7 +91,7 @@ export default function SugerenciasPalabras({ palabra }) {
+       }
+     }
+ 
+-    cargarSugerencias();
++    void cargarSugerencias();
+ 
+     return () => {
+       cancelado = true;
+diff --git a/src/vistas/estudiante/estudiar-tarjetas/TarjetaFlashcard.jsx b/src/vistas/estudiante/estudiar-tarjetas/TarjetaFlashcard.jsx
+index 1c3708c..5467dbf 100644
+--- a/src/vistas/estudiante/estudiar-tarjetas/TarjetaFlashcard.jsx
++++ b/src/vistas/estudiante/estudiar-tarjetas/TarjetaFlashcard.jsx
+@@ -86,6 +86,7 @@ export function TarjetaFlashcard({
+   return (
+     <div
+       className={`estudiar-tarjeta${volteada ? ' es-volteada' : ''}`}
++      role="presentation"
+       onClick={onVoltear}
+       aria-live="polite"
+     >
+diff --git a/src/vistas/estudiante/registrar-tarjeta/RegistrarTarjetaForm.jsx b/src/vistas/estudiante/registrar-tarjeta/RegistrarTarjetaForm.jsx
+index e4ae31b..2c12b68 100644
+--- a/src/vistas/estudiante/registrar-tarjeta/RegistrarTarjetaForm.jsx
++++ b/src/vistas/estudiante/registrar-tarjeta/RegistrarTarjetaForm.jsx
+@@ -49,7 +49,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
+       }
+     }
+ 
+-    cargarMazos();
++    void cargarMazos();
+   }, []);
+ 
+   function handleChange(evento) {
+diff --git a/src/vistas/invitado/DiccionarioInvitado.jsx b/src/vistas/invitado/DiccionarioInvitado.jsx
+index 883b7a9..7cecee5 100644
+--- a/src/vistas/invitado/DiccionarioInvitado.jsx
++++ b/src/vistas/invitado/DiccionarioInvitado.jsx
+@@ -24,7 +24,7 @@ export function DiccionarioInvitado() {
+       }
+     }
+ 
+-    cargarMazos();
++    void cargarMazos();
+   }, []);
+ 
+   // La variante se guarda en español en la base de datos; aquí solo se traduce

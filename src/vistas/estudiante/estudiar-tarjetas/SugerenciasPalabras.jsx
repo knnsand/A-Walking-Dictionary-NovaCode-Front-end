@@ -91,7 +91,7 @@ export default function SugerenciasPalabras({ palabra }) {
       }
     }
 
-    cargarSugerencias();
+    void cargarSugerencias();
 
     return () => {
       cancelado = true;

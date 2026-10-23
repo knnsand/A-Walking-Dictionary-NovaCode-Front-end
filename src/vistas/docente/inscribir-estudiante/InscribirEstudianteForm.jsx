@@ -14,7 +14,7 @@ export function InscribirEstudianteForm({ onCerrar, onInscripcionCreada }) {
   const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
-    listarCursos().then(setCursos);
+    void listarCursos().then(setCursos);
   }, []);
 
   function handleChange(evento) {

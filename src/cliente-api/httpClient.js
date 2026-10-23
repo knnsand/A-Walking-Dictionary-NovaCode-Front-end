@@ -3,7 +3,19 @@ import i18n from '../i18n';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const TOKEN_KEY = 'walking_dictionary_token';
 
+// Evita que una ruta construida con datos del usuario cambie el host destino
+// (p. ej. "//evil.com", "https://evil.com" o "/../"): solo se aceptan rutas
+// relativas a la API.
+function validarRuta(path) {
+  const texto = String(path);
+  const esRelativa = texto.startsWith('/') && !texto.startsWith('//');
+  if (!esRelativa || texto.includes('\\') || texto.includes('://') || texto.split(/[/?#]/).includes('..')) {
+    throw new Error(i18n.t('api.invalidPath', { path: texto }));
+  }
+}
+
 export async function apiRequest(path, options = {}) {
+  validarRuta(path);
   const token = localStorage.getItem(TOKEN_KEY);
 
   const response = await fetch(`${BASE_URL}${path}`, {
@@ -54,6 +66,7 @@ export async function apiRequest(path, options = {}) {
  * @throws {Error} con `.message` listo para mostrar (el `error` del backend si lo hay).
  */
 export async function apiDescargarArchivo(path, nombreArchivo) {
+  validarRuta(path);
   const token = localStorage.getItem(TOKEN_KEY);
 
   const response = await fetch(`${BASE_URL}${path}`, {
@@ -61,7 +74,7 @@ export async function apiDescargarArchivo(path, nombreArchivo) {
   });
 
   if (!response.ok) {
-    let mensaje = `Error ${response.status} al llamar ${path}`;
+    let mensaje = i18n.t('api.requestFailed', { status: response.status, path });
 
     try {
       const cuerpo = await response.json();

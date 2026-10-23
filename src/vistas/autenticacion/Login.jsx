@@ -29,7 +29,7 @@ export function Login() {
       const respuesta = await loginWithGoogle(credentialResponse.credential);
 
       if (respuesta.usuario.rol === 'docente') {
-        navigate('/docente', { replace: true });
+        void navigate('/docente', { replace: true });
       } else if (respuesta.usuario.rol === 'estudiante') {
         // Si aún no ha completado su perfil, se le lleva a completarlo.
         let perfilCompleto = null;
@@ -41,7 +41,7 @@ export function Login() {
           // Sin datos del perfil: se entra al panel normal.
         }
 
-        navigate(
+        void navigate(
           perfilCompleto === false ? '/estudiante/configuracion-perfil' : '/estudiante',
           { replace: true }
         );
@@ -97,7 +97,7 @@ export function Login() {
               className="btn btn-secondary login__guest-button"
               onClick={() => {
                 logout();
-                navigate('/invitado');
+                void navigate('/invitado');
               }}
             >
               {t('login.continueAsGuest')}

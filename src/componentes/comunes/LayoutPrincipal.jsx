@@ -43,7 +43,7 @@ export function LayoutPrincipal({ contadores = {}, rolFijo }) {
 
   function manejarCerrarSesion() {
     logout();
-    navigate('/login', { replace: true });
+    void navigate('/login', { replace: true });
   }
 
   return (
@@ -78,7 +78,7 @@ export function LayoutPrincipal({ contadores = {}, rolFijo }) {
               // Al crear el mazo desde cualquier pantalla, lleva al
               // docente a "Mazos de estudio" para que vea el mazo recién
               // creado (la marca de estado fuerza la recarga).
-              navigate('/docente/mazos', { state: { refrescar: Date.now() } });
+              void navigate('/docente/mazos', { state: { refrescar: Date.now() } });
             }}
           />
         )}

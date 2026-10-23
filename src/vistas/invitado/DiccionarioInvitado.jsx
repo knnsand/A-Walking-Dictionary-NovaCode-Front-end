@@ -24,7 +24,7 @@ export function DiccionarioInvitado() {
       }
     }
 
-    cargarMazos();
+    void cargarMazos();
   }, []);
 
   // La variante se guarda en español en la base de datos; aquí solo se traduce

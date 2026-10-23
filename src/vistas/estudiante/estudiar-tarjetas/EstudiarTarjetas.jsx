@@ -265,7 +265,7 @@ export function EstudiarTarjetas({
       const valoracion = VALORACIONES_UI.find((item) => item.tecla === evento.key);
       if (valoracion && estado.vista && !estado.guardando) {
         evento.preventDefault();
-        valorar(valoracion.valor);
+        void valorar(valoracion.valor);
       }
     };
 

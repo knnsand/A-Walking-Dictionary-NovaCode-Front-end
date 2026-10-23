@@ -86,7 +86,7 @@ describe('apiDescargarArchivo', () => {
     });
 
     await expect(apiDescargarArchivo('/decks/3/export-pdf', 'mazo-3.pdf')).rejects.toThrow(
-      'Error 500 al llamar /decks/3/export-pdf'
+      'Error 500 when calling /decks/3/export-pdf'
     );
     expect(clickSpy).not.toHaveBeenCalled();
   });

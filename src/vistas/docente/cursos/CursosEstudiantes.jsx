@@ -24,7 +24,7 @@ export function CursosEstudiantes() {
   );
 
   useEffect(() => {
-    listarCursos().then(setCursos);
+    void listarCursos().then(setCursos);
   }, []);
 
   async function handleGenerarCodigo(curso) {
@@ -86,7 +86,7 @@ export function CursosEstudiantes() {
               onKeyDown={(e) => {
                 if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
                   e.preventDefault();
-                  navigate(String(curso.id_curso));
+                  void navigate(String(curso.id_curso));
                 }
               }}
             >
@@ -108,7 +108,7 @@ export function CursosEstudiantes() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={(e) => { e.stopPropagation(); handleGenerarCodigo(curso); }}
+                  onClick={(e) => { e.stopPropagation(); void handleGenerarCodigo(curso); }}
                   disabled={generandoId === curso.id_curso}
                 >
                   {generandoId === curso.id_curso
@@ -122,7 +122,7 @@ export function CursosEstudiantes() {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={(e) => { e.stopPropagation(); handleCopiar(curso); }}
+                    onClick={(e) => { e.stopPropagation(); void handleCopiar(curso); }}
                   >
                     {copiadoId === curso.id_curso ? t('coursesPage.actions.copied') : t('coursesPage.actions.copy')}
                   </button>

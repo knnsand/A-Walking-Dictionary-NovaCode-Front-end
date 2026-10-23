@@ -86,6 +86,7 @@ export function TarjetaFlashcard({
   return (
     <div
       className={`estudiar-tarjeta${volteada ? ' es-volteada' : ''}`}
+      role="presentation"
       onClick={onVoltear}
       aria-live="polite"
     >
