@@ -7,6 +7,8 @@ import { LayoutPrincipal } from './componentes/comunes/LayoutPrincipal';
 import { PanelDocente } from './vistas/docente/PanelDocente';
 import { RevisionPalabras } from './vistas/docente/revision-palabras/RevisionPalabras';
 import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
+import { ProgresoEstudiante } from './vistas/estudiante/reportes/ProgresoEstudiante';
+
 import { CursosEstudiantes } from './vistas/docente/cursos/CursosEstudiantes';
 import { DetalleCurso } from './vistas/docente/cursos/DetalleCurso';
 import { ConfigurarPerfil } from './vistas/estudiante/configurar-perfil/ConfigurarPerfil';
@@ -20,6 +22,7 @@ import { GenerarQuiz } from './vistas/docente/quices/GenerarQuiz';
 import { ListaQuices } from './vistas/quices/ListaQuices';
 import { ResponderQuiz } from './vistas/estudiante/responder-quiz/ResponderQuiz';
 import { DiccionarioGlobal } from './vistas/diccionario-global/DiccionarioGlobal';
+
 
 function RutaSoloEstudiante({ children }) {
   const { autenticado, rol } = useAuth();
@@ -107,9 +110,14 @@ export default function App() {
             >
               <Route index element={<PanelEstudiante />} />
 
+              {/* HU-018: reporte individual de progreso del estudiante */}
+              <Route path="progreso" element={<ProgresoEstudiante />} />
+
               <Route path="mazos" element={<MazosEstudio rol="estudiante" />} />
               {/* Estudiar las palabras de un mazo concreto */}
               <Route path="mazos/:idMazo/estudio" element={<PaginaEstudio />} />
+
+    
 
               <Route path="estudio" element={<PaginaEstudio />} />
               

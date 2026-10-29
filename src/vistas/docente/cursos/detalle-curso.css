@@ -37,3 +37,107 @@
 .mazo-list__item--clicable:focus-visible {
   transform: translateY(-2px);
 }
+
+
+/* ============================================
+   HU-018: Reportes individuales del docente
+   ============================================ */
+
+.detalle-curso__celda-reporte {
+  min-width: 145px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.detalle-curso__reporte {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detalle-curso__reporte .boton-exportar-pdf {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botón azul, exclusivo de los reportes docentes */
+
+.detalle-curso__reporte .btn {
+  background-color: var(--color-role, #172c82);
+  border: 1px solid var(--color-role, #172c82);
+  color: #ffffff;
+
+  min-height: 38px;
+  padding: 8px 16px;
+  border-radius: 8px;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Ícono de descarga sin instalar bibliotecas */
+
+.detalle-curso__reporte .btn::before {
+  content: "↓";
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Efecto al pasar el cursor */
+
+.detalle-curso__reporte .btn:hover:not(:disabled) {
+  background-color: var(--color-role-hover, #0d1c66);
+  border-color: var(--color-role-hover, #0d1c66);
+  color: #ffffff;
+
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(15, 35, 95, 0.2);
+}
+
+/* Estado de carga o botón deshabilitado */
+
+.detalle-curso__reporte .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Accesibilidad */
+
+.detalle-curso__reporte .btn:focus-visible {
+  outline: 3px solid var(--color-role-border, #a4b5eb);
+  outline-offset: 3px;
+}
+
+/* Mensajes de error dentro de la tabla */
+
+.detalle-curso__reporte .boton-exportar-pdf__error {
+  max-width: 170px;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* Adaptación a pantallas pequeñas */
+
+@media (max-width: 768px) {
+  .detalle-curso__celda-reporte {
+    min-width: 125px;
+  }
+
+  .detalle-curso__reporte .btn {
+    padding: 8px 11px;
+    font-size: 0.8rem;
+  }
+}

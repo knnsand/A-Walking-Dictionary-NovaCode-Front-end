@@ -1,3 +1,4 @@
+
 {
   "sidebar": {
     "brand": {
@@ -43,7 +44,6 @@
     },
     "profileNotice": "Go to <profilelink>Settings & Profile</profilelink> and complete your academic profile to unlock these options."
   },
-  
   "studyDecksPage": {
     "title": "Study Decks",
     "subtitle": "Organized by week",
@@ -55,8 +55,8 @@
       "estudiante": "You don't have any decks available yet. Join a course to see them.",
       "invitado": "There are no decks available yet."
     }
-  },  
-    "deckCard": {
+  },
+  "deckCard": {
     "week": "Week {{week}}",
     "regionalVariant": "Regional variant",
     "status": {
@@ -85,7 +85,7 @@
     "ghanaian": "Ghanaian",
     "american": "American"
   },
-    "createDeckForm": {
+  "createDeckForm": {
     "title": "Create New Study Deck",
     "subtitle": "Creation tool exclusively for the Teacher",
     "close": "Close",
@@ -119,7 +119,7 @@
   "createDeckModal": {
     "ariaLabel": "Create new study deck"
   },
-    "auth": {
+  "auth": {
     "subtitle": "Anglophone Literature · Unicauca",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
@@ -152,7 +152,7 @@
       "googleFailed": "Could not complete the registration with Google."
     }
   },
-    "studentPanel": {
+  "studentPanel": {
     "title": "My Contributions",
     "subtitle": "Register new words in the available decks.",
     "actions": {
@@ -232,7 +232,7 @@
   "joinCourseModal": {
     "ariaLabel": "Join a course"
   },
-    "studySession": {
+  "studySession": {
     "title": "Vocabulary Review",
     "mode": "Interactive 3D flashcards mode",
     "weekAndMode": "Week {{week}} · {{mode}}",
@@ -292,7 +292,7 @@
       "quoteContext": "Literary quote & textual context"
     }
   },
-    "registerWordModal": {
+  "registerWordModal": {
     "ariaLabel": "Add new word to the deck"
   },
   "registerWordForm": {
@@ -347,7 +347,7 @@
       "processFailed": "Could not process the word. Please try again."
     }
   },
-    "reviewPage": {
+  "reviewPage": {
     "title": "Vocabulary and Co-authorship Review",
     "subtitle": "Validate the term and co-authorship proposals submitted by the course students.",
     "lastUpdated": "Last updated:",
@@ -446,7 +446,7 @@
     "colloquial": "Colloquial",
     "archaic": "Archaic"
   },
-    "coursesPage": {
+  "coursesPage": {
     "title": "Academic Courses and Students",
     "subtitle": "Manage your courses and enrolled students.",
     "empty": "There are no courses registered yet.",
@@ -477,8 +477,11 @@
       "name": "Name",
       "words": "Contributed words",
       "level": "English level",
-      "code": "Student code"
+      "code": "Student code",
+      "progressReport": "Progress Report"
     },
+    "downloadProgress": "Download PDF",
+    "downloadProgressFor": "Download progress report for {{name}}",
     "errors": {
       "loadFailed": "Could not load the course."
     }
@@ -541,7 +544,7 @@
     "noContributions": "No contributions",
     "participating": "Participating"
   },
-    "quizGenerator": {
+  "quizGenerator": {
     "title": "Generate Cumulative Quiz",
     "description": "Select the decks you want to assess and define the application window. The quiz is built from the approved cards (reviewed by the teacher) of those decks.",
     "fields": {
@@ -599,7 +602,7 @@
     "windowTooShort": "The window between opening and closing must be at least as long as the time limit.",
     "countInvalid": "The number of questions must be an integer greater than or equal to 1."
   },
-    "quizSession": {
+  "quizSession": {
     "minutes_one": "{{count}} minute",
     "minutes_other": "{{count}} minutes",
     "page": {
@@ -650,11 +653,11 @@
       "genericError": "An unexpected error occurred. Please try again."
     }
   },
-    "api": {
+  "api": {
     "requestFailed": "Error {{status}} when calling {{path}}",
     "invalidPath": "Invalid request path: {{path}}"
   },
-    "guestDictionary": {
+  "guestDictionary": {
     "title": "Demo Dictionary",
     "description": "Browse the readings available in guest mode.",
     "loading": "Loading content...",
@@ -667,7 +670,7 @@
       "loadFailed": "Could not load the readings."
     }
   },
-    "exportActions": {
+  "exportActions": {
     "deckPdf": "Export to PDF",
     "deckPdfAria": "Export the deck {{name}} to PDF",
     "quizPrintable": "Export printable version",
@@ -724,5 +727,17 @@
     "docente": "Teacher",
     "estudiante": "Student",
     "invitado": "Guest"
+  },
+  "studentProgress": {
+    "title": "Progress & Performance",
+    "subtitle": "Track your individual learning progress",
+    "heading": "Individual Progress Report",
+    "description": "Download a PDF report containing your contributed words, quiz results, and study progress.",
+    "download": "Download PDF",
+    "includedTitle": "What's included?",
+    "words": "Contributed vocabulary and approval status",
+    "quizzes": "Quiz results and scores",
+    "study": "Study sessions and review progress",
+    "reportSubtitle": "Your academic progress in one PDF"
   }
 }
