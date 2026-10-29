@@ -90,7 +90,7 @@ const RUTAS_DESHABILITADAS_POR_ROL = {
   ],
   estudiante: [
     
-    '/estudiante/progreso',
+    
   ],
   invitado: [
     

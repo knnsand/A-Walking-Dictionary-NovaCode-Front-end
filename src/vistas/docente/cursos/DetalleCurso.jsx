@@ -7,6 +7,9 @@ import { Aviso } from '../../../componentes/comunes/Aviso';
 import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 
 import './detalle-curso.css';
+import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
+import { exportarProgresoEstudiantePdf } from '../../../cliente-api/reportesApi';
+
 
 export function DetalleCurso() {
   const { t } = useTranslation();
@@ -69,6 +72,7 @@ export function DetalleCurso() {
                 <th>{t('courseDetail.columns.words')}</th>
                 <th>{t('courseDetail.columns.level')}</th>
                 <th>{t('courseDetail.columns.code')}</th>
+                <th>{t('courseDetail.columns.progressReport')}</th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +82,23 @@ export function DetalleCurso() {
                   <td>{est.palabras_aportadas}</td>
                   <td>{est.nivel_ingles || '—'}</td>
                   <td>{est.codigo_estudiantil || '—'}</td>
+                  {/* HU-018: descarga del reporte individual */}
+                  
+                <td className="detalle-curso__celda-reporte">
+                  <div className="detalle-curso__reporte">
+                    <BotonExportarPdf
+                      etiqueta={t('courseDetail.downloadProgress')}
+                      ariaLabel={t('courseDetail.downloadProgressFor', {
+                        name: est.nombre_completo,
+                      })}
+                      disabled={!est.id_usuario}
+                      onExportar={() =>
+                        exportarProgresoEstudiantePdf(est.id_usuario)
+                      }
+                    />
+                  </div>
+                </td>
+
                 </tr>
               ))}
             </tbody>

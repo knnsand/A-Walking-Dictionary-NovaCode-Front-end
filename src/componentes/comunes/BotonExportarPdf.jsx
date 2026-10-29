@@ -5,12 +5,14 @@ import { TEXTOS_EXPORTAR_PDF, clasificarErrorExportacion } from './exportarPdf.c
 import './boton-exportar-pdf.css';
 
 /**
- * Botón "Exportar a PDF" (HU-3.3). Ejecuta `onExportar`, que debe descargar el
- * archivo (ver cliente-api/exportacionesApi.js), muestra un indicador de carga
- * mientras se genera y avisa si algo falla.
+* Botón reutilizable para descargar reportes y exportaciones PDF.
  *
- * Solo para la docente: los endpoints de exportación responden 403 a otros roles,
- * así que quien lo use debe renderizarlo únicamente cuando el rol sea docente.
+ * Ejecuta la función onExportar, muestra un indicador de carga
+ * mientras se descarga el archivo y presenta errores si ocurren.
+ *
+ * Puede utilizarse tanto en vistas de docente como de estudiante.
+ * Los permisos de acceso deben verificarse en el backend
+ * según el endpoint y el rol del usuario.
  *
  * @param {Object} props
  * @param {() => Promise<void>} props.onExportar - Descarga el PDF; si falla, lanza un Error.
