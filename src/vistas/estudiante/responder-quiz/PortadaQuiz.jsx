@@ -1,8 +1,10 @@
-// vistas/estudiante/responder-quiz/PortadaQuiz.jsx
-// HU-3.2: portada del quiz. Muestra los datos y el botón "Iniciar", que solo se
-// habilita si el quiz está abierto (CONTRATO_FRONTEND_HU-3.2.md, sección Pantallas).
-//
-// Solo presenta los datos que recibe; quien la use se encarga de consultarlos.
+/**
+ * @file PortadaQuiz.jsx
+ * @brief HU-3.2: portada del quiz. Muestra los datos y el botón "Iniciar", que solo se
+ * habilita si el quiz está abierto (CONTRATO_FRONTEND_HU-3.2.md, sección Pantallas).
+ *
+ * Solo presenta los datos que recibe; quien la use se encarga de consultarlos.
+ */
 
 import { useTranslation } from 'react-i18next';
 import { ESTADO, TEXTOS_CLAVES } from './responderQuiz.constants';
@@ -10,9 +12,11 @@ import { formatearFecha, textoMinutos } from './responderQuiz.format';
 import './responder-quiz.css';
 
 /**
+ * @brief Portada con título, fechas, tiempo límite y estado del quiz.
  * @param {Object}   props
  * @param {Object}   props.quiz      Respuesta de GET /quizzes/:id (usa `estado_efectivo`).
  * @param {Function} props.onIniciar Se llama al pulsar "Iniciar".
+ * @return {JSX.Element}
  */
 export function PortadaQuiz({ quiz, onIniciar }) {
   const { t } = useTranslation();

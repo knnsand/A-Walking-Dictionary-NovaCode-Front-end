@@ -1,3 +1,8 @@
+/**
+ * @file ConfigurarPerfilForm.jsx
+ * @brief Formulario del perfil académico del estudiante (HU-013).
+ */
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { actualizarPerfil } from '../../../cliente-api/perfilApi';
@@ -5,6 +10,13 @@ import { Aviso } from '../../../componentes/comunes/Aviso';
 import { NIVELES_MCER, FORM_INICIAL } from './configurarPerfil.constants';
 import { validarCamposObligatorios } from './configurarPerfil.validation';
 
+/**
+ * @brief Formulario con nivel de inglés, código estudiantil, avatar e intereses.
+ * @param {Object} props
+ * @param {Object} [props.datosIniciales] - Perfil actual con el que se llena el formulario.
+ * @param {Function} [props.onPerfilActualizado] - Recibe el perfil guardado.
+ * @return {JSX.Element}
+ */
 export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
   const { t } = useTranslation();
 
@@ -13,11 +25,19 @@ export function ConfigurarPerfilForm({ datosIniciales, onPerfilActualizado }) {
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
   const [enviando, setEnviando] = useState(false);
 
+  /**
+   * @brief Actualiza el campo del formulario que cambió.
+   * @param {Event} evento - Evento change del input o select.
+   */
   function handleChange(evento) {
     const { name, value } = evento.target;
     setForm((anterior) => ({ ...anterior, [name]: value }));
   }
 
+  /**
+   * @brief Valida el formulario y guarda el perfil en el backend.
+   * @param {SubmitEvent} evento - Evento submit del formulario.
+   */
   async function handleSubmit(evento) {
     evento.preventDefault();
 

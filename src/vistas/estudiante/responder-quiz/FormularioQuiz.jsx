@@ -1,10 +1,12 @@
-// vistas/estudiante/responder-quiz/FormularioQuiz.jsx
-// HU-3.2: formulario del quiz. Todas las preguntas en una página, cronómetro
-// regresivo y botón "Finalizar examen" (CONTRATO_FRONTEND_HU-3.2.md).
-//
-// No consulta nada por su cuenta: recibe el quiz, las preguntas y la hora de
-// inicio, y entrega el cuerpo del envío a `onEnviar`. El envío real y su resultado
-// los maneja quien use este componente.
+/**
+ * @file FormularioQuiz.jsx
+ * @brief HU-3.2: formulario del quiz. Todas las preguntas en una página, cronómetro
+ * regresivo y botón "Finalizar examen" (CONTRATO_FRONTEND_HU-3.2.md).
+ *
+ * No consulta nada por su cuenta: recibe el quiz, las preguntas y la hora de
+ * inicio, y entrega el cuerpo del envío a `onEnviar`. El envío real y su resultado
+ * los maneja quien use este componente.
+ */
 
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,10 +23,13 @@ import { guardarBorrador } from './responderQuiz.storage';
 import { useTemporizadorQuiz } from './useTemporizadorQuiz';
 import './responder-quiz.css';
 
+/** @brief Letras de las opciones de respuesta. */
 const LETRAS = ['A', 'B', 'C', 'D'];
+/** @brief Segundos restantes desde los que el cronómetro se muestra en modo urgente. */
 const SEGUNDOS_URGENTE = 60;
 
 /**
+ * @brief Formulario con todas las preguntas del quiz y el cronómetro regresivo.
  * @param {Object}   props
  * @param {Object}   props.quiz        Quiz (usa id_quiz, titulo, tiempo_limite_min, fecha_cierre).
  * @param {Array}    props.preguntas   Respuesta de GET /quizzes/:id/preguntas.
@@ -33,6 +38,7 @@ const SEGUNDOS_URGENTE = 60;
  * @param {Function} props.onEnviar    Recibe el cuerpo del POST /submit.
  * @param {boolean}  [props.enviando]  true mientras el envío está en curso.
  * @param {string|null} [props.errorEnvio] Mensaje (ya traducido) del último envío fallido.
+ * @return {JSX.Element}
  */
 export function FormularioQuiz({
   quiz,
@@ -71,6 +77,7 @@ export function FormularioQuiz({
   const total = preguntas.length;
   const faltan = contarSinContestar({ preguntas, respuestas });
 
+  /** @brief Arma el cuerpo del envío con lo contestado y lo entrega a onEnviar. */
   function enviar() {
     if (enviando) return;
     setConfirmando(false);
@@ -88,12 +95,18 @@ export function FormularioQuiz({
   const bloqueado = agotado || enviando;
   const urgente = segundosRestantes !== null && segundosRestantes <= SEGUNDOS_URGENTE;
 
+  /**
+   * @brief Guarda la opción elegida y actualiza el borrador en sessionStorage.
+   * @param {number} idPregunta - Id de la pregunta.
+   * @param {string} texto - Texto exacto de la opción elegida.
+   */
   function elegir(idPregunta, texto) {
     const siguientes = { ...respuestas, [idPregunta]: texto };
     setRespuestas(siguientes);
     guardarBorrador(quiz.id_quiz, { fechaInicio, respuestas: siguientes });
   }
 
+  /** @brief Envía el quiz; si faltan preguntas, primero pide confirmación. */
   function finalizar() {
     // Si faltan preguntas se pide confirmación, salvo que ya se haya agotado el tiempo.
     if (faltan > 0 && !agotado) {

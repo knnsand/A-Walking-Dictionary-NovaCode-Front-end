@@ -1,3 +1,9 @@
+/**
+ * @file App.jsx
+ * @brief Componente raíz: define las rutas de la aplicación por rol (docente, estudiante e
+ * invitado) y las protege según la sesión.
+ */
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexto/AuthProvider';
 import { ThemeProvider } from './contexto/ThemeProvider';
@@ -24,6 +30,13 @@ import { ResponderQuiz } from './vistas/estudiante/responder-quiz/ResponderQuiz'
 import { DiccionarioGlobal } from './vistas/diccionario-global/DiccionarioGlobal';
 
 
+/**
+ * @brief Protege una ruta para que solo la vea un estudiante autenticado. Sin sesión redirige a
+ * /login y con otro rol redirige a /docente.
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Contenido protegido.
+ * @return {JSX.Element}
+ */
 function RutaSoloEstudiante({ children }) {
   const { autenticado, rol } = useAuth();
 
@@ -38,6 +51,13 @@ function RutaSoloEstudiante({ children }) {
   return children;
 }
 
+/**
+ * @brief Protege una ruta para que solo la vea la docente autenticada. Sin sesión redirige a
+ * /login y con otro rol redirige a /estudiante.
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Contenido protegido.
+ * @return {JSX.Element}
+ */
 function RutaSoloDocente({ children }) {
   const { autenticado, rol } = useAuth();
 
@@ -52,6 +72,10 @@ function RutaSoloDocente({ children }) {
   return children;
 }
 
+/**
+ * @brief Arma los proveedores (router, tema y sesión) y la tabla de rutas de la aplicación.
+ * @return {JSX.Element}
+ */
 export default function App() {
   return (
     <BrowserRouter>

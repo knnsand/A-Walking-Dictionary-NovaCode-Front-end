@@ -1,3 +1,8 @@
+/**
+ * @file InscribirEstudianteForm.jsx
+ * @brief Formulario para inscribir un estudiante en un curso por correo (HU-5.3.2).
+ */
+
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { listarCursos } from '../../../cliente-api/cursosApi';
@@ -6,6 +11,13 @@ import { Aviso } from '../../../componentes/comunes/Aviso';
 import { FORM_INICIAL } from './inscribirEstudiante.constants';
 import { validarCamposObligatorios, validarFormatoEmail } from './inscribirEstudiante.validation';
 
+/**
+ * @brief Formulario con el curso y el correo del estudiante a inscribir.
+ * @param {Object} props
+ * @param {Function} [props.onCerrar] - Cierra el formulario.
+ * @param {Function} [props.onInscripcionCreada] - Recibe la inscripción creada.
+ * @return {JSX.Element}
+ */
 export function InscribirEstudianteForm({ onCerrar, onInscripcionCreada }) {
   const { t } = useTranslation();
   const [cursos, setCursos] = useState([]);
@@ -17,11 +29,19 @@ export function InscribirEstudianteForm({ onCerrar, onInscripcionCreada }) {
     void listarCursos().then(setCursos);
   }, []);
 
+  /**
+   * @brief Actualiza el campo del formulario que cambió.
+   * @param {Event} evento - Evento change del input o select.
+   */
   function handleChange(evento) {
     const { name, value } = evento.target;
     setForm((anterior) => ({ ...anterior, [name]: value }));
   }
 
+  /**
+   * @brief Valida el formulario e inscribe al estudiante en el curso.
+   * @param {SubmitEvent} evento - Evento submit del formulario.
+   */
   async function handleSubmit(evento) {
     evento.preventDefault();
 

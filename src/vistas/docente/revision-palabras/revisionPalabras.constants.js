@@ -1,5 +1,10 @@
 /**
- * Configuración de las pestañas del panel de Revisión de Palabras.
+ * @file revisionPalabras.constants.js
+ * @brief Constantes del panel de revisión de palabras.
+ */
+
+/**
+ * @brief Configuración de las pestañas del panel de Revisión de Palabras.
  *
  * Cada objeto define:
  * - id: identificador interno usado en el estado `tabActivo` de
@@ -18,7 +23,7 @@ export const TABS = [
 ];
 
 /**
- * Registros lingüísticos. `value` es el valor que se guarda en la base de datos
+ * @brief Registros lingüísticos. `value` es el valor que se guarda en la base de datos
  * y NO se traduce; `labelKey` es la clave del texto que se muestra.
  */
 export const REGISTROS = [
@@ -29,7 +34,7 @@ export const REGISTROS = [
   { value: 'Anticuado', labelKey: 'registers.archaic' },
 ];
 
-// Valor guardado -> clave de traducción (para mostrar el registro de una tarjeta ya guardada).
+/** @brief Valor guardado -> clave de traducción (para mostrar el registro de una tarjeta ya guardada). */
 export const REGISTRO_CLAVES = Object.fromEntries(
   REGISTROS.map(({ value, labelKey }) => [value, labelKey])
 );

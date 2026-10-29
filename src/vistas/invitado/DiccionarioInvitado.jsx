@@ -1,9 +1,18 @@
+/**
+ * @file DiccionarioInvitado.jsx
+ * @brief Diccionario de demostración para el modo invitado.
+ */
+
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { listarMazos } from '../../cliente-api/mazosApi';
 import { VARIANTE_REGIONAL_CLAVES } from '../docente/crear-mazo/crearMazo.constants';
 import './DiccionarioInvitado.css';
 
+/**
+ * @brief Muestra las lecturas (mazos) disponibles en modo invitado.
+ * @return {JSX.Element}
+ */
 export function DiccionarioInvitado() {
   const { t } = useTranslation();
   const [mazos, setMazos] = useState([]);

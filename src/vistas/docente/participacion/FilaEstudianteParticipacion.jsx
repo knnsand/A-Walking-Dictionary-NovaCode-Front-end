@@ -1,9 +1,17 @@
+/**
+ * @file FilaEstudianteParticipacion.jsx
+ * @brief Fila de la tabla de participación por mazo (HU-2.3).
+ */
+
 import { useTranslation } from 'react-i18next';
 import { sinAportesCriterio } from './participacionMazo.constants';
 
 /**
- * Fila de la tabla de participación. Recibe una fila con la forma exacta de la
+ * @brief Fila de la tabla de participación. Recibe una fila con la forma exacta de la
  * respuesta del backend (ver doc/CONTRATO_FRONTEND_HU-2.3.md).
+ * @param {Object} props
+ * @param {Object} props.fila - Participación de un estudiante en el mazo.
+ * @return {JSX.Element}
  */
 export function FilaEstudianteParticipacion({ fila }) {
   const { t } = useTranslation();

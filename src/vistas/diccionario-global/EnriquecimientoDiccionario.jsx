@@ -1,8 +1,13 @@
+/**
+ * @file EnriquecimientoDiccionario.jsx
+ * @brief Sugerencias léxicas de WordNet en el detalle de una palabra (HU-011).
+ */
 
 import { useEffect, useState } from 'react';
 import { obtenerFamiliaPalabras } from '../../cliente-api/enriquecimientoApi';
 import './EnriquecimientoDiccionario.css';
 
+/** @brief Categorías gramaticales de la respuesta y su título en inglés. */
 const CATEGORIAS = [
   ['sustantivos', 'Nouns'],
   ['verbos', 'Verbs'],
@@ -10,6 +15,7 @@ const CATEGORIAS = [
   ['adverbios', 'Adverbs'],
 ];
 
+/** @brief Relaciones léxicas de la respuesta y su título en inglés. */
 const RELACIONES = [
   ['sinonimos', 'Synonyms'],
   ['familia', 'Word Family'],
@@ -19,6 +25,13 @@ const RELACIONES = [
 
 
 
+/**
+ * @brief Grupo de palabras relacionadas (sin repetidas); no se muestra si está vacío.
+ * @param {Object} props
+ * @param {string} props.title - Título del grupo.
+ * @param {string[]} props.words - Palabras del grupo.
+ * @return {JSX.Element|null}
+ */
 function RelationGroup({ title, words }) {
   if (!Array.isArray(words) || words.length === 0) {
     return null;
@@ -46,6 +59,12 @@ function RelationGroup({ title, words }) {
 
 
 
+/**
+ * @brief Botón para consultar WordNet y lista de sugerencias de la palabra.
+ * @param {Object} props
+ * @param {string} props.palabra - Palabra a consultar.
+ * @return {JSX.Element}
+ */
 export function EnriquecimientoDiccionario({ palabra }) {
   const [resultado, setResultado] = useState(null);
   const [cargando, setCargando] = useState(false);
@@ -59,6 +78,7 @@ export function EnriquecimientoDiccionario({ palabra }) {
     setConsultado(false);
   }, [palabra]);
 
+  /** @brief Consulta las sugerencias de WordNet de la palabra. */
   async function consultarWordNet() {
     if (!palabra?.trim() || cargando) return;
 

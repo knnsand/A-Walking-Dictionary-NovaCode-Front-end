@@ -1,3 +1,8 @@
+/**
+ * @file EtiquetaContextoModal.jsx
+ * @brief Modal para asignar registro y variante regional al aprobar una tarjeta (HU-005).
+ */
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Aviso } from "../../../componentes/comunes/Aviso";
@@ -8,7 +13,7 @@ import {
 } from '../crear-mazo/crearMazo.constants';
 
 /**
- * HU-005: paso obligatorio antes de aprobar una tarjeta (EPIC-002).
+ * @brief HU-005: paso obligatorio antes de aprobar una tarjeta (EPIC-002).
  * Se abre automáticamente al presionar "Aprobar" en TarjetaPendienteCard;
  * el docente debe asignar registro y variante regional para poder
  * confirmar la aprobación. Si cancela, la tarjeta permanece pendiente.
@@ -24,6 +29,12 @@ import {
  * para que RevisionPalabras.jsx orqueste juntas la aprobación
  * (aprobarTarjeta) y el guardado de contexto (actualizarContextoTarjeta)
  * como una sola operación desde la perspectiva del usuario.
+ * @param {Object} props
+ * @param {Object} props.tarjeta - Tarjeta que se va a aprobar.
+ * @param {Function} props.onCerrar - Cierra el modal sin aprobar.
+ * @param {Function} props.onConfirmar - Recibe { registro, variante_regional }.
+ * @param {boolean} props.guardando - Deshabilita las acciones mientras se guarda.
+ * @return {JSX.Element}
  */
 export function EtiquetaContextoModal({ tarjeta, onCerrar, onConfirmar, guardando }) {
   const { t } = useTranslation();
@@ -31,6 +42,7 @@ export function EtiquetaContextoModal({ tarjeta, onCerrar, onConfirmar, guardand
   const [varianteRegional, setVarianteRegional] = useState(tarjeta.variante_regional || '');
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
 
+  /** @brief Valida que se eligieron registro y variante y los envía a onConfirmar. */
   function handleConfirmar() {
     if (!registro || !varianteRegional) {
       setAviso({ tipo: 'error', mensaje: t('contextModal.errors.required') });

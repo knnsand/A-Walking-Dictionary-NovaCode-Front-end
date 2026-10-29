@@ -1,11 +1,19 @@
+/**
+ * @file diccionarioApi.js
+ * @brief Cliente del Diccionario Global (HU-016): vocabulario aprobado por la docente.
+ */
 
 import { apiRequest } from './httpClient';
 
 /**
- * HU-016: consulta el vocabulario aprobado.
+ * @brief HU-016: consulta el vocabulario aprobado.
  * CA-16.1: listado.
  * CA-16.2: búsqueda parcial.
  * CA-16.3: resultados vacíos.
+ * GET /api/v1/dictionary?q=
+ * @param {string} [termino] - Texto a buscar; si está vacío se lista todo.
+ * @return {Promise<Object[]>} Palabras aprobadas que coinciden con la búsqueda.
+ * @throws {Error} Si la respuesta del backend no trae un arreglo en `data`.
  */
 export async function listarDiccionario(termino = '') {
   const busqueda = String(termino).trim();
@@ -26,8 +34,11 @@ export async function listarDiccionario(termino = '') {
 }
 
 /**
- * Consulta el detalle de una tarjeta aprobada.
+ * @brief Consulta el detalle de una tarjeta aprobada.
  * GET /api/v1/dictionary/:card_id
+ * @param {number|string} idTarjeta - Id de la tarjeta; debe ser un entero positivo.
+ * @return {Promise<Object>} Detalle de la palabra.
+ * @throws {Error} Si el id no es válido.
  */
 export async function obtenerDetallePalabra(idTarjeta) {
   if (!Number.isSafeInteger(Number(idTarjeta)) ||

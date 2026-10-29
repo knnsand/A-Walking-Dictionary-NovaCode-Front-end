@@ -1,3 +1,8 @@
+/**
+ * @file ConfigurarPerfil.jsx
+ * @brief Pantalla de configuración del perfil académico del estudiante (HU-013).
+ */
+
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexto/useAuth';
@@ -6,6 +11,11 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import { obtenerPerfil, obtenerContextoAcademico } from '../../../cliente-api/perfilApi';
 import { ConfigurarPerfilForm } from './ConfigurarPerfilForm';
 
+/**
+ * @brief Carga el perfil y el contexto académico del estudiante y muestra el formulario para
+ * editarlo, junto con la opción de tema claro/oscuro.
+ * @return {JSX.Element}
+ */
 export function ConfigurarPerfil() {
   const { t } = useTranslation();
   const { estudianteId, completarPerfilInicial } = useAuth();

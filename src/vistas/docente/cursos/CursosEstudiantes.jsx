@@ -1,3 +1,8 @@
+/**
+ * @file CursosEstudiantes.jsx
+ * @brief Pantalla de cursos de la docente: códigos de acceso e inscripción de estudiantes (HU-5.3).
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +13,11 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 
 import { ModalInscribirEstudiante } from '../inscribir-estudiante/ModalInscribirEstudiante';
 
+/**
+ * @brief Lista los cursos con su código de acceso, permite generarlo o copiarlo, inscribir
+ * estudiantes por correo y abrir el detalle de cada curso.
+ * @return {JSX.Element}
+ */
 export function CursosEstudiantes() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -27,6 +37,11 @@ export function CursosEstudiantes() {
     void listarCursos().then(setCursos);
   }, []);
 
+  /**
+   * @brief Genera el código de acceso del curso; si ya tenía uno, pide confirmación antes de
+   * reemplazarlo.
+   * @param {Object} curso - Curso seleccionado.
+   */
   async function handleGenerarCodigo(curso) {
     // Si ya hay código, regenerar invalida el anterior: pedimos confirmación.
     if (
@@ -56,6 +71,10 @@ export function CursosEstudiantes() {
     }
   }
 
+  /**
+   * @brief Copia el código de acceso del curso al portapapeles.
+   * @param {Object} curso - Curso seleccionado.
+   */
   async function handleCopiar(curso) {
     try {
       await navigator.clipboard.writeText(curso.codigo_acceso);

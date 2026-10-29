@@ -1,12 +1,14 @@
-// vistas/estudiante/responder-quiz/ResponderQuiz.jsx
-// HU-3.2: pantalla del estudiante para responder un quiz y recibir su nota.
-// Une la portada, el formulario y el resultado, y es el único que habla con el backend.
-// Contrato: CONTRATO_FRONTEND_HU-3.2.md (backend). Ruta: /estudiante/quices/:idQuiz.
-//
-// Flujo:
-//   1. Si hay un resultado guardado en el navegador, se muestra directo (CA-3.2.3).
-//   2. Si hay un borrador de un intento en curso y el quiz sigue abierto, se retoma.
-//   3. Si no, portada -> "Iniciar" -> formulario -> resultado.
+/**
+ * @file ResponderQuiz.jsx
+ * @brief HU-3.2: pantalla del estudiante para responder un quiz y recibir su nota.
+ * Une la portada, el formulario y el resultado, y es el único que habla con el backend.
+ * Contrato: CONTRATO_FRONTEND_HU-3.2.md (backend). Ruta: /estudiante/quices/:idQuiz.
+ *
+ * Flujo:
+ *   1. Si hay un resultado guardado en el navegador, se muestra directo (CA-3.2.3).
+ *   2. Si hay un borrador de un intento en curso y el quiz sigue abierto, se retoma.
+ *   3. Si no, portada -> "Iniciar" -> formulario -> resultado.
+ */
 
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -36,8 +38,10 @@ import {
 } from './responderQuiz.storage';
 import './responder-quiz.css';
 
+/** @brief API real que usa la pantalla si no se le pasa otro servicio. */
 const servicioPorDefecto = { obtenerQuiz, obtenerPreguntasQuiz, enviarRespuestasQuiz };
 
+/** @brief Pantallas por las que pasa el flujo del quiz. */
 const FASE = {
   CARGANDO: 'cargando',
   ERROR: 'error',
@@ -46,14 +50,20 @@ const FASE = {
   RESULTADO: 'resultado',
 };
 
-// Descriptor de error: { mensaje } si lo trae el backend (se muestra tal cual; puede estar
-// en español, pendiente de revisar) o { clave } para el texto propio (se traduce al mostrarlo).
+/**
+ * @brief Descriptor de error: { mensaje } si lo trae el backend (se muestra tal cual; puede estar
+ * en español, pendiente de revisar) o { clave } para el texto propio (se traduce al mostrarlo).
+ * @param {Error} error - Error lanzado por la API.
+ * @return {{mensaje?: string, clave?: string}}
+ */
 const descriptorDeError = (error) =>
   error?.message ? { mensaje: error.message } : { clave: C.errorGenerico };
 
 /**
+ * @brief Pantalla /estudiante/quices/:idQuiz: portada, formulario y resultado del quiz.
  * @param {Object} [props]
  * @param {Object} [props.servicio] Reemplazo de la API (útil para pruebas).
+ * @return {JSX.Element}
  */
 export function ResponderQuiz({ servicio = servicioPorDefecto }) {
   const { t } = useTranslation();
@@ -81,6 +91,11 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
   // Evita un segundo envío mientras el primero sigue en curso (botón + autoenvío).
   const envioEnCursoRef = useRef(false);
 
+  /**
+   * @brief Texto a mostrar de un descriptor de error.
+   * @param {{mensaje?: string, clave?: string}|null} descriptor
+   * @return {string|null}
+   */
   const textoError = (descriptor) =>
     descriptor ? (descriptor.clave ? t(descriptor.clave) : descriptor.mensaje) : null;
 
@@ -139,6 +154,7 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
     };
   }, [servicio, idQuiz, estudianteId, recarga]);
 
+  /** @brief Vuelve a cargar el quiz después de un error. */
   function recargar() {
     setErrorCarga(null);
     setFase(FASE.CARGANDO);
@@ -146,6 +162,7 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
   }
 
   // ---------- "Iniciar": pide las preguntas y arranca el reloj ----------
+  /** @brief Pide las preguntas, guarda la hora de inicio y muestra el formulario. */
   async function iniciar() {
     if (iniciando) return;
     setIniciando(true);
@@ -168,6 +185,10 @@ export function ResponderQuiz({ servicio = servicioPorDefecto }) {
   }
 
   // ---------- Envío (manual o automático al agotarse el tiempo) ----------
+  /**
+   * @brief Envía las respuestas (evitando envíos dobles), guarda el resultado y lo muestra.
+   * @param {Object} payload - Cuerpo del POST /quizzes/:id/submit.
+   */
   async function enviar(payload) {
     if (envioEnCursoRef.current) return;
     envioEnCursoRef.current = true;

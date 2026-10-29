@@ -1,14 +1,16 @@
-// vistas/estudiante/responder-quiz/ResultadoQuiz.jsx
-// HU-3.2: pantalla de resultado. Muestra la nota, el desglose de aciertos y errores
-// (CA-3.2.2) y, si el estudiante ya había enviado, avisa que no hay nuevo intento
-// y muestra el resumen del envío anterior (CA-3.2.3).
-//
-// El backend no devuelve la respuesta correcta de cada pregunta
-// (CONTRATO_FRONTEND_HU-3.2.md), así que el detalle solo indica si cada
-// respuesta fue correcta, incorrecta o quedó sin contestar.
-//
-// No consulta nada por su cuenta: recibe el resultado y, si los tiene, los
-// enunciados de las preguntas.
+/**
+ * @file ResultadoQuiz.jsx
+ * @brief HU-3.2: pantalla de resultado. Muestra la nota, el desglose de aciertos y errores
+ * (CA-3.2.2) y, si el estudiante ya había enviado, avisa que no hay nuevo intento
+ * y muestra el resumen del envío anterior (CA-3.2.3).
+ *
+ * El backend no devuelve la respuesta correcta de cada pregunta
+ * (CONTRATO_FRONTEND_HU-3.2.md), así que el detalle solo indica si cada
+ * respuesta fue correcta, incorrecta o quedó sin contestar.
+ *
+ * No consulta nada por su cuenta: recibe el resultado y, si los tiene, los
+ * enunciados de las preguntas.
+ */
 
 import { useTranslation } from 'react-i18next';
 import { TEXTOS_RESULTADO_CLAVES as T } from './responderQuiz.constants';
@@ -16,20 +18,26 @@ import { formatearTiempo } from './responderQuiz.format';
 import { ordenarPreguntas } from './responderQuiz.payload';
 import './responder-quiz.css';
 
-// Clave de traducción de cada estado interno de una respuesta.
+/** @brief Clave de traducción de cada estado interno de una respuesta. */
 const ETIQUETA_ESTADO = {
   correcta: T.correcta,
   incorrecta: T.incorrecta,
   sin: T.sinContestar,
 };
 
-/** 'correcta' | 'incorrecta' | 'sin' (una pregunta sin contestar cuenta como incorrecta). */
+/**
+ * @brief Estado de una respuesta: 'correcta' | 'incorrecta' | 'sin' (una pregunta sin
+ * contestar cuenta como incorrecta).
+ * @param {Object} [respuesta] - Fila de `respuestas` del submit.
+ * @return {string}
+ */
 function estadoDeRespuesta(respuesta) {
   if (!respuesta || respuesta.respuesta_estudiante == null) return 'sin';
   return respuesta.es_correcta ? 'correcta' : 'incorrecta';
 }
 
 /**
+ * @brief Muestra la nota del quiz y el detalle de cada respuesta.
  * @param {Object}   props
  * @param {Object}   props.resultado   `resultado` del submit (201 o 409).
  * @param {Array}    props.respuestas  `respuestas` del submit: una fila por pregunta.
@@ -38,6 +46,7 @@ function estadoDeRespuesta(respuesta) {
  * @param {string}   [props.titulo]    Título del quiz.
  * @param {boolean}  [props.yaEnviado] true si el backend respondió 409 (CA-3.2.3).
  * @param {Function} [props.onVolver]  Si se pasa, se muestra el botón para salir.
+ * @return {JSX.Element}
  */
 export function ResultadoQuiz({
   resultado,

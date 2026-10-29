@@ -1,3 +1,8 @@
+/**
+ * @file Registro.jsx
+ * @brief Pantalla de registro autónomo de estudiantes con Google (HU-012).
+ */
+
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
@@ -9,7 +14,7 @@ import { useTheme } from '../../../contexto/useTheme';
 import '../Login.css';
 
 /**
- * HU-012 (HU-5.1): registro autónomo de estudiante.
+ * @brief HU-012 (HU-5.1): registro autónomo de estudiante.
  *
  * Reutiliza el mismo flujo de Google Identity Services que Login.jsx,
  * pero llama a `registrarConGoogle` (POST /api/v1/auth/register) en vez
@@ -20,6 +25,7 @@ import '../Login.css';
  * Al registrarse, el perfil académico (HU-013) siempre está incompleto,
  * así que se redirige directo a completarlo en vez de al panel principal
  * (donde de todos modos el menú aparecería deshabilitado, ver Sidebar.jsx).
+ * @return {JSX.Element}
  */
 export function Registro() {
   const { t } = useTranslation();
@@ -29,6 +35,10 @@ export function Registro() {
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
 
+  /**
+   * @brief Recibe la credencial de Google, registra al estudiante y lo lleva a completar su perfil.
+   * @param {{credential?: string}} credentialResponse - Respuesta del botón de Google.
+   */
   async function manejarRegistroGoogle(credentialResponse) {
     if (!credentialResponse?.credential) {
       setError(t('auth.errors.noGoogleCredential'));

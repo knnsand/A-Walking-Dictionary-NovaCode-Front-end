@@ -1,3 +1,8 @@
+/**
+ * @file RevisionPalabras.jsx
+ * @brief Panel de revisión de la docente: términos nuevos, coautorías e historial de aprobadas (HU-004, HU-005).
+ */
+
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,14 +26,20 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 
 import './revision-palabras.css';
 
-// Clave de traducción del nombre de cada lista, tal como se mostrará en el aviso
-// si su actualización falla (se traduce al mostrarlo).
+/**
+ * @brief Clave de traducción del nombre de cada lista, tal como se mostrará en el aviso
+ * si su actualización falla (se traduce al mostrarlo).
+ */
 const NOMBRES_LISTAS = {
   pendientes: 'reviewPage.lists.pending',
   aprobadas: 'reviewPage.lists.approved',
   coautorias: 'reviewPage.lists.coauthorships',
 };
 
+/**
+ * @brief Pantalla con pestañas para revisar y aprobar las tarjetas y coautorías pendientes.
+ * @return {JSX.Element}
+ */
 export function RevisionPalabras() {
   const { t, i18n } = useTranslation();
   const [tabActivo, setTabActivo] = useState('nuevos');
@@ -52,21 +63,26 @@ export function RevisionPalabras() {
     t('reviewPage.subtitle')
   );
 
+  /** @brief Carga las tarjetas pendientes de revisión. */
   const cargarPendientes = useCallback(() => {
     return listarTarjetasPendientes().then(setPendientes);
   }, []);
 
+  /** @brief Carga el historial de tarjetas aprobadas. */
   const cargarAprobadas = useCallback(() => {
     return listarTarjetasAprobadas().then(setAprobadas);
   }, []);
 
+  /** @brief Carga las coautorías pendientes. */
   const cargarCoautorias = useCallback(() => {
     return listarCoautoriasPendientes().then(setCoautorias);
   }, []);
 
-  // Consulta las tres listas en paralelo.
-  // Si una falla, las demás se actualizan y la lista que falló
-  // conserva los datos que ya estaban visibles.
+  /**
+   * @brief Consulta las tres listas en paralelo.
+   * Si una falla, las demás se actualizan y la lista que falló
+   * conserva los datos que ya estaban visibles.
+   */
   const consultarListas = useCallback(async () => {
     try {
       const [rPendientes, rAprobadas, rCoautorias] =
@@ -122,6 +138,7 @@ export function RevisionPalabras() {
     void consultarListas();
   }, [consultarListas]);
 
+  /** @brief Recarga manualmente las tres listas (si no hay una recarga en curso). */
   function handleActualizar() {
     if (actualizando) return;
 
@@ -129,6 +146,11 @@ export function RevisionPalabras() {
     void consultarListas();
   }
 
+  /**
+   * @brief Guarda la tarjeta a aprobar (con sus correcciones) y abre el modal de contexto.
+   * @param {Object} tarjeta - Tarjeta pendiente.
+   * @param {Object} datosEditados - Traducción, definición y ejemplo corregidos.
+   */
   function handleSolicitarAprobacion(tarjeta, datosEditados) {
     setTarjetaParaAprobar({
       ...tarjeta,
@@ -136,6 +158,10 @@ export function RevisionPalabras() {
     });
   }
 
+  /**
+   * @brief Guarda las correcciones, aprueba la tarjeta y le asigna el contexto lingüístico.
+   * @param {{registro: string, variante_regional: string}} contexto - Elegido en el modal.
+   */
   async function handleConfirmarAprobacion(contexto) {
     const {
       id_tarjeta,
@@ -181,6 +207,11 @@ export function RevisionPalabras() {
     }
   }
 
+  /**
+   * @brief Aprueba una coautoría con las correcciones de la docente.
+   * @param {number} idAporte - Id del aporte.
+   * @param {Object} datosEditados - Campos corregidos.
+   */
   async function handleAprobarCoautoria(
     idAporte,
     datosEditados
@@ -222,8 +253,10 @@ export function RevisionPalabras() {
         })
       : null;
 
-  // Registro y variante se guardan en español en la base de datos;
-  // aquí solo se traduce lo que se muestra (si el valor no se conoce, se muestra tal cual).
+  /**
+   * @brief Registro y variante se guardan en español en la base de datos;
+   * aquí solo se traduce lo que se muestra (si el valor no se conoce, se muestra tal cual).
+   */
   const textoRegistro = (valor) =>
     REGISTRO_CLAVES[valor] ? t(REGISTRO_CLAVES[valor]) : valor;
   const textoVariante = (valor) =>

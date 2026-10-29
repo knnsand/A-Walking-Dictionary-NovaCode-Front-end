@@ -1,13 +1,26 @@
+/**
+ * @file generarQuiz.validation.js
+ * @brief Validaciones del formulario de generación de quices (HU-3.1).
+ */
+
 import { ERRORES_VALIDACION, TITULO_MAX } from './generarQuiz.constants';
 
-// Entero >= 1. Rechaza vacío, decimales, negativos y notación científica.
+/**
+ * @brief Entero >= 1. Rechaza vacío, decimales, negativos y notación científica.
+ * @param {*} valor - Valor del campo.
+ * @return {boolean}
+ */
 function esEnteroPositivo(valor) {
   const texto = String(valor ?? '').trim();
   return /^\d+$/.test(texto) && Number(texto) >= 1;
 }
 
-// Los campos datetime-local entregan "2026-10-12T15:00" (hora local).
-// Devuelve null si el valor está vacío o no es una fecha válida.
+/**
+ * @brief Convierte el valor de un campo datetime-local en Date.
+ * Los campos datetime-local entregan "2026-10-12T15:00" (hora local).
+ * @param {string} valor - Valor del campo.
+ * @return {Date|null} null si el valor está vacío o no es una fecha válida.
+ */
 function aFecha(valor) {
   if (!valor) return null;
   const fecha = new Date(valor);
@@ -15,7 +28,7 @@ function aFecha(valor) {
 }
 
 /**
- * Valida el formulario de generación de quiz (HU-3.1).
+ * @brief Valida el formulario de generación de quiz (HU-3.1).
  * Reglas: docs/contrato-quiz.md y docs/CONTRATO_FRONTEND_HU-3.1.md (backend).
  *
  * @param {Object} datos
@@ -24,7 +37,7 @@ function aFecha(valor) {
  * @param {Object} datos.form - titulo, fecha_apertura, fecha_cierre,
  *   tiempo_limite_min y cantidad_preguntas, como los entrega el formulario.
  * @param {Date} [ahora] - hora de referencia (se inyecta en las pruebas).
- * @returns {Object} errores por campo; vacío si el formulario es válido.
+ * @return {Object} errores por campo; vacío si el formulario es válido.
  *   Claves posibles: curso, mazos, titulo, fecha_apertura, fecha_cierre,
  *   tiempo_limite_min, cantidad_preguntas.
  */

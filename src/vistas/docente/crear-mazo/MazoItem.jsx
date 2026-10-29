@@ -1,3 +1,8 @@
+/**
+ * @file MazoItem.jsx
+ * @brief Tarjeta de un mazo de estudio dentro de la lista de mazos.
+ */
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 // import { Link } from 'react-router-dom';
@@ -6,14 +11,20 @@ import { exportarMazoPdf } from '../../../cliente-api/exportacionesApi';
 import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
 import { VARIANTE_REGIONAL_CLAVES } from './crearMazo.constants';
 
+/** @brief Cantidad de colores de tarjeta; el color se elige según la semana del mazo. */
 const CANTIDAD_COLORES = 5;
 
 /**
- * Tarjeta de un mazo. Todos los roles ven la información del mazo;
+ * @brief Tarjeta de un mazo. Todos los roles ven la información del mazo;
  * las acciones dependen del rol:
  * - docente: abrir / cerrar el mazo y exportarlo a PDF (HU-3.3).
  * - estudiante: ir a estudiar las palabras del mazo.
  * - invitado: solo lectura (sin acciones).
+ * @param {Object} props
+ * @param {Object} props.mazo - Mazo a mostrar.
+ * @param {string} [props.rol] - 'docente' | 'estudiante' | 'invitado'.
+ * @param {Function} [props.onEstadoActualizado] - Recibe el mazo después de abrirlo o cerrarlo.
+ * @return {JSX.Element}
  */
 export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
   const { t } = useTranslation();
@@ -32,6 +43,7 @@ export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
     ? t(claveVariante)
     : mazo.variante_regional_predeterminada;
 
+  /** @brief Abre el mazo si está cerrado o lo cierra si está abierto. */
   async function handleCambiarEstado() {
     const nuevoEstado = abierto ? 'cerrado' : 'abierto';
 

@@ -1,3 +1,7 @@
+/**
+ * @file ProgresoEstudiante.jsx
+ * @brief Pantalla del reporte de progreso individual del estudiante (HU-018).
+ */
 
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +12,10 @@ import { exportarProgresoEstudiantePdf } from '../../../cliente-api/reportesApi'
 
 import './progreso-estudiante.css';
 
+/**
+ * @brief Explica qué incluye el reporte y permite descargarlo en PDF.
+ * @return {JSX.Element}
+ */
 export function ProgresoEstudiante() {
   const { t } = useTranslation();
   const { estudianteId } = useAuth();

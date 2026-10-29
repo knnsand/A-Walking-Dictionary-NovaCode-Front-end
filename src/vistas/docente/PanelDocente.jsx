@@ -1,6 +1,15 @@
+/**
+ * @file PanelDocente.jsx
+ * @brief Pantalla inicial de la docente: sus mazos de estudio.
+ */
+
 import { useLocation } from 'react-router-dom';
 import { ListaMazosCreados } from './ListaMazosCreados';
 
+/**
+ * @brief Muestra la lista de mazos de la docente y la recarga cuando se crea uno nuevo.
+ * @return {JSX.Element}
+ */
 export function PanelDocente() {
   const location = useLocation();
 

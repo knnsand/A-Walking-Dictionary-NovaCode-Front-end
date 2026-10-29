@@ -1,32 +1,15 @@
+/**
+ * @file Sidebar.jsx
+ * @brief Menú lateral de la aplicación, compartido por los tres roles.
+ */
+
 import { NavLink, Link } from 'react-router-dom';
 import './sidebar-perfil-pendiente.css';
 import './LayoutInvitado.css';
 import { useTheme } from '../../contexto/useTheme';
 import { useTranslation, Trans } from 'react-i18next';
 
-/**
- * Menú lateral. Es EL MISMO componente para Docente, Estudiante e
- * Invitado; lo único que cambia es qué secciones se renderizan,
- * definidas en MENU_POR_ROL según el rol activo.
- *
- * Props:
- * - rol: 'docente' | 'estudiante' | 'invitado'
- * - nombreUsuario, correoUsuario: para el pie del sidebar
- * - contadores: objeto opcional { pendientes: 2 } para badges (HU-004)
- * - perfilCompleto: boolean (HU-012). Si es `false` y el rol es
- *   "estudiante" (primer ingreso tras registrarse), las opciones del menú
- *   se muestran deshabilitadas excepto "Configuración & Perfil", hasta que
- *   guarde su perfil académico (HU-013).
- * - abierto / onCerrar: control del sidebar en móvil (responsive)
- * - onAbrirCrearMazo: callback del botón de acción del Docente (HU-001).
- * - onAbrirRegistrarTarjeta: callback del botón de acción del Estudiante
- *   ("+ Añadir Palabra al Mazo", HU-002). Abre el modal de registro de
- *   palabra. El botón se deshabilita mientras el perfil esté incompleto.
- * - onAbrirUnirseCurso: callback del botón "Unirme a un curso" del Estudiante
- *   (abre el modal de inscripción por código de acceso).
- * - onCerrarSesion: callback del botón "Cerrar sesión" (docente y
- *   estudiante; el invitado no tiene sesión).
- */
+/** @brief Secciones y opciones del menú que ve cada rol. */
 const MENU_POR_ROL = {
   docente: [
     {
@@ -80,10 +63,10 @@ const MENU_POR_ROL = {
   ],
 };
 
-// HU-012: única ruta que sigue habilitada mientras el perfil está incompleto.
+/** @brief HU-012: única ruta que sigue habilitada mientras el perfil está incompleto. */
 const RUTA_PERFIL_ESTUDIANTE = '/estudiante/configuracion-perfil';
 
-// Secciones que aún no están implementadas.
+/** @brief Secciones que aún no están implementadas (se muestran deshabilitadas). */
 const RUTAS_DESHABILITADAS_POR_ROL = {
   docente: [
     
@@ -98,6 +81,32 @@ const RUTAS_DESHABILITADAS_POR_ROL = {
   ],
 };
 
+/**
+ * @brief Menú lateral. Es EL MISMO componente para Docente, Estudiante e
+ * Invitado; lo único que cambia es qué secciones se renderizan,
+ * definidas en MENU_POR_ROL según el rol activo.
+ *
+ * @param {Object} props
+ * @param {string} props.rol - 'docente' | 'estudiante' | 'invitado'.
+ * @param {string} [props.nombreUsuario] - Nombre para el pie del sidebar.
+ * @param {string} [props.correoUsuario] - Correo para el pie del sidebar.
+ * @param {Object} [props.contadores] - Objeto opcional { pendientes: 2 } para badges (HU-004).
+ * @param {boolean} [props.perfilCompleto] - HU-012. Si es `false` y el rol es
+ *   "estudiante" (primer ingreso tras registrarse), las opciones del menú
+ *   se muestran deshabilitadas excepto "Configuración & Perfil", hasta que
+ *   guarde su perfil académico (HU-013).
+ * @param {boolean} props.abierto - Si el sidebar está abierto en móvil (responsive).
+ * @param {Function} props.onCerrar - Cierra el sidebar en móvil.
+ * @param {Function} props.onAbrirCrearMazo - Callback del botón de acción del Docente (HU-001).
+ * @param {Function} props.onAbrirRegistrarTarjeta - Callback del botón de acción del Estudiante
+ *   ("+ Añadir Palabra al Mazo", HU-002). Abre el modal de registro de
+ *   palabra. El botón se deshabilita mientras el perfil esté incompleto.
+ * @param {Function} props.onAbrirUnirseCurso - Callback del botón "Unirme a un curso" del
+ *   Estudiante (abre el modal de inscripción por código de acceso).
+ * @param {Function} props.onCerrarSesion - Callback del botón "Cerrar sesión" (docente y
+ *   estudiante; el invitado no tiene sesión).
+ * @return {JSX.Element}
+ */
 export function Sidebar({
   rol,
   nombreUsuario,

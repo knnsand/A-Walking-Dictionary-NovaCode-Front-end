@@ -1,3 +1,9 @@
+/**
+ * @file crearMazo.constants.js
+ * @brief Constantes del formulario de creación de mazos (HU-001).
+ */
+
+/** @brief Variantes regionales del inglés que puede tener un mazo (valor guardado en BD). */
 export const VARIANTES_REGIONALES = [
   'Británico',
   'Nigeriano',
@@ -6,8 +12,10 @@ export const VARIANTES_REGIONALES = [
   'Estadounidense',
 ];
 
-// Clave de traducción de cada variante regional. El valor en español es el que
-// se guarda en la base de datos y NO cambia; solo se traduce lo que se muestra.
+/**
+ * @brief Clave de traducción de cada variante regional. El valor en español es el que
+ * se guarda en la base de datos y NO cambia; solo se traduce lo que se muestra.
+ */
 export const VARIANTE_REGIONAL_CLAVES = {
   Británico: 'regionalVariants.british',
   Nigeriano: 'regionalVariants.nigerian',
@@ -16,15 +24,18 @@ export const VARIANTE_REGIONAL_CLAVES = {
   Estadounidense: 'regionalVariants.american',
 };
 
+/** @brief Estados posibles de un mazo. */
 export const ESTADOS = [
   { value: 'abierto', label: 'Abierto' },
   { value: 'cerrado', label: 'Cerrado' },
 ];
 
-// Semanas del semestre (18, según el cronograma del curso). Un mazo no puede
-// crearse fuera de este rango. Cada semana guarda mes y día (sin año); el texto
-// que se muestra se arma en el formulario. Si cambia el semestre, solo hay que
-// actualizar mes y día.
+/**
+ * @brief Semanas del semestre (18, según el cronograma del curso). Un mazo no puede
+ * crearse fuera de este rango. Cada semana guarda mes y día (sin año); el texto
+ * que se muestra se arma en el formulario. Si cambia el semestre, solo hay que
+ * actualizar mes y día.
+ */
 export const SEMANAS_SEMESTRE = [
   { value: '1', mes: 8, dia: 6 },
   { value: '2', mes: 8, dia: 13 },
@@ -46,6 +57,7 @@ export const SEMANAS_SEMESTRE = [
   { value: '18', mes: 12, dia: 3 },
 ];
 
+/** @brief Campos que deben estar llenos para crear el mazo. */
 export const CAMPOS_OBLIGATORIOS = [
   'curso_id',
   'nombre_lectura',
@@ -56,6 +68,7 @@ export const CAMPOS_OBLIGATORIOS = [
   'fecha_cierre',
 ];
 
+/** @brief Valores iniciales del formulario. */
 export const FORM_INICIAL = {
   curso_id: '',
   nombre_lectura: '',

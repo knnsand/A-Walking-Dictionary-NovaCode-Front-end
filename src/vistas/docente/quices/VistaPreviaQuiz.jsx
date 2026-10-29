@@ -1,10 +1,16 @@
+/**
+ * @file VistaPreviaQuiz.jsx
+ * @brief Vista previa, para la docente, de las preguntas de un quiz recién generado.
+ */
+
 import { useTranslation } from 'react-i18next';
 import { TEXTOS_CLAVES } from './generarQuiz.constants';
 
+/** @brief Letras de las opciones de respuesta. */
 const LETRAS = ['a', 'b', 'c', 'd'];
 
 /**
- * Vista previa de las preguntas de un quiz recién generado (HU-3.1).
+ * @brief Vista previa de las preguntas de un quiz recién generado (HU-3.1).
  * SOLO para la docente: muestra la respuesta correcta. Nunca usar este
  * componente con el quiz que ve el estudiante.
  *
@@ -14,7 +20,8 @@ const LETRAS = ['a', 'b', 'c', 'd'];
  *   opcion_a: string|null, opcion_b: string|null,
  *   opcion_c: string|null, opcion_d: string|null,
  *   respuesta_correcta: string
- * }>} props.preguntas
+ * }>} props.preguntas - Preguntas generadas.
+ * @return {JSX.Element|null}
  */
 export function VistaPreviaQuiz({ preguntas }) {
   const { t } = useTranslation();

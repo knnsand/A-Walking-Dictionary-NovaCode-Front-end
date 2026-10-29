@@ -1,7 +1,10 @@
-// vistas/estudiante/responder-quiz/responderQuiz.constants.js
-// Claves de traducción de los textos de la pantalla de HU-3.2 (responder quiz y recibir nota).
-// El texto vive en src/i18n/locales/en.json.
+/**
+ * @file responderQuiz.constants.js
+ * @brief Claves de traducción de los textos de la pantalla de HU-3.2 (responder quiz y recibir nota).
+ * El texto vive en src/i18n/locales/en.json.
+ */
 
+/** @brief Claves de traducción de la portada del quiz. */
 export const TEXTOS_CLAVES = {
   tituloPagina: 'quizSession.page.title',
   descripcionPagina: 'quizSession.page.description',
@@ -24,7 +27,7 @@ export const TEXTOS_CLAVES = {
   },
 };
 
-// Valores que devuelve el backend en `estado_efectivo` (CONTRATO_FRONTEND_HU-3.1.md).
+/** @brief Valores que devuelve el backend en `estado_efectivo` (CONTRATO_FRONTEND_HU-3.1.md). */
 export const ESTADO = {
   PROGRAMADO: 'programado',
   ABIERTO: 'abierto',
@@ -32,7 +35,7 @@ export const ESTADO = {
 };
 
 
-// Formulario del quiz (preguntas, cronómetro y envío)
+/** @brief Claves de traducción del formulario del quiz (preguntas, cronómetro y envío). */
 export const TEXTOS_FORMULARIO_CLAVES = {
   tiempoRestante: 'quizSession.form.timeRemaining',
   contestadas: 'quizSession.form.answered', // usa {{answered}} y {{total}}
@@ -48,7 +51,7 @@ export const TEXTOS_FORMULARIO_CLAVES = {
 };
 
 
-// Pantalla de resultado (CA-3.2.2 y CA-3.2.3)
+/** @brief Claves de traducción de la pantalla de resultado (CA-3.2.2 y CA-3.2.3). */
 export const TEXTOS_RESULTADO_CLAVES = {
   titulo: 'quizSession.result.title',
   yaEnviado: 'quizSession.result.alreadySubmitted',
@@ -66,7 +69,7 @@ export const TEXTOS_RESULTADO_CLAVES = {
   botonVolver: 'quizSession.result.backToPanel',
 };
 
-// Contenedor de la pantalla (carga y errores)
+/** @brief Claves de traducción del contenedor de la pantalla (carga y errores). */
 export const TEXTOS_CONTENEDOR_CLAVES = {
   cargando: 'quizSession.container.loading',
   reintentar: 'quizSession.container.retry',

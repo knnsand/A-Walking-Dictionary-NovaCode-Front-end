@@ -1,13 +1,16 @@
-// vistas/estudiante/estudiar-tarjetas/BotonesValoracion.jsx
-// HU-010 / CA-4.1.2: valoración del recuerdo (Repetir, Difícil, Buena, Fácil).
-//
-// El diseño muestra dos botones (Repasar / Aprendida), pero el criterio de aceptación y el back
-// (SM2Service) trabajan con cuatro valoraciones. Se mantiene el estilo circular del diseño y
-// se amplía a cuatro.
+/**
+ * @file BotonesValoracion.jsx
+ * @brief HU-010 / CA-4.1.2: valoración del recuerdo (Repetir, Difícil, Buena, Fácil).
+ *
+ * El diseño muestra dos botones (Repasar / Aprendida), pero el criterio de aceptación y el back
+ * (SM2Service) trabajan con cuatro valoraciones. Se mantiene el estilo circular del diseño y
+ * se amplía a cuatro.
+ */
 
 import { useTranslation } from 'react-i18next';
 import { VALORACIONES_UI } from './estudiarTarjetas.constants';
 
+/** @brief Atributos SVG comunes de los íconos de valoración. */
 const ICONO = {
   width: 22,
   height: 22,
@@ -20,6 +23,7 @@ const ICONO = {
   'aria-hidden': true,
 };
 
+/** @brief Ícono de "Repetir". */
 const IconoX = () => (
   <svg {...ICONO}>
     <path d="M18 6 6 18" />
@@ -27,18 +31,21 @@ const IconoX = () => (
   </svg>
 );
 
+/** @brief Ícono de "Difícil". */
 const IconoMenos = () => (
   <svg {...ICONO}>
     <path d="M5 12h14" />
   </svg>
 );
 
+/** @brief Ícono de "Buena". */
 const IconoCheck = () => (
   <svg {...ICONO}>
     <path d="M20 6 9 17l-5-5" />
   </svg>
 );
 
+/** @brief Ícono de "Fácil". */
 const IconoCheckDoble = () => (
   <svg {...ICONO}>
     <path d="M18 6 7 17l-5-5" />
@@ -46,6 +53,7 @@ const IconoCheckDoble = () => (
   </svg>
 );
 
+/** @brief Ícono de cada valoración, por `id` de VALORACIONES_UI. */
 const ICONOS = {
   repetir: IconoX,
   dificil: IconoMenos,
@@ -54,10 +62,12 @@ const ICONOS = {
 };
 
 /**
+ * @brief Botones circulares para valorar el recuerdo de la tarjeta.
  * @param {Object}   props
  * @param {boolean}  props.habilitado  false hasta que el estudiante haya visto la respuesta.
  * @param {boolean}  props.guardando   true mientras se envía la valoración al back.
  * @param {Function} props.onValorar   Recibe el texto exacto que espera el back.
+ * @return {JSX.Element}
  */
 export function BotonesValoracion({ habilitado, guardando, onValorar }) {
   const { t } = useTranslation();

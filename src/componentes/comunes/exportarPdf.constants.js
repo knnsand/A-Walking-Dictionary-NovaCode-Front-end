@@ -1,4 +1,9 @@
-// Claves de traducción de los textos del botón (el texto vive en src/i18n/locales/en.json).
+/**
+ * @file exportarPdf.constants.js
+ * @brief Textos y clasificación de errores del botón de exportar a PDF.
+ */
+
+/** @brief Claves de traducción de los textos del botón (el texto vive en src/i18n/locales/en.json). */
 export const TEXTOS_EXPORTAR_PDF = {
   cargando: 'pdfExport.loading',
   sesionVencida: 'pdfExport.errors.sessionExpired',
@@ -22,7 +27,7 @@ const ES_MENSAJE_LEGIBLE =
   /no encontrado|no tiene preguntas generadas|id inválido/i;
 
 /**
- * Traduce el error de una exportación al mensaje que ve el usuario.
+ * @brief Traduce el error de una exportación al mensaje que ve el usuario.
  * `apiRequest`/`apiDescargarArchivo` no exponen el código HTTP, solo el
  * mensaje, así que se reconoce el caso por su texto.
  *
@@ -31,7 +36,7 @@ const ES_MENSAJE_LEGIBLE =
  * legible que envía el servidor. Siempre viene uno de los dos.
  *
  * @param {string|undefined} mensaje - `error.message` de la exportación.
- * @returns {{ clave?: string, mensaje?: string, cerrarSesion: boolean }}
+ * @return {{ clave?: string, mensaje?: string, cerrarSesion: boolean }}
  */
 export function clasificarErrorExportacion(mensaje) {
   if (ES_SESION_INVALIDA.test(mensaje ?? '')) {

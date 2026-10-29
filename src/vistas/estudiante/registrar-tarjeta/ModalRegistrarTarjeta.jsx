@@ -1,8 +1,19 @@
+/**
+ * @file ModalRegistrarTarjeta.jsx
+ * @brief Modal para registrar una palabra nueva en un mazo (HU-002).
+ */
+
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RegistrarTarjetaForm } from './RegistrarTarjetaForm';
 import './registrar-tarjeta.css';
 
+/**
+ * @brief Muestra RegistrarTarjetaForm en un modal que se cierra con Escape o con clic fuera.
+ * @param {Object} props
+ * @param {Function} props.onCerrar - Cierra el modal.
+ * @return {JSX.Element}
+ */
 export function ModalRegistrarTarjeta({ onCerrar }) {
   const { t } = useTranslation();
 
@@ -20,6 +31,10 @@ export function ModalRegistrarTarjeta({ onCerrar }) {
     };
   }, [onCerrar]);
 
+  /**
+   * @brief Cierra el modal si el clic fue en el fondo oscuro y no dentro de la tarjeta.
+   * @param {MouseEvent} evento - Evento de clic.
+   */
   function handleClicFondo(evento) {
     if (evento.target === evento.currentTarget) {
       onCerrar();

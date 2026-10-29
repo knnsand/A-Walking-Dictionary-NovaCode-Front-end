@@ -1,3 +1,8 @@
+/**
+ * @file index.js
+ * @brief Configuración de i18next: la interfaz se muestra en inglés con los textos de locales/en.json.
+ */
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 

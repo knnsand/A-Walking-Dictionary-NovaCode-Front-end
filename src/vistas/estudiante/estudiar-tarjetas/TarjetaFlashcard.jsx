@@ -1,17 +1,20 @@
 
 import SugerenciasPalabras from './SugerenciasPalabras';
 
-// vistas/estudiante/estudiar-tarjetas/TarjetaFlashcard.jsx
-// HU-010 / CA-4.1.1: frente (palabra en inglés) y dorso (traducción, definición y ejemplo).
-//
-// Componente de presentación: no llama a la API ni guarda estado. El estado de "volteada"
-// vive en EstudiarTarjetas.jsx.
-//
-// Campos opcionales de la tarjeta (el diseño los muestra; el back aún no los devuelve):
-//   fonetica, categoria_gramatical
+/**
+ * @file TarjetaFlashcard.jsx
+ * @brief HU-010 / CA-4.1.1: frente (palabra en inglés) y dorso (traducción, definición y ejemplo).
+ *
+ * Componente de presentación: no llama a la API ni guarda estado. El estado de "volteada"
+ * vive en EstudiarTarjetas.jsx.
+ *
+ * Campos opcionales de la tarjeta (el diseño los muestra; el back aún no los devuelve):
+ *   fonetica, categoria_gramatical
+ */
 
 import { useTranslation } from 'react-i18next';
 
+/** @brief Atributos SVG comunes de los íconos de la tarjeta. */
 const ICONO = {
   width: 16,
   height: 16,
@@ -24,6 +27,7 @@ const ICONO = {
   'aria-hidden': true,
 };
 
+/** @brief Ícono del botón de girar. */
 const IconoGirar = () => (
   <svg {...ICONO} width={13} height={13}>
     <path d="M21 12a9 9 0 1 1-3-6.7" />
@@ -31,6 +35,7 @@ const IconoGirar = () => (
   </svg>
 );
 
+/** @brief Ícono del botón de pronunciación. */
 const IconoAltavoz = () => (
   <svg {...ICONO} width={20} height={20}>
     <path d="M11 5 6 9H3v6h3l5 4V5z" />
@@ -39,23 +44,34 @@ const IconoAltavoz = () => (
   </svg>
 );
 
+/**
+ * @brief Indica si el navegador soporta síntesis de voz.
+ * @return {boolean}
+ */
 const puedeHablar = () =>
   typeof window !== 'undefined' &&
   'speechSynthesis' in window &&
   typeof window.SpeechSynthesisUtterance !== 'undefined';
 
+/**
+ * @brief Pone el ejemplo entre comillas si aún no las tiene.
+ * @param {string} texto - Ejemplo de uso.
+ * @return {string}
+ */
 function conComillas(texto) {
   return /^["“'‘]/.test(texto.trim()) ? texto : `“${texto}”`;
 }
 
 /**
+ * @brief Flashcard que se gira al hacer clic para mostrar el dorso.
  * @param {Object}   props
  * @param {Object}   props.tarjeta        Tarjeta actual (campos en español del back).
  * @param {boolean}  props.volteada       true = se ve el dorso.
  * @param {boolean}  [props.repetida]     true si el estudiante ya marcó "Repetir" en esta sesión.
  * @param {Array}    props.atajos         [{ tecla, etiquetaKey }] para la pastilla de teclado.
- * @param {Function} props.onVoltear
+ * @param {Function} props.onVoltear     Gira la tarjeta.
  * @param {Object}   [props.botonGiroRef] Ref del botón de giro (para manejar el foco).
+ * @return {JSX.Element}
  */
 export function TarjetaFlashcard({
   tarjeta,
@@ -67,6 +83,10 @@ export function TarjetaFlashcard({
 }) {
   const { t } = useTranslation();
 
+  /**
+   * @brief Pronuncia la palabra en inglés sin girar la tarjeta.
+   * @param {MouseEvent} evento - Evento de clic.
+   */
   const escuchar = (evento) => {
     evento.stopPropagation();
     if (!puedeHablar()) return;
@@ -78,6 +98,10 @@ export function TarjetaFlashcard({
     sintesis.speak(locucion);
   };
 
+  /**
+   * @brief Gira la tarjeta desde el botón, sin propagar el clic a la tarjeta.
+   * @param {MouseEvent} evento - Evento de clic.
+   */
   const girar = (evento) => {
     evento.stopPropagation();
     onVoltear();
