@@ -1,3 +1,8 @@
+/**
+ * @file ParticipacionMazo.jsx
+ * @brief Panel de analíticas de participación de los estudiantes por mazo (HU-2.3).
+ */
+
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexto/useAuth';
@@ -8,26 +13,38 @@ import { TEXTOS_CLAVES, COLUMNAS } from './participacionMazo.constants';
 import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import './participacion-mazo.css';
 
-// Se usa solo si listarMazos() falla o devuelve vacío (p. ej. sin conexión al
-// backend), para que la vista no quede en blanco. La etiqueta ("Week 3 · ...")
-// se arma al mostrarla, con la semana y el nombre por separado.
+/**
+ * @brief Se usa solo si listarMazos() falla o devuelve vacío (p. ej. sin conexión al
+ * backend), para que la vista no quede en blanco. La etiqueta ("Week 3 · ...")
+ * se arma al mostrarla, con la semana y el nombre por separado.
+ */
 const MAZOS_FALLBACK = [
   { mazo_id: 1, semana: 3, nombre_lectura: 'Their Eyes Were Watching God' },
 ];
 
-// Mensajes exactos que devuelve el backend en rutas protegidas
-// (docs/CONTRATO_AUTENTICACION_FRONTEND.md, sección 4).
-// NO TRADUCIR: se comparan contra el texto en español que envía el backend.
+/**
+ * @brief Indica si el mensaje del backend corresponde a una sesión vencida o sin token.
+ * Mensajes exactos que devuelve el backend en rutas protegidas
+ * (docs/CONTRATO_AUTENTICACION_FRONTEND.md, sección 4).
+ * NO TRADUCIR: se comparan contra el texto en español que envía el backend.
+ */
 const ES_SESION_INVALIDA = (msg) =>
   /token de autenticación no proporcionado|token inválido o expirado/i.test(msg ?? '');
+/** @brief Indica si el mensaje del backend corresponde a un usuario sin rol docente. */
 const ES_SIN_PERMISO = (msg) => /no tiene permisos para acceder a este recurso/i.test(msg ?? '');
 
-// listarMazos() pega a GET /decks (docs/contrato-mazo.md) y devuelve las
-// columnas reales de la tabla "mazo" tal cual (id_mazo, semana,
-// nombre_lectura, ...). Nota: ese endpoint no filtra por curso — mientras
-// solo exista un curso en el entorno de desarrollo no es un problema, pero
-// si se agregan varios cursos habría que filtrar aquí por curso_id (o pedirle
-// al backend un query param para eso).
+/**
+ * @brief Convierte un mazo de la API al formato que usa esta vista.
+ * listarMazos() pega a GET /decks (docs/contrato-mazo.md) y devuelve las
+ * columnas reales de la tabla "mazo" tal cual (id_mazo, semana,
+ * nombre_lectura, ...).
+ * @note Ese endpoint no filtra por curso — mientras
+ * solo exista un curso en el entorno de desarrollo no es un problema, pero
+ * si se agregan varios cursos habría que filtrar aquí por curso_id (o pedirle
+ * al backend un query param para eso).
+ * @param {Object} m - Mazo tal como lo devuelve GET /decks.
+ * @return {{mazo_id: number, semana: number, nombre_lectura: string}}
+ */
 function mapearMazoApi(m) {
   return {
     mazo_id: m.id_mazo,
@@ -37,7 +54,7 @@ function mapearMazoApi(m) {
 }
 
 /**
- * Panel docente de HU-2.3: participación individual por mazo y semana.
+ * @brief Panel docente de HU-2.3: participación individual por mazo y semana.
  * Requiere sesión con rol docente (el endpoint está protegido, ver contrato
  * de autenticación).
  *
@@ -45,6 +62,7 @@ function mapearMazoApi(m) {
  * @param {Array<{ mazo_id: number, nombre: string }>} [props.mazos] - Si se
  *   pasa, se usa tal cual y NO se llama a listarMazos(). Si se omite, la
  *   vista trae los mazos reales del backend.
+ * @return {JSX.Element}
  */
 export function ParticipacionMazo({ mazos: mazosProp }) {
   const { t } = useTranslation();
@@ -84,6 +102,10 @@ export function ParticipacionMazo({ mazos: mazosProp }) {
     };
   }, [mazosProp]);
 
+  /**
+   * @brief Consulta la participación del mazo elegido (con y sin el filtro "sin aportes")
+   * y cierra la sesión si el token venció.
+   */
   const cargar = useCallback(async () => {
     if (!mazoId) return;
     setEstado('cargando');

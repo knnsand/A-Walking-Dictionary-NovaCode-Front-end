@@ -1,3 +1,8 @@
+/**
+ * @file main.jsx
+ * @brief Punto de entrada del frontend: monta App dentro del proveedor de Google OAuth.
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { GoogleOAuthProvider } from '@react-oauth/google';

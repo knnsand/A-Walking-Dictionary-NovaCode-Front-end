@@ -1,3 +1,8 @@
+/**
+ * @file RegistrarTarjetaForm.jsx
+ * @brief Formulario para registrar una palabra nueva en un mazo (HU-002, HU-003).
+ */
+
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,14 +21,25 @@ import { listarMazos } from '../../../cliente-api/mazosApi';
 import { verificarDuplicado, registrarTarjeta } from '../../../cliente-api/tarjetasApi';
 import { useAuth } from '../../../contexto/useAuth';
 
-// Descriptor de error para fallos de la API: si el backend trae mensaje se muestra tal cual
-// (puede estar en español, pendiente de revisar); si no, se usa el mensaje propio.
+/**
+ * @brief Descriptor de error para fallos de la API: si el backend trae mensaje se muestra tal cual
+ * (puede estar en español, pendiente de revisar); si no, se usa el mensaje propio.
+ * @param {Error} e - Error lanzado por la API.
+ * @return {{mensaje?: string, clave?: string}}
+ */
 function errorDeApi(e) {
   return e.message
     ? { mensaje: e.message }
     : { clave: 'registerWordForm.errors.processFailed' };
 }
 
+/**
+ * @brief Formulario con mazo, palabra, traducción, definición y ejemplo. Antes de registrar
+ * verifica duplicados y, si los hay, pide confirmación.
+ * @param {Object} props
+ * @param {Function} [props.onCerrar] - Cierra el formulario.
+ * @return {JSX.Element}
+ */
 export function RegistrarTarjetaForm({ onCerrar }) {
   const { t } = useTranslation();
   const { inscripcionId } = useAuth();
@@ -52,6 +68,10 @@ export function RegistrarTarjetaForm({ onCerrar }) {
     void cargarMazos();
   }, []);
 
+  /**
+   * @brief Actualiza el campo que cambió y limpia los avisos anteriores.
+   * @param {Event} evento - Evento change del input o select.
+   */
   function handleChange(evento) {
     const { name, value } = evento.target;
 
@@ -65,6 +85,11 @@ export function RegistrarTarjetaForm({ onCerrar }) {
     setConfirmacion(null);
   }
 
+  /**
+   * @brief Valida el formulario, verifica si la palabra ya existe en el mazo y, si no está
+   * duplicada, la registra.
+   * @param {SubmitEvent} evento - Evento submit del formulario.
+   */
   async function handleSubmit(evento) {
     evento.preventDefault();
 
@@ -109,6 +134,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
     }
   }
 
+  /** @brief Registra la tarjeta en el mazo elegido. */
   async function enviarTarjeta() {
     try {
       const registro = await registrarTarjeta(Number(form.mazo_id), {

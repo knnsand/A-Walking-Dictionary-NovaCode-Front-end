@@ -1,12 +1,24 @@
+/**
+ * @file CoautoriaPendienteCard.jsx
+ * @brief Tarjeta de una coautoría pendiente en el panel de revisión.
+ */
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Tarjeta individual de la pestaña "Coautoría" (dentro de RevisionPalabras.jsx).
+ * @brief Tarjeta individual de la pestaña "Coautoría" (dentro de RevisionPalabras.jsx).
  * Muestra un aporte de tipo 'coautoria' o 'acepcion_nueva' sobre una tarjeta ya
  * existente, comparado contra la tarjeta original, según el modelo real del DER
  * (tabla aporte + tarjeta, ver AporteRepository.listarCoautoriasPendientes).
  * Solo se puede editar o aprobar; las coautorías ya no se rechazan.
+ * @param {Object} props
+ * @param {Object} props.coautoria - Aporte pendiente con los datos de la tarjeta original.
+ * @param {boolean} props.enEdicion - Si la tarjeta está en modo edición.
+ * @param {Function} props.onIniciarEdicion - Activa el modo edición.
+ * @param {Function} props.onCancelarEdicion - Sale del modo edición sin guardar.
+ * @param {Function} props.onAprobar - Aprueba la coautoría con los datos editados.
+ * @return {JSX.Element}
  */
 export function CoautoriaPendienteCard({
   coautoria, enEdicion, onIniciarEdicion, onCancelarEdicion, onAprobar,
@@ -18,6 +30,10 @@ export function CoautoriaPendienteCard({
     ejemplo_aportado: coautoria.ejemplo_aportado ?? '',
   });
 
+  /**
+   * @brief Actualiza el campo editado en el borrador.
+   * @param {Event} evento - Evento change del campo.
+   */
   function handleChange(evento) {
     const { name, value } = evento.target;
     setBorrador((anterior) => ({ ...anterior, [name]: value }));

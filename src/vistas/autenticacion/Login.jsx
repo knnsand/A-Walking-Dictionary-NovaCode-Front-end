@@ -1,3 +1,8 @@
+/**
+ * @file Login.jsx
+ * @brief Pantalla de inicio de sesión con Google.
+ */
+
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
@@ -8,6 +13,11 @@ import { obtenerPerfil } from '../../cliente-api/perfilApi';
 import { calcularPerfilCompleto } from '../../contexto/perfilCompleto';
 import './Login.css';
 
+/**
+ * @brief Inicia sesión con Google y lleva a cada usuario a su panel según el rol; si el
+ * estudiante no ha completado su perfil, lo lleva a completarlo.
+ * @return {JSX.Element}
+ */
 export function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -16,6 +26,10 @@ export function Login() {
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
 
+  /**
+   * @brief Recibe la credencial de Google, inicia sesión en el backend y redirige.
+   * @param {{credential?: string}} credentialResponse - Respuesta del botón de Google.
+   */
   async function manejarLoginGoogle(credentialResponse) {
     if (!credentialResponse?.credential) {
       setError(t('auth.errors.noGoogleCredential'));

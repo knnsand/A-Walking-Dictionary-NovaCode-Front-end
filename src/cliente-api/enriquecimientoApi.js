@@ -1,10 +1,17 @@
+/**
+ * @file enriquecimientoApi.js
+ * @brief Cliente de enriquecimiento léxico (HU-011): familia de palabras desde WordNet.
+ */
 
 import { apiRequest } from './httpClient';
 import { USE_MOCK } from './apiConfig';
 
 /**
- * HU-011: consulta sugerencias léxicas para una palabra.
+ * @brief HU-011: consulta sugerencias léxicas para una palabra.
  * Endpoint: GET /api/v1/enrichment/family/:word
+ * @param {string} palabra - Palabra a consultar; se ignoran los espacios de los extremos.
+ * @return {Promise<{palabra: string, sugerencias: Array}>} Palabra consultada y sus sugerencias.
+ * @throws {Error} Si la palabra está vacía o el backend responde con error.
  */
 export async function obtenerFamiliaPalabras(palabra) {
   const palabraLimpia = palabra?.trim();

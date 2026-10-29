@@ -1,3 +1,8 @@
+/**
+ * @file DetalleCurso.jsx
+ * @brief Detalle de un curso: estudiantes inscritos y descarga de su reporte de progreso (HU-018).
+ */
+
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +16,10 @@ import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf'
 import { exportarProgresoEstudiantePdf } from '../../../cliente-api/reportesApi';
 
 
+/**
+ * @brief Muestra la tabla de estudiantes del curso indicado en la URL (/docente/cursos/:id).
+ * @return {JSX.Element}
+ */
 export function DetalleCurso() {
   const { t } = useTranslation();
   const { id } = useParams();

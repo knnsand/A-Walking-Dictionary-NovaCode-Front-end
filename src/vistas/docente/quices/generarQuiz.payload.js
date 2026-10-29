@@ -1,5 +1,10 @@
 /**
- * Convierte los datos del formulario en el cuerpo de POST /api/v1/quizzes/generate.
+ * @file generarQuiz.payload.js
+ * @brief Arma el cuerpo de la petición para generar un quiz (HU-3.1).
+ */
+
+/**
+ * @brief Convierte los datos del formulario en el cuerpo de POST /api/v1/quizzes/generate.
  * Los nombres de campo siguen el contrato del backend
  * (docs/CONTRATO_FRONTEND_HU-3.1.md): mazo_ids, no mazos_ids.
  *
@@ -9,7 +14,7 @@
  * @param {string|number} datos.cursoId
  * @param {number[]} datos.mazosSeleccionados
  * @param {Object} datos.form - valores tal como los entrega el formulario.
- * @returns {Object} cuerpo listo para generarQuiz(). Las fechas van en ISO 8601
+ * @return {Object} cuerpo listo para generarQuiz(). Las fechas van en ISO 8601
  *   UTC; cantidad_preguntas solo se incluye si se escribió.
  */
 export function construirPayloadQuiz({ cursoId, mazosSeleccionados, form }) {

@@ -1,3 +1,8 @@
+/**
+ * @file GenerarQuiz.jsx
+ * @brief Pantalla de la docente para generar quices acumulativos (HU-3.1).
+ */
+
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { listarCursos } from '../../../cliente-api/cursosApi';
@@ -15,6 +20,7 @@ import { VistaPreviaQuiz } from './VistaPreviaQuiz';
 import { ListaQuices } from '../../quices/ListaQuices';
 import './generar-quiz.css';
 
+/** @brief Valores iniciales del formulario del quiz. */
 const FORM_INICIAL = {
   titulo: '',
   fecha_apertura: '',
@@ -23,18 +29,29 @@ const FORM_INICIAL = {
   cantidad_preguntas: '',
 };
 
-// Mensajes exactos que devuelve el backend en rutas protegidas
-// (docs/CONTRATO_AUTENTICACION_FRONTEND.md, sección 4).
-// NO TRADUCIR: se comparan contra el texto en español que envía el backend.
+/**
+ * @brief Indica si el mensaje del backend corresponde a una sesión vencida o sin token.
+ * Mensajes exactos que devuelve el backend en rutas protegidas
+ * (docs/CONTRATO_AUTENTICACION_FRONTEND.md, sección 4).
+ * NO TRADUCIR: se comparan contra el texto en español que envía el backend.
+ */
 const ES_SESION_INVALIDA = (msg) =>
   /token de autenticación no proporcionado|token inválido o expirado/i.test(msg ?? '');
+/** @brief Indica si el mensaje del backend corresponde a un usuario sin rol docente. */
 const ES_SIN_PERMISO = (msg) => /no tiene permisos para acceder a este recurso/i.test(msg ?? '');
 
-// Si cambia alguno de estos campos, el error de "ventana corta" (que se muestra
-// en el cierre) puede dejar de aplicar.
+/**
+ * @brief Si cambia alguno de estos campos, el error de "ventana corta" (que se muestra
+ * en el cierre) puede dejar de aplicar.
+ */
 const CAMPOS_QUE_AFECTAN_EL_CIERRE = ['fecha_apertura', 'tiempo_limite_min'];
 
-// "mensaje" es la clave de traducción de un error de validación.
+/**
+ * @brief Muestra el error de validación de un campo del formulario.
+ * @param {Object} props
+ * @param {string} [props.mensaje] - Clave de traducción del error de validación.
+ * @return {JSX.Element|null}
+ */
 function ErrorCampo({ mensaje }) {
   const { t } = useTranslation();
   if (!mensaje) return null;
@@ -46,8 +63,9 @@ function ErrorCampo({ mensaje }) {
 }
 
 /**
- * Pantalla docente de HU-3.1: configurar y generar un quiz acumulativo.
+ * @brief Pantalla docente de HU-3.1: configurar y generar un quiz acumulativo.
  * Contrato: docs/contrato-quiz.md y docs/CONTRATO_FRONTEND_HU-3.1.md (backend).
+ * @return {JSX.Element}
  */
 export function GenerarQuiz() {
   const { t } = useTranslation();
@@ -115,11 +133,19 @@ export function GenerarQuiz() {
     .filter((m) => String(m.curso_id) === String(cursoId))
     .sort((a, b) => Number(a.semana) - Number(b.semana) || a.id_mazo - b.id_mazo);
 
+  /**
+   * @brief Texto de un mazo en la lista de selección (semana y nombre de la lectura).
+   * @param {Object} mazo - Mazo del curso.
+   * @return {string}
+   */
   const etiquetaMazo = (mazo) =>
     t('quizGenerator.deckOption', { week: mazo.semana, name: mazo.nombre_lectura });
 
-  // Quita del estado de errores los campos indicados, para que el aviso
-  // desaparezca en cuanto la docente corrige ese campo.
+  /**
+   * @brief Quita del estado de errores los campos indicados, para que el aviso
+   * desaparezca en cuanto la docente corrige ese campo.
+   * @param {...string} claves - Nombres de los campos a limpiar.
+   */
   function limpiarErrores(...claves) {
     setErrores((anteriores) => {
       if (!claves.some((clave) => clave in anteriores)) return anteriores;
@@ -129,6 +155,10 @@ export function GenerarQuiz() {
     });
   }
 
+  /**
+   * @brief Cambia el curso elegido y descarta los mazos seleccionados del curso anterior.
+   * @param {string} nuevoCursoId - Id del curso elegido.
+   */
   function cambiarCurso(nuevoCursoId) {
     setCursoId(nuevoCursoId);
     // Los mazos elegidos pertenecen al curso anterior: se descartan.
@@ -136,6 +166,10 @@ export function GenerarQuiz() {
     limpiarErrores('curso', 'mazos');
   }
 
+  /**
+   * @brief Marca o desmarca un mazo para incluirlo en el quiz.
+   * @param {number} idMazo - Id del mazo.
+   */
   function alternarMazo(idMazo) {
     setMazosSeleccionados((actuales) =>
       actuales.includes(idMazo)
@@ -145,12 +179,20 @@ export function GenerarQuiz() {
     limpiarErrores('mazos');
   }
 
+  /**
+   * @brief Actualiza el campo que cambió y limpia sus errores.
+   * @param {Event} evento - Evento change del input.
+   */
   function handleChange(evento) {
     const { name, value } = evento.target;
     setForm((anterior) => ({ ...anterior, [name]: value }));
     limpiarErrores(name, ...(CAMPOS_QUE_AFECTAN_EL_CIERRE.includes(name) ? ['fecha_cierre'] : []));
   }
 
+  /**
+   * @brief Valida el formulario, genera el quiz en el backend y muestra el resultado.
+   * @param {SubmitEvent} evento - Evento submit del formulario.
+   */
   async function handleSubmit(evento) {
     evento.preventDefault();
     if (enviando) return;

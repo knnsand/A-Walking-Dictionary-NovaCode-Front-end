@@ -1,3 +1,8 @@
+/**
+ * @file BotonExportarPdf.jsx
+ * @brief Botón reutilizable para exportar y descargar archivos PDF.
+ */
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexto/useAuth';
@@ -5,7 +10,7 @@ import { TEXTOS_EXPORTAR_PDF, clasificarErrorExportacion } from './exportarPdf.c
 import './boton-exportar-pdf.css';
 
 /**
-* Botón reutilizable para descargar reportes y exportaciones PDF.
+ * @brief Botón reutilizable para descargar reportes y exportaciones PDF.
  *
  * Ejecuta la función onExportar, muestra un indicador de carga
  * mientras se descarga el archivo y presenta errores si ocurren.
@@ -21,6 +26,7 @@ import './boton-exportar-pdf.css';
  *   por defecto, el texto estándar de `pdfExport.loading`).
  * @param {string} [props.ariaLabel] - Nombre accesible, útil cuando hay varios botones iguales.
  * @param {boolean} [props.disabled] - Deshabilita el botón desde afuera.
+ * @return {JSX.Element}
  */
 export function BotonExportarPdf({
   onExportar,
@@ -35,6 +41,7 @@ export function BotonExportarPdf({
   // { clave } (texto del front, se traduce al mostrarlo) o { mensaje } (texto del backend, tal cual).
   const [error, setError] = useState(null);
 
+  /** @brief Ejecuta la exportación y, si falla, muestra el error (y cierra sesión si venció). */
   async function handleClick() {
     if (exportando) return;
 

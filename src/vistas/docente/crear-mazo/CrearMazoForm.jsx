@@ -1,3 +1,8 @@
+/**
+ * @file CrearMazoForm.jsx
+ * @brief Formulario para crear un mazo de estudio (HU-001).
+ */
+
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { listarCursos } from '../../../cliente-api/cursosApi';
@@ -20,6 +25,14 @@ import {
 } from './crearMazo.constants';
 
 
+/**
+ * @brief Formulario de creación de mazo: curso, lectura, autor, semana, variante regional,
+ * estado y fechas de apertura y cierre.
+ * @param {Object} props
+ * @param {Function} [props.onMazoCreado] - Recibe el mazo creado.
+ * @param {Function} [props.onCerrar] - Cierra el formulario.
+ * @return {JSX.Element}
+ */
 export function CrearMazoForm({ onMazoCreado, onCerrar }) {
   const { t, i18n } = useTranslation();
   const { docenteId } = useAuth();
@@ -34,6 +47,11 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
     day: 'numeric',
   });
 
+  /**
+   * @brief Arma el texto de una opción de semana, por ejemplo "Week 1 (August 6)".
+   * @param {{value: string, mes: number, dia: number}} semana - Semana de SEMANAS_SEMESTRE.
+   * @return {string} Texto traducido de la opción.
+   */
   function etiquetaSemana(semana) {
     return t('createDeckForm.weekOption', {
       week: semana.value,
@@ -41,8 +59,12 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
     });
   }
 
-  // La variante se guarda en español en la base de datos; aquí solo se traduce
-  // lo que se muestra. Si llegara un valor desconocido, se muestra tal cual.
+  /**
+   * @brief La variante se guarda en español en la base de datos; aquí solo se traduce
+   * lo que se muestra. Si llegara un valor desconocido, se muestra tal cual.
+   * @param {string} variante - Variante regional en español.
+   * @return {string} Texto a mostrar.
+   */
   function etiquetaVariante(variante) {
     const clave = VARIANTE_REGIONAL_CLAVES[variante];
     return clave ? t(clave) : variante;
@@ -52,11 +74,19 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
     listarCursos().then(setCursos);
   }, []);
 
+  /**
+   * @brief Actualiza el campo del formulario que cambió.
+   * @param {Event} evento - Evento change del input o select.
+   */
   function handleChange(evento) {
     const { name, value } = evento.target;
     setForm((anterior) => ({ ...anterior, [name]: value }));
   }
 
+  /**
+   * @brief Valida el formulario y crea el mazo en el backend.
+   * @param {SubmitEvent} evento - Evento submit del formulario.
+   */
   async function handleSubmit(evento) {
     evento.preventDefault();
 

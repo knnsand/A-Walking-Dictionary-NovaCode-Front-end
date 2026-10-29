@@ -1,19 +1,23 @@
-// vistas/estudiante/responder-quiz/responderQuiz.storage.js
-// HU-3.2: respaldo del intento en curso en `sessionStorage`.
-//
-// Guarda el momento de inicio y las respuestas elegidas, para que una recarga de
-// la página no reinicie el reloj ni borre lo contestado (CONTRATO_FRONTEND_HU-3.2.md,
-// sección Temporizador). Todo va en una sola clave por quiz.
-//
-// `sessionStorage` puede no estar disponible o fallar (navegación privada, cuota
-// llena, datos de sitio bloqueados), por eso cada acceso va dentro de try/catch:
-// si falla, el quiz sigue funcionando, solo sin respaldo.
+/**
+ * @file responderQuiz.storage.js
+ * @brief HU-3.2: respaldo del intento en curso en `sessionStorage`.
+ *
+ * Guarda el momento de inicio y las respuestas elegidas, para que una recarga de
+ * la página no reinicie el reloj ni borre lo contestado (CONTRATO_FRONTEND_HU-3.2.md,
+ * sección Temporizador). Todo va en una sola clave por quiz.
+ *
+ * `sessionStorage` puede no estar disponible o fallar (navegación privada, cuota
+ * llena, datos de sitio bloqueados), por eso cada acceso va dentro de try/catch:
+ * si falla, el quiz sigue funcionando, solo sin respaldo.
+ */
 
+/** @brief Clave de sessionStorage del borrador de un quiz. */
 const clave = (idQuiz) => `quiz_${idQuiz}_borrador`;
 
 /**
- * @param {number|string} idQuiz
- * @returns {{ fechaInicio: string, respuestas: Object<string, string> } | null}
+ * @brief Lee el borrador del intento en curso.
+ * @param {number|string} idQuiz - Id del quiz.
+ * @return {{ fechaInicio: string, respuestas: Object<string, string> } | null}
  *   `respuestas` es { [pregunta_id]: texto de la opción elegida }. Devuelve null si
  *   no hay borrador o si está dañado.
  */
@@ -34,8 +38,9 @@ export function leerBorrador(idQuiz) {
 }
 
 /**
- * @param {number|string} idQuiz
- * @param {{ fechaInicio: string, respuestas: Object<string, string> }} borrador
+ * @brief Guarda el borrador del intento en curso.
+ * @param {number|string} idQuiz - Id del quiz.
+ * @param {{ fechaInicio: string, respuestas: Object<string, string> }} borrador - Hora de inicio y respuestas.
  */
 export function guardarBorrador(idQuiz, { fechaInicio, respuestas }) {
   try {
@@ -45,7 +50,10 @@ export function guardarBorrador(idQuiz, { fechaInicio, respuestas }) {
   }
 }
 
-/** Elimina el borrador de un quiz (por ejemplo, después de enviarlo). */
+/**
+ * @brief Elimina el borrador de un quiz (por ejemplo, después de enviarlo).
+ * @param {number|string} idQuiz - Id del quiz.
+ */
 export function borrarBorrador(idQuiz) {
   try {
     sessionStorage.removeItem(clave(idQuiz));
@@ -69,10 +77,11 @@ export function borrarBorrador(idQuiz) {
 // computador compartido el siguiente estudiante vería el resultado del anterior.
 // ---------------------------------------------------------------------------
 
+/** @brief Clave de localStorage del resultado de un quiz para un estudiante. */
 const claveResultado = (idQuiz, idEstudiante) => `quiz_${idQuiz}_resultado_${idEstudiante}`;
 
 /**
- * Guarda el resultado de un quiz ya enviado. No hace nada si no se conoce el estudiante.
+ * @brief Guarda el resultado de un quiz ya enviado. No hace nada si no se conoce el estudiante.
  *
  * @param {number|string} idQuiz
  * @param {number|string} idEstudiante
@@ -95,9 +104,10 @@ export function guardarResultado(idQuiz, idEstudiante, { resultado, respuestas, 
 }
 
 /**
- * @param {number|string} idQuiz
- * @param {number|string} idEstudiante
- * @returns {{ resultado: Object, respuestas: Array, preguntas: Array|null } | null}
+ * @brief Lee el resultado guardado de un quiz ya enviado.
+ * @param {number|string} idQuiz - Id del quiz.
+ * @param {number|string} idEstudiante - Id del estudiante.
+ * @return {{ resultado: Object, respuestas: Array, preguntas: Array|null } | null}
  *   null si no hay resultado guardado, si no se conoce el estudiante o si el dato está
  *   dañado. `preguntas` es null si no se guardaron.
  */

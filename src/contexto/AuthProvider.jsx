@@ -1,3 +1,9 @@
+/**
+ * @file AuthProvider.jsx
+ * @brief Proveedor de la sesión: guarda el token y el usuario en localStorage, consulta si el
+ * perfil del estudiante está completo y obtiene su inscripción activa.
+ */
+
 import { useCallback, useEffect, useState } from 'react';
 import { AuthContext } from './AuthContext';
 import {
@@ -7,12 +13,19 @@ import {
 import { obtenerContextoAcademico, obtenerPerfil } from '../cliente-api/perfilApi';
 import { calcularPerfilCompleto } from './perfilCompleto';
 
+/** @brief Clave de localStorage donde se guarda el JWT. */
 const TOKEN_KEY = 'walking_dictionary_token';
+/** @brief Clave de localStorage donde se guarda el usuario autenticado. */
 const USER_KEY = 'walking_dictionary_usuario';
 
+/** @brief Inscripción de respaldo (VITE_INSCRIPCION_ID_SIMULADA) si no se puede consultar la real. */
 const INSCRIPCION_ID_SIMULADA =
   Number(import.meta.env.VITE_INSCRIPCION_ID_SIMULADA) || null;
 
+/**
+ * @brief Recupera la sesión guardada en localStorage; si está corrupta, la borra.
+ * @return {{token: string|null, usuario: Object|null}} Sesión guardada o vacía.
+ */
 function obtenerSesionGuardada() {
   const tokenGuardado = localStorage.getItem(TOKEN_KEY);
   const usuarioGuardado = localStorage.getItem(USER_KEY);
@@ -40,6 +53,12 @@ function obtenerSesionGuardada() {
   }
 }
 
+/**
+ * @brief Componente que comparte la sesión con toda la aplicación mediante AuthContext.
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Árbol de componentes que tendrá acceso a la sesión.
+ * @return {JSX.Element}
+ */
 export function AuthProvider({ children }) {
   const [sesion, setSesion] = useState(obtenerSesionGuardada);
 
@@ -103,6 +122,11 @@ export function AuthProvider({ children }) {
   const inscripcionId =
     estudianteId && inscripcion.estudianteId === estudianteId ? inscripcion.id : null;
 
+  /**
+   * @brief Guarda el token y el usuario en localStorage y en el estado.
+   * @param {{token: string, usuario: Object}} respuesta - Respuesta del login o registro.
+   * @param {{esRegistro?: boolean}} [opciones] - Si es un registro, marca el perfil como incompleto.
+   */
   function guardarSesion(respuesta, { esRegistro = false } = {}) {
     localStorage.setItem(TOKEN_KEY, respuesta.token);
     localStorage.setItem(USER_KEY, JSON.stringify(respuesta.usuario));
@@ -114,24 +138,34 @@ export function AuthProvider({ children }) {
     }
   }
 
+  /**
+   * @brief Inicia sesión con Google y guarda la sesión.
+   * @param {string} idToken - Token de identidad de Google.
+   * @return {Promise<{token: string, usuario: Object}>} Respuesta del backend.
+   */
   async function loginWithGoogle(idToken) {
     const respuesta = await iniciarSesionConGoogle(idToken);
     guardarSesion(respuesta);
     return respuesta;
   }
 
-  /** HU-012: registro autónomo de estudiante con Google. */
+  /**
+   * @brief HU-012: registro autónomo de estudiante con Google.
+   * @param {string} idToken - Token de identidad de Google.
+   * @return {Promise<{token: string, usuario: Object}>} Respuesta del backend.
+   */
   async function registrarConGoogle(idToken) {
     const respuesta = await registrarConGoogleApi(idToken);
     guardarSesion(respuesta, { esRegistro: true });
     return respuesta;
   }
 
-  /** Se llama al guardar el perfil (campos obligatorios ya validados). */
+  /** @brief Se llama al guardar el perfil (campos obligatorios ya validados). */
   function completarPerfilInicial() {
     setPerfilCompleto(true);
   }
 
+  /** @brief Cierra la sesión: borra el token y el usuario de localStorage y del estado. */
   function logout() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);

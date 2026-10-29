@@ -1,9 +1,19 @@
+/**
+ * @file PanelEstudiante.jsx
+ * @brief Pantalla inicial del estudiante: "Mis aportes".
+ */
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ModalRegistrarTarjeta } from './registrar-tarjeta/ModalRegistrarTarjeta';
 import { ModalUnirseCurso } from './unirse-curso/ModalUnirseCurso';
 import { useEncabezadoPagina } from '../../contexto/useEncabezadoPagina';
 
+/**
+ * @brief Muestra los botones para registrar una palabra y para unirse a un curso, y abre el
+ * modal correspondiente.
+ * @return {JSX.Element}
+ */
 export function PanelEstudiante() {
   const { t } = useTranslation();
   const [mostrarFormularioTarjeta, setMostrarFormularioTarjeta] = useState(false);

@@ -1,6 +1,6 @@
 /**
- * analiticasApi.js
- * Cliente para el endpoint de HU-2.3 (HU-006 en la numeración de sprint del equipo).
+ * @file analiticasApi.js
+ * @brief Cliente para el endpoint de HU-2.3 (HU-006 en la numeración de sprint del equipo).
  * Fuentes: doc/CONTRATO_FRONTEND_HU-2.3.md + docs/CONTRATO_AUTENTICACION_FRONTEND.md
  *
  * Auth: la tabla de rutas del contrato de autenticación (sección 5) lista
@@ -28,11 +28,11 @@ import { USE_MOCK } from './apiConfig';
 import { obtenerParticipacionMazoMock } from './mocks/analiticasMock';
 
 /**
- * Obtiene la participación de todos los estudiantes inscritos en un mazo.
+ * @brief Obtiene la participación de todos los estudiantes inscritos en un mazo.
  * @param {number|string} mazoId - id del mazo (path param :id del contrato).
  * @param {{ sinAportes?: boolean, token?: string }} [opciones] - `token` es el
  *   JWT de `useAuth()`; sin él, el backend responde 401.
- * @returns {Promise<Array<{
+ * @return {Promise<Array<{
  *   estudiante_id: number,
  *   nombre_completo: string,
  *   palabras_aportadas: number,

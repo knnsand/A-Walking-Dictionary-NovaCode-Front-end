@@ -1,24 +1,28 @@
-// vistas/estudiante/responder-quiz/useTemporizadorQuiz.js
-// HU-3.2, CA-3.2.1: control de tiempo durante la prueba.
-//
-// El tiempo restante se calcula comparando la hora actual con `fechaInicio`,
-// no restando un segundo por cada tick: así no se desfasa si la pestaña queda
-// en segundo plano. El límite es el menor entre `fechaInicio + tiempoLimiteMin`
-// y la `fechaCierre` del quiz (CONTRATO_FRONTEND_HU-3.2.md, sección Temporizador).
+/**
+ * @file useTemporizadorQuiz.js
+ * @brief HU-3.2, CA-3.2.1: control de tiempo durante la prueba.
+ *
+ * El tiempo restante se calcula comparando la hora actual con `fechaInicio`,
+ * no restando un segundo por cada tick: así no se desfasa si la pestaña queda
+ * en segundo plano. El límite es el menor entre `fechaInicio + tiempoLimiteMin`
+ * y la `fechaCierre` del quiz (CONTRATO_FRONTEND_HU-3.2.md, sección Temporizador).
+ */
 
 import { useEffect, useRef, useState } from 'react';
 
+/** @brief Milisegundos en un segundo. */
 const MS_POR_SEGUNDO = 1000;
+/** @brief Milisegundos en un minuto. */
 const MS_POR_MINUTO = 60 * MS_POR_SEGUNDO;
 
 /**
- * Instante (en ms) en que se acaba el tiempo, o null si faltan datos válidos.
+ * @brief Instante (en ms) en que se acaba el tiempo, o null si faltan datos válidos.
  *
  * @param {Object} datos
  * @param {string|null} datos.fechaInicio - ISO 8601; null si el quiz no ha iniciado.
- * @param {number} datos.tiempoLimiteMin
+ * @param {number} datos.tiempoLimiteMin - Tiempo límite en minutos.
  * @param {string} [datos.fechaCierre] - ISO 8601.
- * @returns {number|null}
+ * @return {number|null}
  */
 export function calcularLimiteMs({ fechaInicio, tiempoLimiteMin, fechaCierre }) {
   if (!fechaInicio) return null;
@@ -31,18 +35,24 @@ export function calcularLimiteMs({ fechaInicio, tiempoLimiteMin, fechaCierre }) 
   return Number.isFinite(cierre) ? Math.min(finPorTiempo, cierre) : finPorTiempo;
 }
 
-/** Segundos que faltan hasta el límite; nunca negativo. */
+/**
+ * @brief Segundos que faltan hasta el límite; nunca negativo.
+ * @param {number|null} limiteMs - Instante límite en ms.
+ * @param {number} ahoraMs - Instante actual en ms.
+ * @return {number|null}
+ */
 export function calcularSegundosRestantes(limiteMs, ahoraMs) {
   return Math.max(0, Math.ceil((limiteMs - ahoraMs) / MS_POR_SEGUNDO));
 }
 
 /**
+ * @brief Hook del cronómetro regresivo del quiz.
  * @param {Object} props
  * @param {string|null} props.fechaInicio - ISO 8601; null mientras no se pulsa "Iniciar".
- * @param {number} props.tiempoLimiteMin
+ * @param {number} props.tiempoLimiteMin - Tiempo límite en minutos.
  * @param {string} [props.fechaCierre] - ISO 8601.
  * @param {Function} [props.onTiempoAgotado] - Se llama una sola vez cuando el tiempo llega a 0.
- * @returns {{ segundosRestantes: number|null, agotado: boolean }}
+ * @return {{ segundosRestantes: number|null, agotado: boolean }}
  *   `segundosRestantes` es null mientras el quiz no ha iniciado.
  */
 export function useTemporizadorQuiz({

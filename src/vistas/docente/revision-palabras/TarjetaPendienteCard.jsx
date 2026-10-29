@@ -1,8 +1,13 @@
+/**
+ * @file TarjetaPendienteCard.jsx
+ * @brief Tarjeta de un término nuevo pendiente de revisión (HU-004).
+ */
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Tarjeta individual de la pestaña "Nuevos Términos" (HU-004).
+ * @brief Tarjeta individual de la pestaña "Nuevos Términos" (HU-004).
  * Muestra una palabra recién aportada por un estudiante, pendiente
  * de validación por parte de la docente.
  *
@@ -24,6 +29,13 @@ import { useTranslation } from 'react-i18next';
  * asignar registro y variante regional antes de que la aprobación
  * se confirme. Por eso este componente no sabe nada de "contexto
  * lingüístico" -- esa responsabilidad vive en el padre.
+ * @param {Object} props
+ * @param {Object} props.tarjeta - Tarjeta pendiente.
+ * @param {boolean} props.enEdicion - Si la tarjeta está en modo edición.
+ * @param {Function} props.onIniciarEdicion - Activa el modo edición.
+ * @param {Function} props.onCancelarEdicion - Sale del modo edición sin guardar.
+ * @param {Function} props.onAprobar - Recibe { traduccion, definicion, ejemplo }.
+ * @return {JSX.Element}
  */
 export function TarjetaPendienteCard({
   tarjeta,
@@ -44,12 +56,13 @@ export function TarjetaPendienteCard({
   const [ejemplo, setEjemplo] = useState(tarjeta.ejemplo || '');
 
   /**
-   * Se dispara al enviar el formulario de edición (botón "Guardar
+   * @brief Se dispara al enviar el formulario de edición (botón "Guardar
    * y Aprobar", type="submit"). Evita el comportamiento por defecto
    * del <form> (que recargaría la página) y envía los 3 campos
    * editados al padre para que continúe el flujo de aprobación
    * (que, como se explica arriba, en realidad abre el modal de
    * contexto de HU-005 antes de aprobar de verdad).
+   * @param {SubmitEvent} e - Evento submit del formulario.
    */
   function handleGuardarAprobar(e) {
     e.preventDefault();

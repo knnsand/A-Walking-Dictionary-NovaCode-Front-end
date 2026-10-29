@@ -1,6 +1,6 @@
 /**
- * quizzesApi.js
- * Cliente para HU-3.1 (generar quices acumulativos).
+ * @file quizzesApi.js
+ * @brief Cliente para HU-3.1 (generar quices acumulativos).
  * Fuentes: docs/contrato-quiz.md (frontend) y docs/CONTRATO_FRONTEND_HU-3.1.md
  * (backend, rama feature/Sprint_3_HU_007).
  *
@@ -11,7 +11,7 @@
 import { apiRequest } from './httpClient';
 
 /**
- * Genera un quiz acumulativo a partir de las tarjetas `revisado_docente` de los
+ * @brief Genera un quiz acumulativo a partir de las tarjetas `revisado_docente` de los
  * mazos elegidos y lo guarda en estado `programado` (CA-3.1.1, CA-3.1.2, CA-3.1.3).
  * POST /api/v1/quizzes/generate
  *
@@ -24,7 +24,7 @@ import { apiRequest } from './httpClient';
  * @param {number} datos.tiempo_limite_min - entero >= 1.
  * @param {number} [datos.cantidad_preguntas] - entero >= 1; si no se envía, el
  *   backend genera una pregunta por cada tarjeta aprobada.
- * @returns {Promise<{
+ * @return {Promise<{
  *   quiz: {
  *     id_quiz: number, curso_id: number, titulo: string, semana_corte: number,
  *     fecha_creacion: string, fecha_apertura: string, fecha_cierre: string,
@@ -47,8 +47,9 @@ export async function generarQuiz(datos) {
     body: JSON.stringify(datos),
   });
 }
+
 /**
- * Lista todos los quices generados, cada uno con `estado_efectivo` calculado
+ * @brief Lista todos los quices generados, cada uno con `estado_efectivo` calculado
  * (CA-3.1.3). Lo usa la lista compartida de quices (vistas/quices/ListaQuices):
  * la docente la ve bajo el formulario y exporta el PDF de cualquiera, aunque ya
  * haya recargado la página (CA-3.3.2); el estudiante la ve en /estudiante/quices.
@@ -58,7 +59,7 @@ export async function generarQuiz(datos) {
  * Cuando exista GET /quizzes/mine (docs/contrato-quiz-estudiante.md, 2.1), el
  * estudiante usará una función propia y esta quedará para la docente.
  *
- * @returns {Promise<Array<{
+ * @return {Promise<Array<{
  *   id_quiz: number, curso_id: number, titulo: string, semana_corte: number,
  *   fecha_creacion: string, fecha_apertura: string, fecha_cierre: string,
  *   tiempo_limite_min: number, estado: string, estado_efectivo: string
@@ -71,13 +72,13 @@ export async function listarQuices() {
 
 
 /**
- * Obtiene las preguntas de un quiz para el estudiante, sin `respuesta_correcta`
+ * @brief Obtiene las preguntas de un quiz para el estudiante, sin `respuesta_correcta`
  * ni `tarjeta_id` (HU-3.2). Solo responde mientras el quiz está abierto.
  * GET /api/v1/quizzes/:id/preguntas
  * Fuente: CONTRATO_FRONTEND_HU-3.2.md (backend, rama feature/Sprint_3_HU_008).
  *
- * @param {number|string} idQuiz
- * @returns {Promise<{
+ * @param {number|string} idQuiz - Id del quiz.
+ * @return {Promise<{
  *   quiz: {
  *     id_quiz: number, titulo: string, tiempo_limite_min: number,
  *     fecha_apertura: string, fecha_cierre: string,
@@ -97,7 +98,7 @@ export async function obtenerPreguntasQuiz(idQuiz) {
 }
 
 /**
- * Envía las respuestas del estudiante, el backend las califica y las guarda
+ * @brief Envía las respuestas del estudiante, el backend las califica y las guarda
  * (CA-3.2.1, CA-3.2.2, CA-3.2.3). Cada estudiante puede enviar una sola vez.
  * POST /api/v1/quizzes/:id/submit
  *
@@ -105,13 +106,13 @@ export async function obtenerPreguntasQuiz(idQuiz) {
  * devuelve el resumen del intento anterior y se entrega igual, con
  * `yaEnviado: true`, para mostrarlo como pantalla de resultado (CA-3.2.3).
  *
- * @param {number|string} idQuiz
+ * @param {number|string} idQuiz - Id del quiz.
  * @param {Object} datos
  * @param {string} datos.fecha_inicio - ISO 8601 (toISOString()); el backend lo
  *   usa para validar el tiempo límite.
  * @param {Array<{pregunta_id: number, respuesta_estudiante: string|null}>} datos.respuestas
  *   - `respuesta_estudiante` es el texto exacto de la opción elegida, no la letra.
- * @returns {Promise<{
+ * @return {Promise<{
  *   resultado: {
  *     id_resultado: number, quiz_id: number, estudiante_id: number,
  *     fecha_inicio: string, fecha_envio: string,
@@ -149,15 +150,15 @@ export async function enviarRespuestasQuiz(idQuiz, datos) {
 
 
 /**
- * Obtiene un quiz con su `estado_efectivo` calculado, para la portada del quiz (HU-3.2).
+ * @brief Obtiene un quiz con su `estado_efectivo` calculado, para la portada del quiz (HU-3.2).
  * GET /api/v1/quizzes/:id
  * No incluye preguntas (para eso, `obtenerPreguntasQuiz`).
  * Fuente: CONTRATO_FRONTEND_HU-3.1.md (backend), sección "Endpoints de apoyo".
  *
  * Usar siempre `estado_efectivo` ("programado" | "abierto" | "cerrado"), nunca `estado`.
  *
- * @param {number|string} idQuiz
- * @returns {Promise<{
+ * @param {number|string} idQuiz - Id del quiz.
+ * @return {Promise<{
  *   id_quiz: number, curso_id: number, titulo: string, semana_corte: number,
  *   fecha_creacion: string, fecha_apertura: string, fecha_cierre: string,
  *   tiempo_limite_min: number, estado: string, estado_efectivo: string

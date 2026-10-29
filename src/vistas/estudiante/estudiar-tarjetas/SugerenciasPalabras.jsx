@@ -1,11 +1,19 @@
+/**
+ * @file SugerenciasPalabras.jsx
+ * @brief Sugerencias de palabras relacionadas (WordNet) en el dorso de la flashcard (HU-011).
+ */
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { obtenerFamiliaPalabras } from '../../../cliente-api/enriquecimientoApi';
 import './sugerencias-palabras.css';
 
-// El backend agrupa por categoría gramatical (sustantivos, verbos, adjetivos, adverbios).
-// Aquí se aplana todo en una sola lista de términos.
+/**
+ * @brief El backend agrupa por categoría gramatical (sustantivos, verbos, adjetivos, adverbios).
+ * Aquí se aplana todo en una sola lista de términos.
+ * @param {Array|Object} sugerencias - Sugerencias tal como las devuelve el backend.
+ * @return {string[]}
+ */
 function aplanarSugerencias(sugerencias) {
   if (Array.isArray(sugerencias)) return sugerencias;
   if (!sugerencias || typeof sugerencias !== 'object') return [];
@@ -18,6 +26,12 @@ function aplanarSugerencias(sugerencias) {
   ]);
 }
 
+/**
+ * @brief Consulta y muestra las sugerencias de WordNet para la palabra de la tarjeta.
+ * @param {Object} props
+ * @param {string} props.palabra - Palabra de la tarjeta.
+ * @return {JSX.Element|null}
+ */
 export default function SugerenciasPalabras({ palabra }) {
   const { t } = useTranslation();
   const [sugerencias, setSugerencias] = useState([]);

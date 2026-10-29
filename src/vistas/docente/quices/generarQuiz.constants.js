@@ -1,6 +1,12 @@
+/**
+ * @file generarQuiz.constants.js
+ * @brief Constantes de la pantalla de generación de quices (HU-3.1).
+ */
+
+/** @brief Longitud máxima del título del quiz. */
 export const TITULO_MAX = 200;
 
-// Claves de traducción de los textos de la pantalla (el texto vive en src/i18n/locales/en.json).
+/** @brief Claves de traducción de los textos de la pantalla (el texto vive en src/i18n/locales/en.json). */
 export const TEXTOS_CLAVES = {
   titulo: 'quizGenerator.title',
   descripcion: 'quizGenerator.description',
@@ -43,8 +49,10 @@ export const TEXTOS_CLAVES = {
   botonExportarQuiz: 'exportActions.quizPrintable',
 };
 
-// Claves de los mensajes de validación del formulario (ver docs/contrato-quiz.md).
-// "tituloLargo" usa {{max}}, que se completa con TITULO_MAX al mostrarlo.
+/**
+ * @brief Claves de los mensajes de validación del formulario (ver docs/contrato-quiz.md).
+ * "tituloLargo" usa {{max}}, que se completa con TITULO_MAX al mostrarlo.
+ */
 export const ERRORES_VALIDACION = {
   curso: 'quizValidation.course',
   mazos: 'quizValidation.decks',

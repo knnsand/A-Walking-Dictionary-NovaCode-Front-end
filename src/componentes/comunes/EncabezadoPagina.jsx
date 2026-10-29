@@ -1,12 +1,20 @@
+/**
+ * @file EncabezadoPagina.jsx
+ * @brief Barra superior del layout con el título de la pantalla activa.
+ */
+
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EncabezadoContext } from '../../contexto/EncabezadoContext';
 
 /**
- * Barra superior del layout. Muestra el título y subtítulo que declaró la
+ * @brief Barra superior del layout. Muestra el título y subtítulo que declaró la
  * pantalla activa (useEncabezadoPagina) y, en móvil, el botón ☰ del menú.
  * Si la pantalla no declara título, queda como antes: oculta en escritorio
  * y solo con el botón ☰ en móvil.
+ * @param {Object} props
+ * @param {Function} props.onAbrirMenu - Abre o cierra el menú lateral en móvil.
+ * @return {JSX.Element}
  */
 export function EncabezadoPagina({ onAbrirMenu }) {
   const { t } = useTranslation();

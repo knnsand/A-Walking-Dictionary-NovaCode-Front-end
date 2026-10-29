@@ -1,3 +1,8 @@
+/**
+ * @file LayoutPrincipal.jsx
+ * @brief Layout común de las vistas de docente, estudiante e invitado.
+ */
+
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
@@ -9,7 +14,7 @@ import { ModalRegistrarTarjeta } from '../../vistas/estudiante/registrar-tarjeta
 import { ModalUnirseCurso } from '../../vistas/estudiante/unirse-curso/ModalUnirseCurso';
 
 /**
- * Envoltorio de página usado por las 3 vistas de rol. Coloca el
+ * @brief Envoltorio de página usado por las 3 vistas de rol. Coloca el
  * Sidebar (adaptado al rol activo vía useAuth) más una barra
  * superior con el título de la pantalla activa, y renderiza la ruta
  * hija en <Outlet/>.
@@ -27,9 +32,11 @@ import { ModalUnirseCurso } from '../../vistas/estudiante/unirse-curso/ModalUnir
  * opciones mientras el estudiante recién registrado no haya completado
  * su perfil académico (HU-013) y sus datos personales.
  *
- * Props:
- * - rolFijo: fuerza el rol del layout sin importar la sesión. Se usa en
+ * @param {Object} props
+ * @param {Object} [props.contadores] - Contadores para los badges del Sidebar (ej. { pendientes: 2 }).
+ * @param {string} [props.rolFijo] - Fuerza el rol del layout sin importar la sesión. Se usa en
  *   /invitado (modo consulta pública), donde no hay sesión iniciada.
+ * @return {JSX.Element}
  */
 export function LayoutPrincipal({ contadores = {}, rolFijo }) {
   const { rol: rolSesion, usuario, perfilCompleto, logout } = useAuth();
@@ -41,6 +48,7 @@ export function LayoutPrincipal({ contadores = {}, rolFijo }) {
   const [modalRegistrarTarjetaAbierto, setModalRegistrarTarjetaAbierto] = useState(false);
   const [modalUnirseCursoAbierto, setModalUnirseCursoAbierto] = useState(false);
 
+  /** @brief Cierra la sesión y vuelve a la pantalla de login. */
   function manejarCerrarSesion() {
     logout();
     void navigate('/login', { replace: true });

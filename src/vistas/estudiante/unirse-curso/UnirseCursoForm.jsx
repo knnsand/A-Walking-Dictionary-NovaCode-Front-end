@@ -1,3 +1,8 @@
+/**
+ * @file UnirseCursoForm.jsx
+ * @brief Formulario para unirse a un curso con código de acceso (HU-5.3.1).
+ */
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { unirseCurso } from '../../../cliente-api/inscripcionesApi';
@@ -6,6 +11,13 @@ import { useAuth } from '../../../contexto/useAuth';
 import { FORM_INICIAL } from './unirseCurso.constants';
 import { validarCamposObligatorios } from './unirseCurso.validation';
 
+/**
+ * @brief Formulario con el código de acceso que entrega la docente.
+ * @param {Object} props
+ * @param {Function} [props.onCerrar] - Cierra el formulario.
+ * @param {Function} [props.onInscripcionCreada] - Recibe la inscripción creada.
+ * @return {JSX.Element}
+ */
 export function UnirseCursoForm({ onCerrar, onInscripcionCreada }) {
   const { t } = useTranslation();
   const { estudianteId } = useAuth();
@@ -13,11 +25,19 @@ export function UnirseCursoForm({ onCerrar, onInscripcionCreada }) {
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
   const [enviando, setEnviando] = useState(false);
 
+  /**
+   * @brief Actualiza el campo del formulario que cambió.
+   * @param {Event} evento - Evento change del input o select.
+   */
   function handleChange(evento) {
     const { name, value } = evento.target;
     setForm((anterior) => ({ ...anterior, [name]: value }));
   }
 
+  /**
+   * @brief Valida el código e inscribe al estudiante en el curso.
+   * @param {SubmitEvent} evento - Evento submit del formulario.
+   */
   async function handleSubmit(evento) {
     evento.preventDefault();
 

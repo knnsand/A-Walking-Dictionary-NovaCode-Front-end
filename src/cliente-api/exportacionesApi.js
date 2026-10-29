@@ -1,6 +1,6 @@
 /**
- * exportacionesApi.js
- * Cliente para HU-3.3 (HU-009 en la numeración de sprint): exportar mazos y
+ * @file exportacionesApi.js
+ * @brief Cliente para HU-3.3 (HU-009 en la numeración de sprint): exportar mazos y
  * quices a PDF.
  * Fuente: docs/contrato-exportacion.md (frontend) y
  * docs/CONTRATO_FRONTEND_HU-3.3.md (backend).
@@ -12,14 +12,16 @@
 import { apiDescargarArchivo } from './httpClient';
 import { USE_MOCK } from './apiConfig';
 
+/** @brief Mensaje de error cuando se intenta exportar con datos simulados. */
 const MENSAJE_MOCK =
   'La exportación a PDF no está disponible con datos simulados (VITE_USE_MOCK=true).';
 
 /**
- * Descarga el PDF del mazo con sus tarjetas aprobadas por la docente (CA-3.3.1, CA-3.3.3).
+ * @brief Descarga el PDF del mazo con sus tarjetas aprobadas por la docente (CA-3.3.1, CA-3.3.3).
  * GET /api/v1/decks/:id/export-pdf
  *
- * @param {number|string} idMazo
+ * @param {number|string} idMazo - Id del mazo a exportar.
+ * @return {Promise<void>} Se resuelve cuando inicia la descarga.
  * @throws {Error} con `.message` listo para mostrar al usuario.
  */
 export async function exportarMazoPdf(idMazo) {
@@ -30,11 +32,12 @@ export async function exportarMazoPdf(idMazo) {
 }
 
 /**
- * Descarga el PDF imprimible del quiz: hoja de preguntas y, en página aparte,
+ * @brief Descarga el PDF imprimible del quiz: hoja de preguntas y, en página aparte,
  * la hoja de respuestas para la docente (CA-3.3.2, CA-3.3.3).
  * GET /api/v1/quizzes/:id/export-pdf
  *
- * @param {number|string} idQuiz
+ * @param {number|string} idQuiz - Id del quiz a exportar.
+ * @return {Promise<void>} Se resuelve cuando inicia la descarga.
  * @throws {Error} con `.message` listo para mostrar al usuario.
  */
 export async function exportarQuizPdf(idQuiz) {

@@ -1,11 +1,20 @@
+/**
+ * @file httpClient.js
+ * @brief Cliente HTTP base de la aplicación: arma las peticiones a la API, agrega el token JWT
+ * y convierte las respuestas de error del backend en objetos Error legibles.
+ */
+
 import i18n from '../i18n';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const TOKEN_KEY = 'walking_dictionary_token';
 
-// Evita que una ruta construida con datos del usuario cambie el host destino
-// (p. ej. "//evil.com", "https://evil.com" o "/../"): solo se aceptan rutas
-// relativas a la API.
+/**
+ * @brief Evita que una ruta construida con datos del usuario cambie el host destino
+ * (p. ej. "//evil.com", "https://evil.com" o "/../"): solo se aceptan rutas relativas a la API.
+ * @param {string} path - Ruta a validar.
+ * @throws {Error} Si la ruta no es relativa a la API.
+ */
 function validarRuta(path) {
   const texto = String(path);
   const esRelativa = texto.startsWith('/') && !texto.startsWith('//');
@@ -14,6 +23,14 @@ function validarRuta(path) {
   }
 }
 
+/**
+ * @brief Hace una petición JSON a la API con el token guardado en localStorage.
+ * @param {string} path - Ruta relativa a VITE_API_BASE_URL (ej. `/decks`).
+ * @param {RequestInit} [options] - Opciones de fetch (method, body, headers adicionales).
+ * @return {Promise<any>} El cuerpo de la respuesta ya interpretado como JSON.
+ * @throws {Error} Con `.message` listo para mostrar (el `error` del backend si lo hay),
+ * `.status` con el código HTTP y `.cuerpo` con el JSON de error recibido.
+ */
 export async function apiRequest(path, options = {}) {
   validarRuta(path);
   const token = localStorage.getItem(TOKEN_KEY);
@@ -50,8 +67,9 @@ export async function apiRequest(path, options = {}) {
 
   return response.json();
 }
+
 /**
- * Descarga un archivo binario (p. ej. un PDF) desde el backend y dispara la
+ * @brief Descarga un archivo binario (p. ej. un PDF) desde el backend y dispara la
  * descarga en el navegador.
  *
  * `apiRequest` no sirve para esto porque siempre interpreta la respuesta como

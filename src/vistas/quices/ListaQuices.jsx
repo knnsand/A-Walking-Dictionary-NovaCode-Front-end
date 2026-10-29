@@ -1,27 +1,29 @@
-// vistas/quices/ListaQuices.jsx
-// HU-009: lista de quices compartida por docente y estudiante (mismo patrón que
-// MazosEstudio: una sola vista y las acciones de cada tarjeta dependen del rol).
-//
-// Dónde se usa:
-//   - docente:    dentro de GenerarQuiz (/docente/quices), justo debajo del formulario, con
-//                 la prop `embebida` (no pisa el encabezado de la pantalla). Cada tarjeta
-//                 trae su botón de exportar la versión impresa (HU-3.3, CA-3.3.2).
-//   - estudiante: pantalla propia /estudiante/quices. Cada tarjeta enlaza a
-//                 /estudiante/quices/:idQuiz (ResponderQuiz, HU-3.2).
-//
-// Siempre se usa `estado_efectivo`, nunca `estado`.
-//
-// Datos: GET /quizzes (listarQuices): todos los quices, de todos los cursos y sin orden
-// garantizado. Cuando exista GET /quizzes/mine (docs/contrato-quiz-estudiante.md, 2.1), el
-// estudiante recibirá otro `servicio` y `quiz.resultado` traerá la nota de los ya enviados.
-//
-// PENDIENTE al fusionar HU-3.2 (esta rama aún no la trae): además de `quiz.resultado`, marcar
-// como respondido con leerResultado(idQuiz, estudianteId) de responderQuiz.storage.js, que
-// requiere useAuth().estudianteId.
-//
-// Aspecto: reutiliza la librería visual global de las tarjetas de Revisión de Palabras
-// (.tarjeta-pendiente dentro de .mazo-pila, .badge, .btn); solo la cuadrícula y el color por
-// estado viven en lista-quices.css.
+/**
+ * @file ListaQuices.jsx
+ * @brief HU-009: lista de quices compartida por docente y estudiante (mismo patrón que
+ * MazosEstudio: una sola vista y las acciones de cada tarjeta dependen del rol).
+ *
+ * Dónde se usa:
+ *   - docente:    dentro de GenerarQuiz (/docente/quices), justo debajo del formulario, con
+ *                 la prop `embebida` (no pisa el encabezado de la pantalla). Cada tarjeta
+ *                 trae su botón de exportar la versión impresa (HU-3.3, CA-3.3.2).
+ *   - estudiante: pantalla propia /estudiante/quices. Cada tarjeta enlaza a
+ *                 /estudiante/quices/:idQuiz (ResponderQuiz, HU-3.2).
+ *
+ * Siempre se usa `estado_efectivo`, nunca `estado`.
+ *
+ * Datos: GET /quizzes (listarQuices): todos los quices, de todos los cursos y sin orden
+ * garantizado. Cuando exista GET /quizzes/mine (docs/contrato-quiz-estudiante.md, 2.1), el
+ * estudiante recibirá otro `servicio` y `quiz.resultado` traerá la nota de los ya enviados.
+ *
+ * PENDIENTE al fusionar HU-3.2 (esta rama aún no la trae): además de `quiz.resultado`, marcar
+ * como respondido con leerResultado(idQuiz, estudianteId) de responderQuiz.storage.js, que
+ * requiere useAuth().estudianteId.
+ *
+ * Aspecto: reutiliza la librería visual global de las tarjetas de Revisión de Palabras
+ * (.tarjeta-pendiente dentro de .mazo-pila, .badge, .btn); solo la cuadrícula y el color por
+ * estado viven en lista-quices.css.
+ */
 
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,11 +43,16 @@ import {
 import { formatearFecha, textoNota } from './listaQuices.format';
 import './lista-quices.css';
 
+/** @brief API real que usa la lista si no se le pasa otro servicio. */
 const servicioPorDefecto = { listarQuices };
 
 /**
- * Pinta el título de la pantalla en el layout (recibe los textos ya traducidos). Va en su propio componente para poder
+ * @brief Pinta el título de la pantalla en el layout (recibe los textos ya traducidos). Va en su propio componente para poder
  * omitirlo cuando la lista está dentro de otra pantalla (que ya tiene su encabezado).
+ * @param {Object} props
+ * @param {string} props.titulo - Título de la pantalla.
+ * @param {string} props.descripcion - Subtítulo de la pantalla.
+ * @return {null}
  */
 function EncabezadoLista({ titulo, descripcion }) {
   useEncabezadoPagina(titulo, descripcion);
@@ -53,6 +60,7 @@ function EncabezadoLista({ titulo, descripcion }) {
 }
 
 /**
+ * @brief Lista de quices en tarjetas, con acciones según el rol.
  * @param {Object} props
  * @param {'docente'|'estudiante'} props.rol
  * @param {boolean} [props.embebida] true cuando va dentro de otra pantalla: no toca el
@@ -60,6 +68,7 @@ function EncabezadoLista({ titulo, descripcion }) {
  * @param {number|string} [props.refrescarTrigger] Cuando cambia, se vuelve a cargar la lista
  *   (la docente lo usa al generar un quiz nuevo).
  * @param {Object} [props.servicio] Reemplazo de la API (útil para pruebas).
+ * @return {JSX.Element}
  */
 export function ListaQuices({
   rol,

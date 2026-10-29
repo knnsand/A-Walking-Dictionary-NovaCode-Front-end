@@ -1,3 +1,8 @@
+/**
+ * @file DiccionarioGlobal.jsx
+ * @brief Diccionario Global (HU-016): vocabulario aprobado con búsqueda, filtro por letra y detalle de cada palabra.
+ */
+
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   listarDiccionario,
@@ -7,8 +12,15 @@ import './DiccionarioGlobal.css';
 import { EnriquecimientoDiccionario } from './EnriquecimientoDiccionario';
 
 
+/** @brief Letras del filtro alfabético. */
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
+/**
+ * @brief Devuelve el valor como texto, o el texto de respaldo si viene vacío.
+ * @param {*} value - Valor a mostrar.
+ * @param {string} [fallback] - Texto si el valor es null, undefined o vacío.
+ * @return {string}
+ */
 function textOrFallback(value, fallback = 'Not available') {
   if (value === null || value === undefined) return fallback;
   const text = String(value).trim();
@@ -19,6 +31,7 @@ function textOrFallback(value, fallback = 'Not available') {
 
 
 
+/** @brief Nombre en inglés de cada tipo de etiqueta de contexto. */
 const CONTEXT_TYPES = {
   registro: 'Register',
   variante_regional: 'Regional Variant',
@@ -27,6 +40,7 @@ const CONTEXT_TYPES = {
   contexto: 'Context',
 };
 
+/** @brief Traducción al inglés de los valores de contexto guardados en español. */
 const CONTEXT_VALUES = {
   informal: 'Informal',
   formal: 'Formal',
@@ -46,6 +60,12 @@ const CONTEXT_VALUES = {
   adverbio: 'Adverb',
 };
 
+/**
+ * @brief Normaliza un texto para buscarlo en CONTEXT_TYPES o CONTEXT_VALUES
+ * (minúsculas y sin tildes).
+ * @param {*} value - Texto a normalizar.
+ * @return {string}
+ */
 function normalizeContextKey(value) {
   return String(value ?? '')
     .trim()
@@ -54,6 +74,11 @@ function normalizeContextKey(value) {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
+/**
+ * @brief Arma el texto de una etiqueta de contexto, por ejemplo "Register: Formal".
+ * @param {{tipo?: string, valor?: string}} tag - Etiqueta de contexto de la tarjeta.
+ * @return {string}
+ */
 function formatContextTag(tag) {
   const rawType = textOrFallback(tag?.tipo, 'Context');
   const rawValue = textOrFallback(tag?.valor, '');
@@ -74,6 +99,14 @@ function formatContextTag(tag) {
 
 
 
+/**
+ * @brief Tarjeta de una palabra en la cuadrícula del diccionario.
+ * @param {Object} props
+ * @param {Object} props.word - Palabra aprobada.
+ * @param {number} props.colorIndex - Índice del color de la tarjeta.
+ * @param {Function} props.onViewDetails - Abre el detalle de la palabra.
+ * @return {JSX.Element}
+ */
 function WordCard({ word, colorIndex, onViewDetails }) {
   const previewContext = Array.isArray(word.contexto)
     ? word.contexto.slice(0, 3)
@@ -144,6 +177,15 @@ function WordCard({ word, colorIndex, onViewDetails }) {
 
 
 
+/**
+ * @brief Panel con el detalle de una palabra; se cierra con Escape o con el botón de cerrar.
+ * @param {Object} props
+ * @param {Object|null} props.word - Detalle de la palabra.
+ * @param {boolean} props.loading - Si el detalle se está cargando.
+ * @param {string} props.error - Mensaje de error, vacío si no hay.
+ * @param {Function} props.onClose - Cierra el panel.
+ * @return {JSX.Element}
+ */
 function WordDetails({
   word,
   loading,
@@ -299,6 +341,10 @@ function WordDetails({
   );
 }
 
+/**
+ * @brief Pantalla del Diccionario Global, compartida por los tres roles.
+ * @return {JSX.Element}
+ */
 export function DiccionarioGlobal() {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -358,18 +404,27 @@ export function DiccionarioGlobal() {
     );
   }, [words, selectedLetter]);
 
+  /**
+   * @brief Aplica el texto de búsqueda y quita el filtro por letra.
+   * @param {SubmitEvent} event - Evento submit del formulario de búsqueda.
+   */
   function handleSearch(event) {
     event.preventDefault();
     setSelectedLetter('ALL');
     setSearchTerm(searchInput.trim());
   }
 
+  /** @brief Limpia la búsqueda y el filtro por letra. */
   function clearFilters() {
     setSearchInput('');
     setSearchTerm('');
     setSelectedLetter('ALL');
   }
 
+  /**
+   * @brief Abre el detalle de una palabra y lo consulta; ignora respuestas de consultas viejas.
+   * @param {number} idTarjeta - Id de la tarjeta.
+   */
   async function viewDetails(idTarjeta) {
     if (idTarjeta == null) return;
 
@@ -400,6 +455,7 @@ export function DiccionarioGlobal() {
     }
   }
 
+  /** @brief Cierra el detalle y devuelve el foco al elemento que lo abrió. */
   function closeDetails() {
     ++detailRequestRef.current;
     setDetailsOpen(false);

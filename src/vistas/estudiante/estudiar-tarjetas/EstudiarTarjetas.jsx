@@ -1,15 +1,17 @@
-// vistas/estudiante/estudiar-tarjetas/EstudiarTarjetas.jsx
-// HU-010: Estudiar con repetición espaciada (flashcards + SM-2)
-//
-// CA-4.1.1  Frente / dorso: la palabra en inglés; al girar se ven traducción, definición y ejemplo.
-// CA-4.1.2  Valoración Repetir / Difícil / Buena / Fácil -> el back recalcula SM-2 y programa
-//           el próximo repaso.
-// CA-4.1.3  "Repetir" reintroduce la tarjeta al final del bloque; las tarjetas no se acaban
-//           (al terminar la vuelta el mazo reinicia) y el resumen de la sesión se muestra
-//           cuando el estudiante pulsa "Terminar sesión de repaso".
-//
-// Uso (por ejemplo desde PanelEstudiante.jsx):
-//   <EstudiarTarjetas inscripcionId={inscripcionId} onSalir={volverAlPanel} />
+/**
+ * @file EstudiarTarjetas.jsx
+ * @brief HU-010: Estudiar con repetición espaciada (flashcards + SM-2)
+ *
+ * CA-4.1.1  Frente / dorso: la palabra en inglés; al girar se ven traducción, definición y ejemplo.
+ * CA-4.1.2  Valoración Repetir / Difícil / Buena / Fácil -> el back recalcula SM-2 y programa
+ *           el próximo repaso.
+ * CA-4.1.3  "Repetir" reintroduce la tarjeta al final del bloque; las tarjetas no se acaban
+ *           (al terminar la vuelta el mazo reinicia) y el resumen de la sesión se muestra
+ *           cuando el estudiante pulsa "Terminar sesión de repaso".
+ *
+ * Uso (por ejemplo desde PanelEstudiante.jsx):
+ *   <EstudiarTarjetas inscripcionId={inscripcionId} onSalir={volverAlPanel} />
+ */
 
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,11 +28,14 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 import { TarjetaFlashcard } from './TarjetaFlashcard';
 import { BotonesValoracion } from './BotonesValoracion';
 
+/** @brief API real que usa la vista si no se le pasa otro servicio. */
 const servicioPorDefecto = { iniciarSesionRepaso, registrarValoracion };
 
+/** @brief Conteo en cero de cada valoración, para el resumen de la sesión. */
 const conteosIniciales = () =>
   Object.fromEntries(Object.values(VALORACIONES).map((valoracion) => [valoracion, 0]));
 
+/** @brief Estado inicial de la sesión de estudio (ver reductor). */
 const estadoInicial = {
   fase: 'cargando', // cargando | error | vacio | estudiando | terminada
   error: null, // { clave, mensaje }: clave de traducción propia o mensaje que devuelve el backend
@@ -51,6 +56,12 @@ const estadoInicial = {
   fin: null,
 };
 
+/**
+ * @brief Reductor de la sesión de estudio: carga, giro, valoración, reinicio de la vuelta y fin.
+ * @param {Object} estado - Estado actual (forma de estadoInicial).
+ * @param {{tipo: string}} accion - Acción a aplicar (CARGA_INICIO, CARGA_OK, VOLTEAR, TERMINAR, ...).
+ * @return {Object} Nuevo estado.
+ */
 function reductor(estado, accion) {
   switch (accion.tipo) {
     case 'CARGA_INICIO':
@@ -128,6 +139,11 @@ function reductor(estado, accion) {
   }
 }
 
+/**
+ * @brief Duración legible de la sesión, por ejemplo "3 min 12 s".
+ * @param {number} ms - Duración en milisegundos.
+ * @return {string}
+ */
 function formatearDuracion(ms) {
   const segundos = Math.max(0, Math.round(ms / 1000));
   const minutos = Math.floor(segundos / 60);
@@ -135,7 +151,12 @@ function formatearDuracion(ms) {
   return minutos > 0 ? `${minutos} min ${resto} s` : `${resto} s`;
 }
 
-// Devuelve un descriptor { clave, valores } que se traduce al mostrarlo.
+/**
+ * @brief Mensaje que se muestra después de valorar una tarjeta.
+ * @param {string} valoracion - Valoración enviada.
+ * @param {Object} [progreso] - Progreso devuelto por el backend (usa intervalo_dias).
+ * @return {{clave: string, valores?: Object}} Descriptor que se traduce al mostrarlo.
+ */
 function construirMensaje(valoracion, progreso) {
   if (valoracion === VALORACIONES.REPETIR) {
     return { clave: 'studySession.feedback.repeat' };
@@ -146,6 +167,7 @@ function construirMensaje(valoracion, progreso) {
     : { clave: 'studySession.feedback.saved' };
 }
 
+/** @brief Ícono de flecha para volver a los mazos. */
 const IconoVolver = () => (
   <svg
     width="16"
@@ -164,11 +186,13 @@ const IconoVolver = () => (
 );
 
 /**
+ * @brief Sesión de estudio con flashcards y repetición espaciada (SM-2).
  * @param {Object}   props
  * @param {number}   props.inscripcionId  Inscripción activa del estudiante (la exige el back).
  * @param {Object}   [props.mazosPorId]   { [mazo_id]: { nombre, semana } } para el encabezado.
  * @param {Function} [props.onSalir]      Si se pasa, se muestra la flecha y "Volver a los mazos".
  * @param {Object}   [props.servicio]     Reemplazo de la API (útil para pruebas).
+ * @return {JSX.Element}
  */
 export function EstudiarTarjetas({
   inscripcionId,
@@ -218,11 +242,17 @@ export function EstudiarTarjetas({
     };
   }, [servicio, inscripcionId, recarga]);
 
+  /** @brief Gira la tarjeta actual. */
   const voltear = useCallback(() => dispatch({ tipo: 'VOLTEAR' }), []);
 
+  /** @brief Termina la sesión y muestra el resumen. */
   const terminar = useCallback(() => dispatch({ tipo: 'TERMINAR' }), []);
 
   // ---------- Valoración (CA-4.1.2) ----------
+  /**
+   * @brief Envía la valoración de la tarjeta actual y pasa a la siguiente.
+   * @param {string} valoracion - 'Repetir', 'Difícil', 'Buena' o 'Fácil'.
+   */
   const valorar = useCallback(
     async (valoracion) => {
       if (!actual || estado.guardando || !estado.vista) return;
@@ -281,6 +311,7 @@ export function EstudiarTarjetas({
     }
   }, [estado.fase, estado.turno]);
 
+  /** @brief Vuelve a pedir la sesión de repaso al backend. */
   const recargar = () => setRecarga((n) => n + 1);
 
   const botonSalir = onSalir && (
