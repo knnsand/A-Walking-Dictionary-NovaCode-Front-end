@@ -1,5 +1,8 @@
 
-/* HU-018: Vista del progreso individual */
+/* =========================================
+   REPORTES DEL ESTUDIANTE
+   HU-018 Y HU-019
+   ========================================= */
 
 .progreso-estudiante {
   width: 100%;
@@ -7,7 +10,13 @@
   margin: 0;
   padding: 24px 16px;
   box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
+
+/* Tarjetas principales de reportes */
 
 .progreso-estudiante__card {
   width: 100%;
@@ -17,9 +26,10 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(20, 28, 48, 0.05);
+  box-sizing: border-box;
 }
 
-/* Encabezado de la tarjeta */
+/* Encabezado */
 
 .progreso-estudiante__header {
   display: flex;
@@ -36,6 +46,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
   border-radius: 12px;
   background: var(--color-role-bg, #fce8eb);
   color: var(--color-role, #ac1f32);
@@ -48,15 +59,17 @@
   color: var(--color-text-main, #152342);
   font-family: var(--font-serif, Georgia, serif);
   font-size: 1.45rem;
+  line-height: 1.3;
 }
 
 .progreso-estudiante__header p {
   margin: 0;
   color: var(--color-text-muted, #64748b);
   font-size: 0.9rem;
+  line-height: 1.5;
 }
 
-/* Contenido principal */
+/* Contenido */
 
 .progreso-estudiante__body {
   padding: 24px;
@@ -69,7 +82,7 @@
   line-height: 1.6;
 }
 
-/* Tarjetas informativas */
+/* Tres bloques informativos */
 
 .progreso-estudiante__items {
   display: grid;
@@ -81,8 +94,11 @@
   display: flex;
   flex-direction: column;
   gap: 9px;
+
+  min-width: 0;
   min-height: 125px;
   padding: 16px;
+
   background: var(--color-bg-header, #f4f6fa);
   border: 1px solid var(--color-border, #dce2ed);
   border-radius: 10px;
@@ -98,15 +114,16 @@
 .progreso-estudiante__item strong {
   color: var(--color-text-main, #152342);
   font-size: 0.92rem;
+  line-height: 1.4;
 }
 
 .progreso-estudiante__item small {
   color: var(--color-text-muted, #64748b);
   font-size: 0.8rem;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
-/* Botón debajo de las tarjetas */
+/* Botones de descarga */
 
 .progreso-estudiante__acciones {
   display: flex;
@@ -122,6 +139,9 @@
   padding: 11px 22px;
   font-weight: 700;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .progreso-estudiante__acciones .btn:hover:not(:disabled) {
@@ -145,20 +165,37 @@
 @media (max-width: 700px) {
   .progreso-estudiante {
     padding: 16px 10px;
+    gap: 18px;
   }
 
   .progreso-estudiante__items {
     grid-template-columns: 1fr;
   }
 
+  .progreso-estudiante__item {
+    min-height: auto;
+  }
+
   .progreso-estudiante__header {
     padding: 18px;
+    gap: 12px;
+  }
+
+  .progreso-estudiante__header h2 {
+    font-size: 1.2rem;
+  }
+
+  .progreso-estudiante__icono {
+    width: 46px;
+    height: 46px;
   }
 
   .progreso-estudiante__body {
     padding: 18px;
   }
 
+  .progreso-estudiante__acciones,
+  .progreso-estudiante__acciones .boton-exportar-pdf,
   .progreso-estudiante__acciones .btn {
     width: 100%;
   }

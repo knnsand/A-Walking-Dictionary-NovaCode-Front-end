@@ -486,7 +486,29 @@
     "downloadCourseReportFor": "Export the report of all students in {{name}}",
     "errors": {
       "loadFailed": "Could not load the course."
-    }
+    },
+    
+    "reportsTitle": "Reports",
+    "reportsSubtitle": "Download the course report or the general study mode report.",
+    "exportCourseReport": "Download Course Report PDF",
+    "studentsTitle": "Enrolled students",
+    "exportReportFor": "Export the report of all students in {{name}}"
+
+  },
+   "studyModeReport": {
+    "downloadGeneral": "Download Study Mode Report PDF",
+    "generalScope": "The study mode report includes all students, not only those enrolled in this course.",
+    "ownTitle": "Study Mode Report",
+    "ownSubtitle": "Your spaced repetition progress in one PDF",
+    "ownDescription": "Download a PDF with your review activity, ratings, overdue cards and words that need more practice.",
+    "downloadOwn": "Download My Study Report",
+    "reviewSummaryTitle": "Review Summary",
+    "reviewSummary": "Reviewed cards, last review date and overdue cards",
+    "ratingsTitle": "Review Ratings",
+    "ratings": "Repeat, Hard, Good and Easy ratings",
+    "difficultWordsTitle": "Difficult Words",
+    "difficultWords": "Words with the lowest ease factors and upcoming reviews"
+
   },
   "enrollStudentForm": {
     "title": "Enroll student",
@@ -740,6 +762,10 @@
     "words": "Contributed vocabulary and approval status",
     "quizzes": "Quiz results and scores",
     "study": "Study sessions and review progress",
-    "reportSubtitle": "Your academic progress in one PDF"
+    "reportSubtitle": "Your academic progress in one PDF",
+    "wordsTitle": "Vocabulary",
+    "quizzesTitle": "Quiz Results",
+    "studyTitle": "Study Progress"
+
   }
 }

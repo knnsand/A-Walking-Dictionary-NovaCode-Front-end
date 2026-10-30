@@ -89,6 +89,62 @@ export async function descargarProgresoMock(idEstudiante) {
   descargarBlob(crearPdfBasico(lineas), `student-progress-${idEstudiante}-MOCK.pdf`);
 }
 
+/**
+ * HU-019: genera y descarga un reporte ficticio del modo de estudio.
+ *
+ * Sin idEstudiante: simula el reporte general de la docente.
+ * Con idEstudiante: simula el reporte individual del estudiante.
+ *
+ * Los datos son ficticios y se utilizan únicamente para
+ * comprobar la descarga desde el frontend.
+ */
+export async function descargarModoEstudioMock(idEstudiante = null) {
+  const esGeneral = idEstudiante === null;
+
+  const lineas = [
+    'A WALKING DICTIONARY - STUDY MODE REPORT',
+    'MOCK DATA - FOR FRONTEND TESTING ONLY',
+    `Generated: ${new Date().toISOString().slice(0, 10)}`,
+    '',
+    esGeneral
+      ? 'REPORT TYPE: GENERAL - ALL STUDENTS'
+      : `REPORT TYPE: INDIVIDUAL - STUDENT ID ${idEstudiante}`,
+    '',
+    '1. STUDY REVIEW SUMMARY',
+    'Reviewed cards: 12',
+    'Last review: 2026-10-25',
+    'Overdue cards: 3',
+    '',
+    'REVIEW RATINGS',
+    'Repeat: 4',
+    'Hard: 3',
+    'Good: 4',
+    'Easy: 1',
+    '',
+    '2. MOST DIFFICULT WORDS',
+    'Wander | Ease factor: 1.30 | Last rating: Repeat',
+    'Next review: 2026-10-30',
+    'Curious | Ease factor: 1.50 | Last rating: Hard',
+    'Next review: 2026-11-01',
+    'Strange | Ease factor: 1.70 | Last rating: Good',
+    'Next review: 2026-11-04',
+  ];
+
+  if (esGeneral) {
+    lineas.push(
+      '',
+      '3. STUDENTS WITHOUT STUDY ACTIVITY',
+      'Javier Delgado - No study activity',
+    );
+  }
+
+  const nombreArchivo = esGeneral
+    ? 'study-mode-report-general-MOCK.pdf'
+    : `study-mode-report-${idEstudiante}-MOCK.pdf`;
+
+  descargarBlob(crearPdfBasico(lineas), nombreArchivo);
+}
+
 // HU-020: genera y descarga el reporte ficticio de todos los estudiantes de un curso.
 export async function descargarReporteCursoMock(idCurso) {
   const lineas = [
