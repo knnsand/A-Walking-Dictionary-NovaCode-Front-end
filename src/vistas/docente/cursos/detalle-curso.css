@@ -1,59 +1,223 @@
+
+/* =========================================
+   DETALLE DEL CURSO - DOCENTE
+   HU-018, HU-019 Y HU-020
+   ========================================= */
+
+.detalle-curso {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  box-sizing: border-box;
+}
+
+/* Enlace para volver */
 .detalle-curso__volver {
-  display: inline-block;
-  margin-bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 24px;
+  color: var(--color-role, #102681);
   font-weight: 600;
   text-decoration: none;
-  color: var(--color-role, inherit);
 }
 
-/* HU-020: barra con el botón del reporte del curso, encima de la tabla */
-.detalle-curso__acciones {
+.detalle-curso__volver:hover {
+  text-decoration: underline;
+}
+
+.detalle-curso__volver:focus-visible {
+  outline: 3px solid var(--color-role-border, #a4b5eb);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* =========================================
+   PANEL BLANCO DE REPORTES
+   ========================================= */
+
+.detalle-curso__panel-reportes {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto 32px;
+  padding: 28px 30px;
+
+  background-color: var(--color-bg-card, #ffffff);
+  border: 1px solid var(--color-border, #dce2ed);
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(18, 38, 75, 0.06);
+
+  box-sizing: border-box;
+}
+
+.detalle-curso__panel-encabezado {
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-border, #dce2ed);
+}
+
+.detalle-curso__panel-titulo {
+  margin: 0 0 8px;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text-main, #172752);
+}
+
+.detalle-curso__panel-descripcion {
+  margin: 0;
+  color: var(--color-text-muted, #64748b);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+/* =========================================
+   BOTONES HU-019 Y HU-020
+   ========================================= */
+
+.detalle-curso__acciones-reportes {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
+.detalle-curso__acciones-reportes .boton-exportar-pdf {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.detalle-curso__acciones-reportes .btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  min-height: 42px;
+  padding: 10px 18px;
+
+  background-color: var(--color-role, #102681);
+  border: 1px solid var(--color-role, #102681);
+  border-radius: 8px;
+
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.detalle-curso__acciones-reportes .btn:hover:not(:disabled) {
+  background-color: var(--color-role-hover, #0b1d63);
+  border-color: var(--color-role-hover, #0b1d63);
+  color: #ffffff;
+
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(16, 38, 129, 0.18);
+}
+
+.detalle-curso__acciones-reportes .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.detalle-curso__acciones-reportes .btn:focus-visible {
+  outline: 3px solid var(--color-role-border, #a4b5eb);
+  outline-offset: 3px;
+}
+
+.detalle-curso__acciones-reportes
+.boton-exportar-pdf__error {
+  max-width: 260px;
+  margin-top: 8px;
+  font-size: 0.8rem;
+}
+
+.detalle-curso__nota-reporte {
+  margin: 18px 0 0;
+  color: var(--color-text-muted, #64748b);
+  font-size: 0.83rem;
+  line-height: 1.6;
+}
+
+/* =========================================
+   SECCION DE ESTUDIANTES
+   ========================================= */
+
+.detalle-curso__seccion-estudiantes {
+  width: 100%;
+  margin-top: 28px;
+}
+
+.detalle-curso__estudiantes-titulo {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-main, #172752);
+}
+
+/* Contenedor de tabla */
 .detalle-curso__tabla-contenedor {
+  width: 100%;
   overflow-x: auto;
+
+  background-color: var(--color-bg-card, #ffffff);
+  border: 1px solid var(--color-border, #dce2ed);
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(18, 38, 75, 0.04);
 }
 
+/* Tabla */
 .detalle-curso__tabla {
   width: 100%;
+  min-width: 780px;
   border-collapse: collapse;
 }
 
-.detalle-curso__tabla th,
-.detalle-curso__tabla td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+.detalle-curso__tabla thead {
+  background-color: var(--color-bg-header, #f4f6fa);
 }
 
 .detalle-curso__tabla th {
-  font-size: 0.85rem;
+  padding: 16px 14px;
+  color: var(--color-text-muted, #566174);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: left;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  opacity: 0.75;
+  white-space: nowrap;
 }
 
-.mazo-list__item--clicable {
-  cursor: pointer;
+.detalle-curso__tabla td {
+  padding: 13px 14px;
+  color: var(--color-text-main, #172752);
+  font-size: 0.9rem;
+  vertical-align: middle;
+  border-top: 1px solid var(--color-border, #e1e5ed);
 }
 
-.mazo-list__item--clicable:hover,
-.mazo-list__item--clicable:focus-visible {
-  transform: translateY(-2px);
+.detalle-curso__tabla tbody tr:hover {
+  background-color: var(
+    --color-role-bg-soft,
+    rgba(16, 38, 129, 0.035)
+  );
 }
 
-
-/* ============================================
-   HU-018: Reportes individuales del docente
-   ============================================ */
+/* =========================================
+   HU-018: REPORTE INDIVIDUAL
+   ========================================= */
 
 .detalle-curso__celda-reporte {
-  min-width: 145px;
+  min-width: 150px;
   text-align: center;
-  vertical-align: middle;
 }
 
 .detalle-curso__reporte {
@@ -64,87 +228,307 @@
 
 .detalle-curso__reporte .boton-exportar-pdf {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
-
-/* Botón azul, exclusivo de los reportes docentes */
 
 .detalle-curso__reporte .btn {
-  background-color: var(--color-role, #172c82);
-  border: 1px solid var(--color-role, #172c82);
-  color: #ffffff;
-
   min-height: 38px;
-  padding: 8px 16px;
+  padding: 8px 14px;
+
+  background-color: var(--color-role, #102681);
+  border: 1px solid var(--color-role, #102681);
   border-radius: 8px;
 
-  font-size: 0.85rem;
+  color: #ffffff;
+  font-size: 0.83rem;
   font-weight: 700;
   white-space: nowrap;
-
   cursor: pointer;
+
   transition:
     background-color 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.2s ease;
 }
-
-/* Ícono de descarga sin instalar bibliotecas */
-
-.detalle-curso__reporte .btn::before {
-  content: "↓";
-  display: inline-block;
-  margin-right: 8px;
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-/* Efecto al pasar el cursor */
 
 .detalle-curso__reporte .btn:hover:not(:disabled) {
-  background-color: var(--color-role-hover, #0d1c66);
-  border-color: var(--color-role-hover, #0d1c66);
+  background-color: var(--color-role-hover, #0b1d63);
+  border-color: var(--color-role-hover, #0b1d63);
   color: #ffffff;
-
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(15, 35, 95, 0.2);
 }
-
-/* Estado de carga o botón deshabilitado */
 
 .detalle-curso__reporte .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
-
-/* Accesibilidad */
 
 .detalle-curso__reporte .btn:focus-visible {
   outline: 3px solid var(--color-role-border, #a4b5eb);
   outline-offset: 3px;
 }
 
-/* Mensajes de error dentro de la tabla */
-
-.detalle-curso__reporte .boton-exportar-pdf__error {
-  max-width: 170px;
+.detalle-curso__reporte
+.boton-exportar-pdf__error {
+  max-width: 160px;
   margin-top: 6px;
   font-size: 0.75rem;
   text-align: center;
 }
 
-/* Adaptación a pantallas pequeñas */
+/* =========================================
+   RESPONSIVE
+   ========================================= */
 
 @media (max-width: 768px) {
-  .detalle-curso__celda-reporte {
-    min-width: 125px;
+  .detalle-curso {
+    padding: 16px 12px 28px;
   }
 
-  .detalle-curso__reporte .btn {
-    padding: 8px 11px;
-    font-size: 0.8rem;
+  .detalle-curso__panel-reportes {
+    padding: 22px 18px;
+  }
+
+  .detalle-curso__panel-titulo {
+    font-size: 1.3rem;
+  }
+
+  .detalle-curso__acciones-reportes {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .detalle-curso__acciones-reportes
+  .boton-exportar-pdf {
+    width: 100%;
+  }
+
+  .detalle-curso__acciones-reportes .btn {
+    width: 100%;
+  }
+
+  .detalle-curso__estudiantes-titulo {
+    font-size: 1.1rem;
   }
 }
+
+/* =========================================
+   PANELES UNIFICADOS - DETALLE DEL CURSO
+   ========================================= */
+
+/* Contenedor principal */
+.detalle-curso {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  box-sizing: border-box;
+}
+
+/* Las dos tarjetas comparten exactamente
+   el mismo ancho, fondo y borde */
+.detalle-curso__card {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 26px;
+  padding: 28px 30px;
+  box-sizing: border-box;
+
+  background-color: var(--color-bg-card, #ffffff);
+  border: 1px solid var(--color-border, #dce2ed);
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(18, 38, 75, 0.06);
+}
+
+/* Encabezado de las tarjetas */
+.detalle-curso__card-header {
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-border, #dce2ed);
+}
+
+.detalle-curso__card-header h2 {
+  margin: 0 0 8px;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--color-text-main, #172752);
+}
+
+.detalle-curso__card-header p {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--color-text-muted, #64748b);
+}
+
+/* =========================================
+   REPORTES HU-019 Y HU-020
+   ========================================= */
+
+.detalle-curso__reports-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.detalle-curso__reports-actions .boton-exportar-pdf {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.detalle-curso__reports-actions .btn {
+  min-height: 42px;
+  padding: 10px 18px;
+
+  background-color: var(--color-role, #102681);
+  border: 1px solid var(--color-role, #102681);
+  border-radius: 8px;
+
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.detalle-curso__reports-actions .btn:hover:not(:disabled) {
+  background-color: var(--color-role-hover, #0b1d63);
+  border-color: var(--color-role-hover, #0b1d63);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.detalle-curso__reports-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.detalle-curso__reports-actions .btn:focus-visible {
+  outline: 3px solid var(--color-role-border, #a4b5eb);
+  outline-offset: 3px;
+}
+
+.detalle-curso__reports-note {
+  margin: 20px 0 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--color-text-muted, #64748b);
+}
+
+/* =========================================
+   TARJETA DE ESTUDIANTES HU-018
+   ========================================= */
+
+.detalle-curso__students-card .detalle-curso__tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+
+  background-color: var(--color-bg-card, #ffffff);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Mantiene la tabla dentro del panel blanco */
+.detalle-curso__students-card .detalle-curso__tabla {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+}
+
+/* Encabezado de la tabla */
+.detalle-curso__students-card .detalle-curso__tabla thead {
+  background-color: var(--color-bg-header, #f4f6fa);
+}
+
+.detalle-curso__students-card .detalle-curso__tabla th {
+  padding: 15px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--color-text-muted, #566174);
+}
+
+/* Celdas */
+.detalle-curso__students-card .detalle-curso__tabla td {
+  padding: 13px 14px;
+  font-size: 0.9rem;
+  color: var(--color-text-main, #172752);
+
+  border-top: 1px solid var(--color-border, #e1e5ed);
+  vertical-align: middle;
+}
+
+/* Resaltar suavemente la fila */
+.detalle-curso__students-card .detalle-curso__tabla tbody tr:hover {
+  background-color: var(
+    --color-role-bg-soft,
+    rgba(16, 38, 129, 0.035)
+  );
+}
+
+/* Botones individuales de HU-018 */
+.detalle-curso__students-card .detalle-curso__reporte {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.detalle-curso__students-card .detalle-curso__reporte .btn {
+  min-height: 38px;
+  padding: 8px 14px;
+
+  background-color: var(--color-role, #102681);
+  border: 1px solid var(--color-role, #102681);
+  border-radius: 8px;
+
+  color: #ffffff;
+  font-size: 0.83rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.detalle-curso__students-card
+.detalle-curso__reporte .btn:hover:not(:disabled) {
+  background-color: var(--color-role-hover, #0b1d63);
+  border-color: var(--color-role-hover, #0b1d63);
+  color: #ffffff;
+}
+
+/* =========================================
+   DISEÑO RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+  .detalle-curso {
+    padding: 16px 12px 28px;
+  }
+
+  .detalle-curso__card {
+    padding: 20px 16px;
+  }
+
+  .detalle-curso__card-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .detalle-curso__reports-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .detalle-curso__reports-actions .boton-exportar-pdf,
+  .detalle-curso__reports-actions .btn {
+    width: 100%;
+  }
+}
+

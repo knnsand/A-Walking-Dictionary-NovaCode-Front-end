@@ -1,12 +1,13 @@
 /**
  * @file reportesApi.js
  * @brief Reportes en PDF: progreso individual del estudiante (HU-018) y reporte de los
+ * HU-019: reporte del modo de estudio.
  * estudiantes de un curso (HU-020).
  */
 
 import { apiDescargarArchivo } from './httpClient';
 import { USE_MOCK } from './apiConfig';
-import { descargarProgresoMock, descargarReporteCursoMock } from './mocks/reportesMock';
+import { descargarProgresoMock, descargarReporteCursoMock ,descargarModoEstudioMock,} from './mocks/reportesMock';
 
 /**
  * @brief Convierte un id en texto y verifica que sea un entero positivo.
@@ -45,6 +46,49 @@ export async function exportarProgresoEstudiantePdf(idEstudiante) {
     `student-progress-${id}.pdf`,
   );
 }
+
+
+/**
+ * @brief HU-019: descarga el reporte del modo de estudio.
+ *
+ * La docente puede solicitar el reporte general sin student_id.
+ * El estudiante solicita su reporte individual con student_id.
+ *
+ * GET /api/v1/reports/study-mode/export-pdf
+ * GET /api/v1/reports/study-mode/export-pdf?student_id=:id
+ *
+ * @param {number|string|null} idEstudiante - ID opcional.
+ * @return {Promise<void>} Se resuelve cuando inicia la descarga.
+ * @throws {Error} Si el ID no es válido o el backend devuelve un error.
+ */
+export async function exportarReporteModoEstudioPdf(
+  idEstudiante = null
+) {
+  // Sin ID: reporte general de estudio para la docente.
+  const esReporteGeneral =
+    idEstudiante === null || idEstudiante === undefined;
+
+  const id = esReporteGeneral
+    ? null
+    : idValido(idEstudiante, 'Invalid student ID.');
+
+  // Permite probar la descarga sin depender del backend.
+  if (USE_MOCK) {
+    return descargarModoEstudioMock(id);
+  }
+
+  // Construye la ruta según el tipo de reporte.
+  const ruta = id
+    ? `/reports/study-mode/export-pdf?student_id=${id}`
+    : '/reports/study-mode/export-pdf';
+
+  const nombreArchivo = id
+    ? `study-mode-report-${id}.pdf`
+    : 'study-mode-report-general.pdf';
+
+  return apiDescargarArchivo(ruta, nombreArchivo);
+}
+
 
 /**
  * @brief HU-020: descarga el reporte consolidado de los estudiantes de un curso (palabras
