@@ -37,7 +37,7 @@ const ESTUDIANTES = [
   },
 ];
 
-const BOTON_CURSO = 'Download the report of all students in Anglophone Literature I';
+const BOTON_CURSO = 'Export the report of all students in Anglophone Literature I';
 
 function renderizar() {
   return render(

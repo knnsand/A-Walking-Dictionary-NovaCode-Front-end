@@ -92,24 +92,25 @@ export async function descargarProgresoMock(idEstudiante) {
 // HU-020: genera y descarga el reporte ficticio de todos los estudiantes de un curso.
 export async function descargarReporteCursoMock(idCurso) {
   const lineas = [
-    'A WALKING DICTIONARY - COURSE REPORT (MOCK DATA)',
-    `Course ID: ${idCurso}`,
+    'A WALKING DICTIONARY - STUDENT REPORT (MOCK DATA)',
+    `Course: Literatura Anglofona (ID ${idCurso})`,
+    `Generated: ${new Date().toISOString().slice(0, 10)}`,
     'This report contains fictional data for frontend testing only.',
     '',
 
-    'STUDENT: Mateo Rodriguez',
-    'Words added: 5 (4 approved, 1 pending) - Co-authorships: 1',
-    'Quiz grades: Wonderland Quiz 1: 4.0 - Vocabulary Review: 4.5',
+    'STUDENTS AND CONTRIBUTIONS',
+    'Name | Code | CEFR | Added | Approved | Co-authorships',
+    'Mateo Rodriguez | 104611 | B1 | 5 | 4 | 1',
+    'Lucia Gomez | 104620 | B2 | 3 | 1 | 0',
+    'Javier Delgado | 104635 | A2 | 0 | 0 | 0',
+    'Group totals | | | 8 | 5 | 1',
     '',
 
-    'STUDENT: Lucia Gomez',
-    'Words added: 3 (1 approved, 2 pending) - Co-authorships: 0',
-    'Quiz grades: Wonderland Quiz 1: 3.5 - Vocabulary Review: not submitted',
-    '',
-
-    'STUDENT: Javier Delgado',
-    'Words added: 0 - Co-authorships: 0 (no contributions)',
-    'Quiz grades: no quizzes submitted',
+    'QUIZ GRADES',
+    'Name | Wonderland Quiz 1 | Vocabulary Review | Average',
+    'Mateo Rodriguez | 4.0 | 4.5 | 4.25',
+    'Lucia Gomez | 3.5 | No presento | 3.50',
+    'Javier Delgado | No presento | No presento | -',
   ];
 
   descargarBlob(crearPdfBasico(lineas), `course-report-${idCurso}-MOCK.pdf`);

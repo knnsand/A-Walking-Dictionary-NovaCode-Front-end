@@ -22,6 +22,8 @@ las decisiones tomadas y el resultado. Cada entrada va de la más reciente a la 
 3. «podemos trabajar en el front y dejar un contrato que le diga al back que implemente lo que
    pides, recuerda leer el claude.md que se encuentra en el back y dejar una bitacora.md con el
    prompt que te mande y el resultado».
+4. Captura de los CA detallados de la HU-020 (CA-20.1 a CA-20.3) con la pregunta «¿sí
+   cumplimos con esto?», y luego «¿y por qué no lo corriges, qué esperas?».
 
 ### Contexto revisado por la IA
 - `CLAUDE.md` del backend (rama `develop`): no inventar endpoints ni parámetros (si falta un
@@ -45,7 +47,7 @@ las decisiones tomadas y el resultado. Cada entrada va de la más reciente a la 
   positivo. La validación del id se comparte con la función de la HU-018.
 - `src/cliente-api/mocks/reportesMock.js`: PDF de prueba del curso para `VITE_USE_MOCK=true`; la
   lógica de descarga se movió a un helper compartido con el mock de la HU-018.
-- `src/vistas/docente/cursos/DetalleCurso.jsx` y `detalle-curso.css`: botón «Download course
+- `src/vistas/docente/cursos/DetalleCurso.jsx` y `detalle-curso.css`: botón «Export student
   report (PDF)» encima de la tabla, con `BotonExportarPdf` (estado de carga y errores 401/403).
 - `src/i18n/locales/en.json`: textos `courseDetail.downloadCourseReport` y
   `courseDetail.downloadCourseReportFor`.
@@ -55,6 +57,17 @@ las decisiones tomadas y el resultado. Cada entrada va de la más reciente a la 
 - `docs/contrato-reporte-curso.md`: contrato para el backend (endpoint, permisos, contenido del
   PDF con las tablas del DER, errores y supuestos).
 
+### Ajuste por los CA detallados (prompt 4)
+La primera versión del contrato se hizo con el resumen de la tarjeta. Al comparar con los CA
+detallados faltaban datos del PDF, así que se ajustó:
+- Contrato: CA textuales; tabla con nivel MCER, palabras añadidas/aprobadas, coautorías y
+  totales del grupo; promedio de quices, «No presentó» y curso sin quices sin error. Los valores
+  (`tipo_aporte = 'creada'`, `tarjeta.estado = 'revisado_docente'`) se tomaron del `init.sql`
+  y del código actual del backend; los dudosos quedan como supuestos.
+- PDF simulado con la misma estructura.
+- Botón renombrado a «Export student report (PDF)», como el «Exportar reporte de estudiantes»
+  del CA-20.1 (la interfaz está en inglés).
+
 ### Validación
 - `npm run lint`: 0 errores (los mismos 6 warnings que ya tenía `develop`).
 - `npm test`: 428/428 pruebas (20 nuevas).
@@ -63,9 +76,9 @@ las decisiones tomadas y el resultado. Cada entrada va de la más reciente a la 
 ### Criterios de aceptación
 | Criterio | Estado en el frontend |
 |----------|-----------------------|
-| Listado de estudiantes y aportes | Lo genera el backend dentro del PDF; pedido en el contrato. El front lo descarga. |
-| Notas de quices por estudiante | Igual que el anterior. |
-| Restricción de acceso al reporte | Botón solo en rutas de docente; manejo de 401 (cierra sesión) y 403 (aviso). La validación real (rol y dueña del curso) se pide al backend en el contrato. |
+| CA-20.1 Listado de estudiantes y aportes | Botón «Export student report (PDF)». La tabla con nivel MCER, aportes y totales la genera el backend; pedida en el contrato y simulada en el mock. |
+| CA-20.2 Notas de quices por estudiante | Notas, promedio, «No presentó» y curso sin quices: los genera el backend; pedidos en el contrato y simulados en el mock. |
+| CA-20.3 Restricción de acceso al reporte | Botón solo en rutas de docente; manejo de 401 (cierra sesión) y 403 (aviso). La validación real (rol y dueña del curso) se pide al backend en el contrato. |
 
 ### Pendiente
 - Que el equipo valide el parámetro `curso_id` y que el backend implemente el endpoint.
