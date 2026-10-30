@@ -86,13 +86,43 @@ export async function descargarProgresoMock(idEstudiante) {
     'Words requiring practice: 3',
   ];
 
-  const blob = crearPdfBasico(lineas);
+  descargarBlob(crearPdfBasico(lineas), `student-progress-${idEstudiante}-MOCK.pdf`);
+}
 
+// HU-020: genera y descarga el reporte ficticio de todos los estudiantes de un curso.
+export async function descargarReporteCursoMock(idCurso) {
+  const lineas = [
+    'A WALKING DICTIONARY - STUDENT REPORT (MOCK DATA)',
+    `Course: Literatura Anglofona (ID ${idCurso})`,
+    `Generated: ${new Date().toISOString().slice(0, 10)}`,
+    'This report contains fictional data for frontend testing only.',
+    '',
+
+    'STUDENTS AND CONTRIBUTIONS',
+    'Name | Code | CEFR | Added | Approved | Co-authorships',
+    'Mateo Rodriguez | 104611 | B1 | 5 | 4 | 1',
+    'Lucia Gomez | 104620 | B2 | 3 | 1 | 0',
+    'Javier Delgado | 104635 | A2 | 0 | 0 | 0',
+    'Group totals | | | 8 | 5 | 1',
+    '',
+
+    'QUIZ GRADES',
+    'Name | Wonderland Quiz 1 | Vocabulary Review | Average',
+    'Mateo Rodriguez | 4.0 | 4.5 | 4.25',
+    'Lucia Gomez | 3.5 | No presento | 3.50',
+    'Javier Delgado | No presento | No presento | -',
+  ];
+
+  descargarBlob(crearPdfBasico(lineas), `course-report-${idCurso}-MOCK.pdf`);
+}
+
+// Dispara la descarga de un blob en el navegador con el nombre indicado.
+function descargarBlob(blob, nombreArchivo) {
   const url = URL.createObjectURL(blob);
 
   const enlace = document.createElement('a');
   enlace.href = url;
-  enlace.download = `student-progress-${idEstudiante}-MOCK.pdf`;
+  enlace.download = nombreArchivo;
 
   document.body.appendChild(enlace);
   enlace.click();
