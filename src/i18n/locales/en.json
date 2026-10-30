@@ -482,6 +482,8 @@
     },
     "downloadProgress": "Download PDF",
     "downloadProgressFor": "Download progress report for {{name}}",
+    "downloadCourseReport": "Download course report (PDF)",
+    "downloadCourseReportFor": "Download the report of all students in {{name}}",
     "errors": {
       "loadFailed": "Could not load the course."
     }

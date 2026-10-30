@@ -1,6 +1,7 @@
 /**
  * @file DetalleCurso.jsx
- * @brief Detalle de un curso: estudiantes inscritos y descarga de su reporte de progreso (HU-018).
+ * @brief Detalle de un curso: estudiantes inscritos, descarga del reporte de progreso de cada
+ * uno (HU-018) y del reporte consolidado del curso (HU-020).
  */
 
 import { useEffect, useState } from 'react';
@@ -13,7 +14,10 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 
 import './detalle-curso.css';
 import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
-import { exportarProgresoEstudiantePdf } from '../../../cliente-api/reportesApi';
+import {
+  exportarProgresoEstudiantePdf,
+  exportarReporteCursoPdf,
+} from '../../../cliente-api/reportesApi';
 
 
 /**
@@ -65,6 +69,19 @@ export function DetalleCurso() {
       </Link>
 
       <Aviso tipo={aviso.tipo} mensaje={aviso.mensaje} />
+
+      {/* HU-020: reporte consolidado de todos los estudiantes del curso */}
+      {!cargando && curso && (
+        <div className="detalle-curso__acciones">
+          <div className="detalle-curso__reporte">
+            <BotonExportarPdf
+              etiqueta={t('courseDetail.downloadCourseReport')}
+              ariaLabel={t('courseDetail.downloadCourseReportFor', { name: curso.nombre })}
+              onExportar={() => exportarReporteCursoPdf(id)}
+            />
+          </div>
+        </div>
+      )}
 
       {cargando ? (
         <p className="empty-state">{t('courseDetail.loading')}</p>

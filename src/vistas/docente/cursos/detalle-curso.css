@@ -6,6 +6,13 @@
   color: var(--color-role, inherit);
 }
 
+/* HU-020: barra con el botón del reporte del curso, encima de la tabla */
+.detalle-curso__acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
 .detalle-curso__tabla-contenedor {
   overflow-x: auto;
 }

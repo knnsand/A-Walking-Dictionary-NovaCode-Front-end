@@ -86,13 +86,42 @@ export async function descargarProgresoMock(idEstudiante) {
     'Words requiring practice: 3',
   ];
 
-  const blob = crearPdfBasico(lineas);
+  descargarBlob(crearPdfBasico(lineas), `student-progress-${idEstudiante}-MOCK.pdf`);
+}
 
+// HU-020: genera y descarga el reporte ficticio de todos los estudiantes de un curso.
+export async function descargarReporteCursoMock(idCurso) {
+  const lineas = [
+    'A WALKING DICTIONARY - COURSE REPORT (MOCK DATA)',
+    `Course ID: ${idCurso}`,
+    'This report contains fictional data for frontend testing only.',
+    '',
+
+    'STUDENT: Mateo Rodriguez',
+    'Words added: 5 (4 approved, 1 pending) - Co-authorships: 1',
+    'Quiz grades: Wonderland Quiz 1: 4.0 - Vocabulary Review: 4.5',
+    '',
+
+    'STUDENT: Lucia Gomez',
+    'Words added: 3 (1 approved, 2 pending) - Co-authorships: 0',
+    'Quiz grades: Wonderland Quiz 1: 3.5 - Vocabulary Review: not submitted',
+    '',
+
+    'STUDENT: Javier Delgado',
+    'Words added: 0 - Co-authorships: 0 (no contributions)',
+    'Quiz grades: no quizzes submitted',
+  ];
+
+  descargarBlob(crearPdfBasico(lineas), `course-report-${idCurso}-MOCK.pdf`);
+}
+
+// Dispara la descarga de un blob en el navegador con el nombre indicado.
+function descargarBlob(blob, nombreArchivo) {
   const url = URL.createObjectURL(blob);
 
   const enlace = document.createElement('a');
   enlace.href = url;
-  enlace.download = `student-progress-${idEstudiante}-MOCK.pdf`;
+  enlace.download = nombreArchivo;
 
   document.body.appendChild(enlace);
   enlace.click();
