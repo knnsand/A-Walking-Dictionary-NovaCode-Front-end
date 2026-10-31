@@ -1,0 +1,26 @@
+# Cada fusión a develop del FRONTEND avisa al repo backend para que reconstruya el SUPERPROMPT
+# (el workflow "Reconstruir SUPERPROMPT" vive allá y abre un PR para revisión humana).
+#
+# Requiere el secreto SUPERPROMPT_DISPATCH_TOKEN en este repo (Settings > Secrets and variables > Actions):
+# un token personal (classic, permiso "repo") de una cuenta con acceso de escritura al repo backend.
+# Si el secreto no existe, este workflow no hace nada y no falla.
+name: Avisar al SUPERPROMPT
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  avisar:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.SUPERPROMPT_DISPATCH_TOKEN }}
+    steps:
+      - name: Disparar la reconstrucción en el backend
+        if: ${{ env.TOKEN != '' }}
+        run: |
+          curl -sS -f -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            https://api.github.com/repos/wsernam/A-Walking-Dictionary-NovaCode-Back-end/dispatches \
+            -d '{"event_type":"frontend-develop"}'
