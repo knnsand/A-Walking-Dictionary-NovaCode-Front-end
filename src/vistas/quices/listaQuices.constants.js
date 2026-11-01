@@ -27,6 +27,9 @@ export const TEXTOS_CLAVES = {
   // Exportar a PDF (solo docente, HU-3.3): se reutilizan las claves compartidas.
   botonExportarQuiz: 'exportActions.quizPrintable',
   botonExportarQuizAria: 'exportActions.quizPrintableAria',
+  // Reporte de resultados del quiz (solo docente, HU-021).
+  botonExportarResultados: 'exportActions.quizResults',
+  botonExportarResultadosAria: 'exportActions.quizResultsAria',
 
   // Acciones del estudiante: llevan a /estudiante/quices/:idQuiz
   accionResponder: 'quizList.actions.take',

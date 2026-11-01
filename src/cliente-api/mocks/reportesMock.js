@@ -172,6 +172,38 @@ export async function descargarReporteCursoMock(idCurso) {
   descargarBlob(crearPdfBasico(lineas), `course-report-${idCurso}-MOCK.pdf`);
 }
 
+// HU-021: genera y descarga el reporte ficticio de resultados de un quiz.
+export async function descargarResultadosQuizMock(idQuiz) {
+  const lineas = [
+    'A WALKING DICTIONARY - QUIZ RESULTS REPORT (MOCK DATA)',
+    `Quiz: Quiz semanas 1-4 (ID ${idQuiz})`,
+    'Course: Literatura Anglofona',
+    `Generated: ${new Date().toISOString().slice(0, 10)}`,
+    'This report contains fictional data for frontend testing only.',
+    '',
+
+    'INDIVIDUAL RESULTS',
+    'Name | Grade | Score | Time spent | Submitted',
+    'Lucia Gomez | 4.5 | 9/10 | 12 min 40 s | 2026-10-02 10:15',
+    'Mateo Rodriguez | 3.5 | 7/10 | 18 min 05 s | 2026-10-02 11:02',
+    'Javier Delgado | No presento | - | - | -',
+    '',
+
+    'GROUP STATISTICS',
+    'Average grade: 4.00',
+    'Highest grade: 4.5 | Lowest grade: 3.5',
+    'Students who took the quiz: 2 of 3 (66.7%)',
+    '',
+
+    'QUESTIONS WITH THE HIGHEST ERROR RATE',
+    '1. "Wander" - 50.0% wrong (1 of 2)',
+    '2. "Curious" - 50.0% wrong (1 of 2)',
+    '3. "Strange" - 0.0% wrong (0 of 2)',
+  ];
+
+  descargarBlob(crearPdfBasico(lineas), `quiz-results-${idQuiz}-MOCK.pdf`);
+}
+
 // Dispara la descarga de un blob en el navegador con el nombre indicado.
 function descargarBlob(blob, nombreArchivo) {
   const url = URL.createObjectURL(blob);

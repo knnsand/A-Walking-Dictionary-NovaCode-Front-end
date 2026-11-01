@@ -1,13 +1,18 @@
 /**
  * @file reportesApi.js
- * @brief Reportes en PDF: progreso individual del estudiante (HU-018) y reporte de los
- * HU-019: reporte del modo de estudio.
- * estudiantes de un curso (HU-020).
+ * @brief Reportes en PDF: progreso individual del estudiante (HU-018), reporte del modo de
+ * estudio (HU-019), reporte de los estudiantes de un curso (HU-020) y resultados de un quiz
+ * (HU-021).
  */
 
 import { apiDescargarArchivo } from './httpClient';
 import { USE_MOCK } from './apiConfig';
-import { descargarProgresoMock, descargarReporteCursoMock ,descargarModoEstudioMock,} from './mocks/reportesMock';
+import {
+  descargarProgresoMock,
+  descargarReporteCursoMock,
+  descargarModoEstudioMock,
+  descargarResultadosQuizMock,
+} from './mocks/reportesMock';
 
 /**
  * @brief Convierte un id en texto y verifica que sea un entero positivo.
@@ -111,5 +116,28 @@ export async function exportarReporteCursoPdf(idCurso) {
   return apiDescargarArchivo(
     `/reports/students/export-pdf?curso_id=${id}`,
     `course-report-${id}.pdf`,
+  );
+}
+
+/**
+ * @brief HU-021: descarga el reporte de resultados de un quiz (calificación de cada estudiante,
+ * «No presentó» y estadísticas del grupo). Solo docente. Usa un PDF de prueba si USE_MOCK está
+ * activo.
+ * GET /api/v1/reports/quizzes/:id/results/export-pdf
+ * @note Contrato para el backend en docs/contrato-reporte-resultados-quiz.md.
+ * @param {number|string} idQuiz - Id del quiz; debe ser un entero positivo.
+ * @return {Promise<void>} Se resuelve cuando inicia la descarga.
+ * @throws {Error} Si el id no es válido o el backend responde con error.
+ */
+export async function exportarResultadosQuizPdf(idQuiz) {
+  const id = idValido(idQuiz, 'Invalid quiz ID.');
+
+  if (USE_MOCK) {
+    return descargarResultadosQuizMock(id);
+  }
+
+  return apiDescargarArchivo(
+    `/reports/quizzes/${id}/results/export-pdf`,
+    `quiz-results-${id}.pdf`,
   );
 }

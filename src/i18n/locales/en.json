@@ -698,7 +698,9 @@
     "deckPdf": "Export to PDF",
     "deckPdfAria": "Export the deck {{name}} to PDF",
     "quizPrintable": "Export printable version",
-    "quizPrintableAria": "Export printable version of the quiz {{title}}"
+    "quizPrintableAria": "Export printable version of the quiz {{title}}",
+    "quizResults": "Export results (PDF)",
+    "quizResultsAria": "Export the results report of the quiz {{title}}"
   },
   "pdfExport": {
     "loading": "Generating PDF…",
