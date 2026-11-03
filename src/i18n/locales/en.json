@@ -501,7 +501,7 @@
     "ownTitle": "Study Mode Report",
     "ownSubtitle": "Your spaced repetition progress in one PDF",
     "ownDescription": "Download a PDF with your review activity, ratings, overdue cards and words that need more practice.",
-    "downloadOwn": "Download My Study Report",
+    "downloadOwn": "Download My Study Report PDF",
     "reviewSummaryTitle": "Review Summary",
     "reviewSummary": "Reviewed cards, last review date and overdue cards",
     "ratingsTitle": "Review Ratings",
