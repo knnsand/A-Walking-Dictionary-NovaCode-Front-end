@@ -1,6 +1,7 @@
 // vistas/quices/ListaQuices.test.jsx
 // HU-009: lista de quices compartida por docente y estudiante.
-//   - docente: lista con exportar a PDF por tarjeta (HU-3.3, CA-3.3.2).
+//   - docente: lista con exportar a PDF por tarjeta (HU-3.3, CA-3.3.2) y reporte de
+//     resultados (HU-021).
 //   - estudiante: lista que enlaza a /estudiante/quices/:idQuiz.
 
 import { render, screen, fireEvent, within } from '@testing-library/react';
@@ -13,9 +14,11 @@ vi.mock('../../contexto/useAuth', () => ({
 }));
 vi.mock('../../cliente-api/quizzesApi', () => ({ listarQuices: vi.fn() }));
 vi.mock('../../cliente-api/exportacionesApi', () => ({ exportarQuizPdf: vi.fn() }));
+vi.mock('../../cliente-api/reportesApi', () => ({ exportarResultadosQuizPdf: vi.fn() }));
 
 import { listarQuices } from '../../cliente-api/quizzesApi';
 import { exportarQuizPdf } from '../../cliente-api/exportacionesApi';
+import { exportarResultadosQuizPdf } from '../../cliente-api/reportesApi';
 
 // Se entregan en el orden "malo" a propósito: la lista debe mostrar el más reciente primero.
 // El quiz 2 tiene `estado: 'programado'` pero `estado_efectivo: 'abierto'`: se debe leer el segundo.
@@ -94,6 +97,40 @@ describe('ListaQuices', () => {
 
       expect(exportarQuizPdf).toHaveBeenCalledTimes(1);
       expect(exportarQuizPdf).toHaveBeenCalledWith(1);
+    });
+
+    it('exporta el reporte de resultados del quiz cuyo botón se pulsa (HU-021)', async () => {
+      listarQuices.mockResolvedValue(QUICES);
+      exportarResultadosQuizPdf.mockResolvedValue(undefined);
+      renderLista({ rol: 'docente' });
+
+      fireEvent.click(
+        await screen.findByRole('button', {
+          name: 'Export the results report of the quiz Quiz semanas 5-8',
+        })
+      );
+
+      expect(exportarResultadosQuizPdf).toHaveBeenCalledTimes(1);
+      expect(exportarResultadosQuizPdf).toHaveBeenCalledWith(2);
+      expect(exportarQuizPdf).not.toHaveBeenCalled();
+    });
+
+    it('avisa si el backend niega el reporte de resultados con 403 (CA-21.3)', async () => {
+      listarQuices.mockResolvedValue([QUICES[0]]);
+      exportarResultadosQuizPdf.mockRejectedValue(
+        new Error('No tiene permisos para acceder a este recurso')
+      );
+      renderLista({ rol: 'docente' });
+
+      fireEvent.click(
+        await screen.findByRole('button', {
+          name: 'Export the results report of the quiz Quiz semanas 1-4',
+        })
+      );
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'Your account does not have the teacher role'
+      );
     });
 
     it('no ofrece acciones de estudiante', async () => {

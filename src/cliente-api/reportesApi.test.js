@@ -1,5 +1,5 @@
 // cliente-api/reportesApi.test.js
-// HU-018 y HU-020: rutas, nombres de archivo y validación de ids de los reportes en PDF.
+// HU-018, HU-020 y HU-021: rutas, nombres de archivo y validación de ids de los reportes en PDF.
 
 import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
 
@@ -7,6 +7,7 @@ vi.mock('./httpClient', () => ({ apiDescargarArchivo: vi.fn() }));
 vi.mock('./mocks/reportesMock', () => ({
   descargarProgresoMock: vi.fn(),
   descargarReporteCursoMock: vi.fn(),
+  descargarResultadosQuizMock: vi.fn(),
 }));
 
 // USE_MOCK se lee al importar, así que cada prueba carga módulos nuevos con su propio entorno.
@@ -68,6 +69,39 @@ describe('reportesApi', () => {
       await exportarReporteCursoPdf(3);
 
       expect(descargarReporteCursoMock).toHaveBeenCalledWith('3');
+      expect(apiDescargarArchivo).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('exportarResultadosQuizPdf (HU-021)', () => {
+    it('descarga desde GET /reports/quizzes/:id/results/export-pdf como quiz-results-{id}.pdf', async () => {
+      const { apiDescargarArchivo, exportarResultadosQuizPdf } = await cargarModulos('false');
+
+      await exportarResultadosQuizPdf(5);
+
+      expect(apiDescargarArchivo).toHaveBeenCalledWith(
+        '/reports/quizzes/5/results/export-pdf',
+        'quiz-results-5.pdf'
+      );
+    });
+
+    it.each([undefined, null, '', '0', '-1', '2.5', 'abc', '5/../1'])(
+      'rechaza el id inválido %p sin llamar al backend',
+      async (idInvalido) => {
+        const { apiDescargarArchivo, exportarResultadosQuizPdf } = await cargarModulos('false');
+
+        await expect(exportarResultadosQuizPdf(idInvalido)).rejects.toThrow('Invalid quiz ID.');
+        expect(apiDescargarArchivo).not.toHaveBeenCalled();
+      }
+    );
+
+    it('con datos simulados (VITE_USE_MOCK=true) descarga el PDF de prueba', async () => {
+      const { apiDescargarArchivo, descargarResultadosQuizMock, exportarResultadosQuizPdf } =
+        await cargarModulos('true');
+
+      await exportarResultadosQuizPdf(5);
+
+      expect(descargarResultadosQuizMock).toHaveBeenCalledWith('5');
       expect(apiDescargarArchivo).not.toHaveBeenCalled();
     });
   });

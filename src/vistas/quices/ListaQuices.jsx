@@ -6,7 +6,8 @@
  * Dónde se usa:
  *   - docente:    dentro de GenerarQuiz (/docente/quices), justo debajo del formulario, con
  *                 la prop `embebida` (no pisa el encabezado de la pantalla). Cada tarjeta
- *                 trae su botón de exportar la versión impresa (HU-3.3, CA-3.3.2).
+ *                 trae su botón de exportar la versión impresa (HU-3.3, CA-3.3.2) y el del
+ *                 reporte de resultados (HU-021, CA-21.1).
  *   - estudiante: pantalla propia /estudiante/quices. Cada tarjeta enlaza a
  *                 /estudiante/quices/:idQuiz (ResponderQuiz, HU-3.2).
  *
@@ -30,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { exportarQuizPdf } from '../../cliente-api/exportacionesApi';
 import { listarQuices } from '../../cliente-api/quizzesApi';
+import { exportarResultadosQuizPdf } from '../../cliente-api/reportesApi';
 import { Aviso } from '../../componentes/comunes/Aviso';
 import { BotonExportarPdf } from '../../componentes/comunes/BotonExportarPdf';
 import { useEncabezadoPagina } from '../../contexto/useEncabezadoPagina';
@@ -179,11 +181,19 @@ export function ListaQuices({
 
                   <div className="tarjeta-pendiente__acciones">
                     {esDocente ? (
-                      <BotonExportarPdf
-                        onExportar={() => exportarQuizPdf(quiz.id_quiz)}
-                        etiqueta={t(TEXTOS_CLAVES.botonExportarQuiz)}
-                        ariaLabel={t(TEXTOS_CLAVES.botonExportarQuizAria, { title: quiz.titulo })}
-                      />
+                      <>
+                        <BotonExportarPdf
+                          onExportar={() => exportarQuizPdf(quiz.id_quiz)}
+                          etiqueta={t(TEXTOS_CLAVES.botonExportarQuiz)}
+                          ariaLabel={t(TEXTOS_CLAVES.botonExportarQuizAria, { title: quiz.titulo })}
+                        />
+                        {/* HU-021: el reporte se genera aunque nadie haya presentado (CA-21.2). */}
+                        <BotonExportarPdf
+                          onExportar={() => exportarResultadosQuizPdf(quiz.id_quiz)}
+                          etiqueta={t(TEXTOS_CLAVES.botonExportarResultados)}
+                          ariaLabel={t(TEXTOS_CLAVES.botonExportarResultadosAria, { title: quiz.titulo })}
+                        />
+                      </>
                     ) : (
                       <Link
                         to={`/estudiante/quices/${quiz.id_quiz}`}
