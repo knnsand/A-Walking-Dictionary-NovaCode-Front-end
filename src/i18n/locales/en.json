@@ -299,6 +299,7 @@
     "title": "Add New Word to the Deck",
     "close": "Close",
     "requiredLegend": "Fields marked with * are required.",
+    "duplicateWord": "This word has already been submitted. Please choose a different word.",
     "duplicate": {
       "sameTitle": "⚠️ This word already exists in the deck, with the same definition.",
       "sameText": "You will be added as a co-author of the existing contribution; no new card will be created.",

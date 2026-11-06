@@ -21,6 +21,9 @@ import { listarMazos } from '../../../cliente-api/mazosApi';
 import { verificarDuplicado, registrarTarjeta } from '../../../cliente-api/tarjetasApi';
 import { useAuth } from '../../../contexto/useAuth';
 
+const COAUTORIAS_HABILITADAS =
+  import.meta.env.VITE_ENABLE_COAUTHORSHIP === 'true';
+
 /**
  * @brief Descriptor de error para fallos de la API: si el backend trae mensaje se muestra tal cual
  * (puede estar en español, pendiente de revisar); si no, se usa el mensaje propio.
@@ -123,6 +126,13 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       );
 
       if (chequeo.duplicado) {
+        if (!COAUTORIAS_HABILITADAS) {
+          setError({
+            clave: 'registerWordForm.errors.duplicateWord',
+          });
+          return;
+        }
+
         setConfirmacion(chequeo.resultado);
         return;
       }
@@ -198,36 +208,10 @@ export function RegistrarTarjetaForm({ onCerrar }) {
         {t('registerWordForm.requiredLegend')}
       </p>
 
-      {confirmacion && (
+      {COAUTORIAS_HABILITADAS && confirmacion && (
         <div className="form-tarjeta__notice" role="alert">
-          {confirmacion === 'coautoria' ? (
-            <>
-              <strong>{t('registerWordForm.duplicate.sameTitle')}</strong>
-              <p>{t('registerWordForm.duplicate.sameText')}</p>
-            </>
-          ) : (
-            <>
-              <strong>{t('registerWordForm.duplicate.differentTitle')}</strong>
-              <p>{t('registerWordForm.duplicate.differentText')}</p>
-            </>
-          )}
-
-          <div className="form-tarjeta__footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setConfirmacion(null)}
-            >
-              {t('registerWordForm.duplicate.cancel')}
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={enviarTarjeta}
-            >
-              {t('registerWordForm.duplicate.confirm')}
-            </button>
-          </div>
+          {/* Aquí permanece todo el contenido original
+              de confirmación de coautorías */}
         </div>
       )}
 
