@@ -1,3 +1,22 @@
+/**
+ * @brief Permite desactivar temporalmente las coautorías y
+ * el registro de palabras existentes sin eliminar el flujo original.
+ *
+ * false: cada palabra se registra una sola vez en el diccionario.
+ * true: se conserva el comportamiento anterior de coautorías
+ * y nuevas acepciones.
+ */
+const COAUTORIAS_HABILITADAS =
+  import.meta.env.VITE_ENABLE_COAUTHORSHIP === 'true';
+
+/**
+ * @brief Normaliza una palabra para comparar duplicados.
+ */
+function normalizarPalabra(palabra) {
+  return String(palabra ?? '').trim().toLocaleLowerCase();
+}
+
+
 let tarjetas = [
   {
     id_tarjeta: 1,
@@ -104,20 +123,47 @@ export function mockListarAprobadas() {
     }));
 }
 
-export function mockRegistrarTarjeta(idMazo, datos) {
-  const palabraNormalizada = datos.palabra.trim().toLowerCase();
 
-  const tarjetaExistente = tarjetas.find(
-    tarjeta =>
+/**
+ * @brief Registra una tarjeta nueva.
+ *
+ * Cuando las coautorías están desactivadas, impide registrar
+ * palabras existentes en cualquier mazo.
+ *
+ * Cuando están habilitadas, conserva el flujo original
+ * de creación, coautoría y nuevas acepciones.
+ */
+export function mockRegistrarTarjeta(idMazo, datos) {
+  const palabraNormalizada = normalizarPalabra(datos.palabra);
+
+  const tarjetaExistente = tarjetas.find((tarjeta) => {
+    const mismaPalabra =
+      normalizarPalabra(tarjeta.palabra) === palabraNormalizada;
+
+    if (!COAUTORIAS_HABILITADAS) {
+      return mismaPalabra;
+    }
+
+    return (
       tarjeta.mazo_id === idMazo &&
-      tarjeta.palabra.trim().toLowerCase() === palabraNormalizada
-  );
+      mismaPalabra
+    );
+  });
 
   const fechaAporte = new Date().toISOString();
 
+  // Bloqueo de duplicados cuando las coautorías están desactivadas.
+  if (tarjetaExistente && !COAUTORIAS_HABILITADAS) {
+    throw new Error(
+      'This word has already been submitted. Please choose a different word.'
+    );
+  }
+
+  // Registro normal de una palabra nueva.
   if (!tarjetaExistente) {
     const nuevaTarjeta = {
-      id_tarjeta: tarjetas.length + 1,
+      id_tarjeta:
+        Math.max(0, ...tarjetas.map((tarjeta) => tarjeta.id_tarjeta)) + 1,
       mazo_id: idMazo,
       palabra: palabraNormalizada,
       traduccion: datos.traduccion,
@@ -131,7 +177,7 @@ export function mockRegistrarTarjeta(idMazo, datos) {
     const nuevoAporte = {
       id_aporte: siguienteIdAporte++,
       tarjeta_id: nuevaTarjeta.id_tarjeta,
-      inscripcion_id: 1,
+      inscripcion_id: datos.inscripcion_id ?? 1,
       traduccion_aportada: datos.traduccion,
       definicion_aportada: datos.definicion,
       ejemplo_aportado: datos.ejemplo || null,
@@ -148,6 +194,7 @@ export function mockRegistrarTarjeta(idMazo, datos) {
     };
   }
 
+  // Flujo original: se conserva para una posible reactivación.
   const mismaDefinicion =
     tarjetaExistente.definicion.trim().toLowerCase() ===
     datos.definicion.trim().toLowerCase();
@@ -164,7 +211,7 @@ export function mockRegistrarTarjeta(idMazo, datos) {
   const nuevoAporte = {
     id_aporte: siguienteIdAporte++,
     tarjeta_id: tarjetaExistente.id_tarjeta,
-    inscripcion_id: 1,
+    inscripcion_id: datos.inscripcion_id ?? 1,
     traduccion_aportada: datos.traduccion,
     definicion_aportada: datos.definicion,
     ejemplo_aportado: datos.ejemplo || null,
@@ -181,20 +228,35 @@ export function mockRegistrarTarjeta(idMazo, datos) {
   };
 }
 
+
+/**
+ * @brief Verifica si una palabra ya existe.
+ *
+ * Con coautorías desactivadas, busca en todo el diccionario.
+ * Con coautorías habilitadas, conserva la búsqueda original
+ * por mazo y la clasificación de coautorías o nuevas acepciones.
+ */
 export function mockVerificarDuplicado(
   mazoId,
   palabra,
   definicion,
   ejemplo
 ) {
-  const tarjetasDelMazo = tarjetas.filter(
-    (tarjeta) => tarjeta.mazo_id === mazoId
-  );
+  const palabraNormalizada = normalizarPalabra(palabra);
 
-  const tarjetaExistente = tarjetasDelMazo.find(
-    (tarjeta) =>
-      tarjeta.palabra.trim().toLowerCase() === palabra.trim().toLowerCase()
-  );
+  const tarjetaExistente = tarjetas.find((tarjeta) => {
+    const mismaPalabra =
+      normalizarPalabra(tarjeta.palabra) === palabraNormalizada;
+
+    if (!COAUTORIAS_HABILITADAS) {
+      return mismaPalabra;
+    }
+
+    return (
+      tarjeta.mazo_id === mazoId &&
+      mismaPalabra
+    );
+  });
 
   if (!tarjetaExistente) {
     return {
@@ -204,6 +266,15 @@ export function mockVerificarDuplicado(
     };
   }
 
+  if (!COAUTORIAS_HABILITADAS) {
+    return {
+      duplicado: true,
+      resultado: 'palabra_existente',
+      tarjeta: tarjetaExistente,
+    };
+  }
+
+  // Flujo original: coautorías y nuevas acepciones.
   const mismaDefinicion =
     tarjetaExistente.definicion.trim().toLowerCase() ===
     definicion.trim().toLowerCase();
@@ -214,9 +285,10 @@ export function mockVerificarDuplicado(
 
   return {
     duplicado: true,
-    resultado: mismaDefinicion && mismoEjemplo
-      ? 'coautoria'
-      : 'acepcion_nueva',
+    resultado:
+      mismaDefinicion && mismoEjemplo
+        ? 'coautoria'
+        : 'acepcion_nueva',
     tarjeta: tarjetaExistente,
   };
 }
