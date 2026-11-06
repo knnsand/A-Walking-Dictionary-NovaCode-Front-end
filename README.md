@@ -35,14 +35,6 @@ Se sigue un flujo tipo **Gitflow**, adaptado al ritmo de sprints del curso (3 sp
 - El nombre describe la funcionalidad o módulo, no la persona ni la fecha. Ej: `feature/gestion-electivas`, no `feature/manuela-tarea1`.
 - Cuando la rama corresponde a una historia de usuario del backlog, se puede incluir el ID: `feature/HU-002-registro-palabra`.
 
-### Flujo de trabajo
+## Contribuir
 
-1. Actualizar `develop` local (`git pull origin develop`) antes de crear una rama nueva.
-2. Crear la rama de trabajo desde `develop`: `git checkout -b feature/nombre-corto`.
-3. Trabajar con commits pequeños y descriptivos (`feat:`, `fix:`, `docs:`, `chore:`).
-4. Subir la rama: `git push -u origin feature/nombre-corto`.
-5. Abrir un Pull Request hacia `develop`, enlazando la historia/issue correspondiente del board.
-6. Al menos un compañero revisa y aprueba el PR antes de hacer merge.
-7. Al cierre de cada sprint: crear `release/sprintX` desde `develop`, estabilizar, hacer PR de `release/sprintX` → `main` y luego mergear `main` de vuelta a `develop`.
-8. Si aparece un bug crítico en producción: crear `hotfix/nombre-corto` desde `main`, corregir, y mergear tanto a `main` como a `develop`.
-9. Eliminar cada rama (`feature/*`, `release/*`, `hotfix/*`) una vez mergeada, para mantener la lista limpia.
+El flujo de trabajo (ramas, commits y Pull Requests) está en [`CONTRIBUTING.md`](CONTRIBUTING.md). Para reportar una vulnerabilidad, ver [`SECURITY.md`](SECURITY.md). El historial de cambios está en [`CHANGELOG.md`](CHANGELOG.md).
