@@ -45,3 +45,11 @@ Cada contrato describe qué consume el front y qué espera del backend para una 
 | Documento | Contenido |
 | --- | --- |
 | [`bitacora.md`](bitacora.md) | Bitácora de trabajo con IA del front-end (prompts, decisiones y resultados) |
+
+## Gobernanza del proyecto
+
+| Documento | Contenido |
+| --- | --- |
+| [`../CONTRIBUTING.md`](../CONTRIBUTING.md) | Flujo de ramas, commits, Pull Requests y uso de IA |
+| [`../SECURITY.md`](../SECURITY.md) | Cómo reportar vulnerabilidades (Security Advisories de GitHub) |
+| [`../CHANGELOG.md`](../CHANGELOG.md) | Resumen de cambios (formato Keep a Changelog) |
