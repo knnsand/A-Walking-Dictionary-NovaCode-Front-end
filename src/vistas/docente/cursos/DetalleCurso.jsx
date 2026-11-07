@@ -1,4 +1,9 @@
-
+/**
+ * @file DetalleCurso.jsx
+ * @brief Vista de la docente con el detalle de un curso (/docente/cursos/:id): datos del curso,
+ * lista de estudiantes inscritos y botones para exportar reportes en PDF (HE-07): reporte del
+ * curso (HU-020), reporte del modo de estudio (HU-019) y progreso individual de cada estudiante (HU-018).
+ */
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +25,11 @@ import { useEncabezadoPagina } from '../../../contexto/useEncabezadoPagina';
 
 import './detalle-curso.css';
 
+/**
+ * @brief Carga el curso y sus estudiantes según el :id de la URL y los muestra con las acciones
+ * de exportación. Si la carga falla, muestra un aviso de error.
+ * @return {JSX.Element} Detalle del curso.
+ */
 export function DetalleCurso() {
   const { t } = useTranslation();
   const { id } = useParams();

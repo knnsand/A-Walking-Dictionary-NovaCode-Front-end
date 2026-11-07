@@ -1,12 +1,15 @@
-// cliente-api/mocks/estudioMock.js
-// HU-010: datos simulados para trabajar la vista de estudio sin back.
-//
-// Los campos base (id_tarjeta, mazo_id, palabra, traduccion, definicion, ejemplo, estado,
-// progreso) son los que ya devuelve POST /api/v1/study/review-session.
-//
-// Los campos marcados como "opcional" (fonetica, categoria_gramatical, etiquetas) los muestra
-// el diseño, pero el back todavía NO los devuelve: la vista los pinta solo si existen.
+/**
+ * @file estudioMock.js
+ * @brief HU-010: datos simulados para trabajar la vista de estudio sin back.
+ *
+ * Los campos base (id_tarjeta, mazo_id, palabra, traduccion, definicion, ejemplo, estado,
+ * progreso) son los que ya devuelve POST /api/v1/study/review-session.
+ *
+ * Los campos marcados como "opcional" (fonetica, categoria_gramatical, etiquetas) los muestra
+ * el diseño, pero el back todavía NO los devuelve: la vista los pinta solo si existen.
+ */
 
+/** @brief Tarjetas aprobadas de ejemplo para la sesión de repaso (algunas con progreso SM-2). */
 export const mockTarjetasEstudio = [
   {
     id_tarjeta: 1,
@@ -100,11 +103,19 @@ export const mockTarjetasEstudio = [
   },
 ];
 
-// Para el encabezado de la vista (semana y nombre del mazo). En producción esto sale de mazosApi.
+/**
+ * @brief Nombre y semana de cada mazo, para el encabezado de la vista. En producción esto
+ * sale de mazosApi.
+ */
 export const mockMazosEstudio = {
   1: { nombre: 'Introduction to the Victorian Era', semana: 1 },
 };
 
+/**
+ * @brief Simula POST /api/v1/study/review-session: inicia una sesión de repaso.
+ * @param {number|string} inscripcionId - Inscripción del estudiante.
+ * @return {{inscripcion_id: number, total_tarjetas: number, tarjetas: Object[]}} Tarjetas de la sesión.
+ */
 export function mockIniciarSesionRepaso(inscripcionId) {
   return {
     inscripcion_id: Number(inscripcionId),
@@ -113,9 +124,20 @@ export function mockIniciarSesionRepaso(inscripcionId) {
   };
 }
 
-// Aproximación del resultado de SM-2 solo para simular la respuesta (el cálculo real lo hace el back).
+/**
+ * @brief Días hasta el próximo repaso según la valoración. Es una aproximación de SM-2 solo
+ * para simular la respuesta (el cálculo real lo hace el back).
+ */
 const INTERVALOS_MOCK = { Repetir: 1, Difícil: 1, Buena: 6, Fácil: 6 };
 
+/**
+ * @brief Simula el registro de la valoración de una tarjeta durante el repaso (CA-4.1.2).
+ * @param {number|string} inscripcionId - Inscripción del estudiante.
+ * @param {number|string} tarjetaId - Tarjeta valorada.
+ * @param {string} valoracion - "Repetir", "Difícil", "Buena" o "Fácil".
+ * @return {{inscripcion_id: number, tarjeta_id: number, ultima_valoracion: string, intervalo_dias: number}}
+ * Progreso simulado (1 día si la valoración no se reconoce).
+ */
 export function mockRegistrarValoracion(inscripcionId, tarjetaId, valoracion) {
   return {
     inscripcion_id: Number(inscripcionId),
