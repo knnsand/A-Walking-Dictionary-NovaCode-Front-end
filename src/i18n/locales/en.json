@@ -72,7 +72,7 @@
     "aria": {
       "close": "Close deck {{name}}",
       "open": "Open deck {{name}}",
-      "study": "Study the words of deck {{name}}"
+      "viewWords": "View the words of deck {{name}}"
     },
     "errors": {
       "changeStateFailed": "Could not change the deck status."

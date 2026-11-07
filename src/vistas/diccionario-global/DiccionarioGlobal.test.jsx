@@ -23,6 +23,7 @@ const PALABRAS = [
     definicion: 'A round fruit',
     ejemplo: 'She ate an apple.',
     semana: 2,
+    mazo_id: 5,
     nombre_lectura: 'Beloved',
     contexto: [
       { id_etiqueta: 1, tipo: 'registro', valor: 'informal' },
@@ -36,6 +37,7 @@ const PALABRAS = [
     definicion: '',
     ejemplo: null,
     semana: null,
+    mazo_id: 8,
     nombre_lectura: null,
     contexto: [],
   },
@@ -278,6 +280,25 @@ describe('DiccionarioGlobal', () => {
 
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
       expect(screen.queryByText('Toni Morrison')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('palabras de un mazo (botón "Ver palabras del mazo")', () => {
+    it('con idMazo solo muestra las palabras de ese mazo y su nombre', async () => {
+      render(<DiccionarioGlobal idMazo="5" />);
+
+      expect(await screen.findByText('Apple')).toBeInTheDocument();
+      expect(screen.queryByText('Banner')).not.toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1, name: 'Deck Words' })).toBeInTheDocument();
+      expect(screen.getByText('Approved vocabulary from the deck "Beloved".')).toBeInTheDocument();
+      expect(screen.getByText(/1\s+word found/)).toBeInTheDocument();
+    });
+
+    it('un mazo sin palabras aprobadas muestra el estado vacío', async () => {
+      render(<DiccionarioGlobal idMazo={99} />);
+
+      expect(await screen.findByText('No matching words found')).toBeInTheDocument();
+      expect(screen.queryByText('Apple')).not.toBeInTheDocument();
     });
   });
 });

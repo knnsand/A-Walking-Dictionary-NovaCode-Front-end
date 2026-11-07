@@ -343,9 +343,12 @@ function WordDetails({
 
 /**
  * @brief Pantalla del Diccionario Global, compartida por los tres roles.
+ * Si recibe `idMazo`, solo muestra las palabras de ese mazo (botón "Ver palabras del mazo").
+ * @param {Object} [props]
+ * @param {number|string} [props.idMazo] - Id del mazo por el que se filtra; sin él se muestra todo.
  * @return {JSX.Element}
  */
-export function DiccionarioGlobal() {
+export function DiccionarioGlobal({ idMazo } = {}) {
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLetter, setSelectedLetter] = useState('ALL');
@@ -394,15 +397,23 @@ export function DiccionarioGlobal() {
     };
   }, [searchTerm]);
 
-  const visibleWords = useMemo(() => {
-    if (selectedLetter === 'ALL') return words;
+  // Palabras del mazo elegido; sin idMazo, todas las del diccionario.
+  const deckWords = useMemo(() => {
+    if (idMazo == null) return words;
+    return words.filter((word) => Number(word.mazo_id) === Number(idMazo));
+  }, [words, idMazo]);
 
-    return words.filter((word) =>
+  const deckName = idMazo != null ? deckWords[0]?.nombre_lectura : null;
+
+  const visibleWords = useMemo(() => {
+    if (selectedLetter === 'ALL') return deckWords;
+
+    return deckWords.filter((word) =>
       String(word.palabra || '')
         .toUpperCase()
         .startsWith(selectedLetter)
     );
-  }, [words, selectedLetter]);
+  }, [deckWords, selectedLetter]);
 
   /**
    * @brief Aplica el texto de búsqueda y quita el filtro por letra.
@@ -475,11 +486,12 @@ export function DiccionarioGlobal() {
           LEXICAL REPOSITORY
         </p>
 
-        <h1>Global Dictionary</h1>
+        <h1>{idMazo != null ? 'Deck Words' : 'Global Dictionary'}</h1>
 
         <p>
-          Explore approved vocabulary collected from different study decks
-          throughout the semester.
+          {idMazo != null
+            ? `Approved vocabulary from the deck${deckName ? ` "${deckName}"` : ''}.`
+            : 'Explore approved vocabulary collected from different study decks throughout the semester.'}
         </p>
       </header>
 
