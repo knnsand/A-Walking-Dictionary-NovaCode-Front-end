@@ -1,7 +1,9 @@
 // vistas/docente/crear-mazo/MazoItem.test.jsx
 // HU-3.3: la docente puede exportar el mazo a PDF; los demás roles no ven el botón.
+// Estudiante e invitado ven el enlace "Ver palabras del mazo".
 
 import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { MazoItem } from './MazoItem';
 
@@ -27,9 +29,11 @@ const NOMBRE_BOTON = 'Export the deck Wide Sargasso Sea to PDF';
 
 function renderizar(rol) {
   return render(
-    <ul>
-      <MazoItem mazo={MAZO} rol={rol} />
-    </ul>
+    <MemoryRouter>
+      <ul>
+        <MazoItem mazo={MAZO} rol={rol} />
+      </ul>
+    </MemoryRouter>
   );
 }
 
@@ -61,5 +65,23 @@ describe('MazoItem — exportar a PDF (HU-3.3)', () => {
 
     expect(screen.queryByRole('button', { name: NOMBRE_BOTON })).not.toBeInTheDocument();
     expect(screen.queryByText('Export to PDF')).not.toBeInTheDocument();
+  });
+});
+
+describe('MazoItem — ver palabras del mazo', () => {
+  const NOMBRE_ENLACE = 'View the words of deck Wide Sargasso Sea';
+
+  it.each(['estudiante', 'invitado'])('el rol %s ve el enlace habilitado a las palabras del mazo', (rol) => {
+    renderizar(rol);
+
+    const enlace = screen.getByRole('link', { name: NOMBRE_ENLACE });
+    expect(enlace).toHaveAttribute('href', `/${rol}/mazos/3/palabras`);
+    expect(enlace).toHaveTextContent('View deck words');
+  });
+
+  it('la docente no ve el enlace', () => {
+    renderizar('docente');
+
+    expect(screen.queryByRole('link', { name: NOMBRE_ENLACE })).not.toBeInTheDocument();
   });
 });
