@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { actualizarEstadoMazo } from '../../../cliente-api/mazosApi';
 import { exportarMazoPdf } from '../../../cliente-api/exportacionesApi';
 import { BotonExportarPdf } from '../../../componentes/comunes/BotonExportarPdf';
@@ -18,8 +18,7 @@ const CANTIDAD_COLORES = 5;
  * @brief Tarjeta de un mazo. Todos los roles ven la información del mazo;
  * las acciones dependen del rol:
  * - docente: abrir / cerrar el mazo y exportarlo a PDF (HU-3.3).
- * - estudiante: ir a estudiar las palabras del mazo.
- * - invitado: solo lectura (sin acciones).
+ * - estudiante e invitado: ver las palabras aprobadas del mazo (/{rol}/mazos/:id/palabras).
  * @param {Object} props
  * @param {Object} props.mazo - Mazo a mostrar.
  * @param {string} [props.rol] - 'docente' | 'estudiante' | 'invitado'.
@@ -120,15 +119,14 @@ export function MazoItem({ mazo, rol = 'docente', onEstadoActualizado }) {
             </div>
           )}
 
-          {rol === 'estudiante' && (
-            <button
+          {(rol === 'estudiante' || rol === 'invitado') && (
+            <Link
               className="btn btn-secondary"
-              type="button"
-              disabled
-              aria-label={t('deckCard.aria.study', { name: mazo.nombre_lectura })}
+              to={`/${rol}/mazos/${mazo.id_mazo}/palabras`}
+              aria-label={t('deckCard.aria.viewWords', { name: mazo.nombre_lectura })}
             >
               {t('deckCard.actions.viewWords')}
-            </button>
+            </Link>
           )}
         </div>
 
