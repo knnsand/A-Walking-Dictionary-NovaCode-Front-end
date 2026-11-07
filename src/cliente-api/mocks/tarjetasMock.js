@@ -1,4 +1,13 @@
 /**
+ * @file tarjetasMock.js
+ * @brief Datos simulados de tarjetas y aportes para trabajar el front sin back: registro de
+ * palabras y detección de duplicados (HE-01) y curaduría de la docente (HE-02).
+ *
+ * Se usa cuando VITE_USE_MOCK=true. Las tarjetas y aportes viven en memoria y se pierden al
+ * recargar la página.
+ */
+
+/**
  * @brief Permite desactivar temporalmente las coautorías y
  * el registro de palabras existentes sin eliminar el flujo original.
  *
@@ -17,6 +26,7 @@ function normalizarPalabra(palabra) {
 }
 
 
+/** @brief Tarjetas de ejemplo (en memoria); empiezan en "pendiente_revision". */
 let tarjetas = [
   {
     id_tarjeta: 1,
@@ -48,6 +58,7 @@ let tarjetas = [
   },
 ];
 
+/** @brief Aportes de ejemplo (en memoria): un aporte "creada" por cada tarjeta inicial. */
 let aportes = [
   {
     id_aporte: 1,
@@ -71,8 +82,13 @@ let aportes = [
   },
 ];
 
+/** @brief Id que recibirá el próximo aporte registrado. */
 let siguienteIdAporte = aportes.length + 1;
 
+/**
+ * @brief Simula GET /api/v1/cards/pending: tarjetas en "pendiente_revision" con sus aportes (CA-2.1.1).
+ * @return {Object[]} Tarjetas pendientes, cada una con su lista de aportes.
+ */
 export function mockListarPendientes() {
   return tarjetas
     .filter(tarjeta => tarjeta.estado === 'pendiente_revision')
@@ -84,6 +100,11 @@ export function mockListarPendientes() {
     }));
 }
 
+/**
+ * @brief Simula la aprobación de una tarjeta: pasa a "revisado_docente" (CA-2.1.2).
+ * @param {number} cardId - Id de la tarjeta.
+ * @return {Object|undefined} Tarjeta aprobada, o undefined si no existe.
+ */
 export function mockAprobarTarjeta(cardId) {
   tarjetas = tarjetas.map((t) =>
     t.id_tarjeta === cardId ? { ...t, estado: 'revisado_docente' } : t
@@ -91,6 +112,12 @@ export function mockAprobarTarjeta(cardId) {
   return tarjetas.find((t) => t.id_tarjeta === cardId);
 }
 
+/**
+ * @brief Simula la corrección de una tarjeta por la docente antes de aprobarla (CA-2.1.2).
+ * @param {number} cardId - Id de la tarjeta.
+ * @param {Object} datos - Campos corregidos (palabra, traduccion, definicion, ejemplo...).
+ * @return {Object|undefined} Tarjeta editada, o undefined si no existe.
+ */
 export function mockEditarTarjeta(cardId, datos) {
   tarjetas = tarjetas.map((t) =>
     t.id_tarjeta === cardId ? { ...t, ...datos } : t
@@ -98,6 +125,11 @@ export function mockEditarTarjeta(cardId, datos) {
   return tarjetas.find((t) => t.id_tarjeta === cardId);
 }
 
+/**
+ * @brief Simula el rechazo de una tarjeta: pasa a "rechazada" (CA-2.1.3).
+ * @param {number} cardId - Id de la tarjeta.
+ * @return {{id_tarjeta: number, estado: string}} Id y estado nuevo.
+ */
 export function mockRechazarTarjeta(cardId) {
   tarjetas = tarjetas.map((t) =>
     t.id_tarjeta === cardId ? { ...t, estado: 'rechazada' } : t
@@ -105,6 +137,12 @@ export function mockRechazarTarjeta(cardId) {
   return { id_tarjeta: cardId, estado: 'rechazada' };
 }
 
+/**
+ * @brief Simula PUT /api/v1/cards/{id}/context: guarda registro y variante regional (CA-2.2.1).
+ * @param {number} cardId - Id de la tarjeta.
+ * @param {Object} contexto - Etiquetas de contexto (registro, variante_regional).
+ * @return {Object|undefined} Tarjeta actualizada, o undefined si no existe.
+ */
 export function mockActualizarContexto(cardId, contexto) {
   tarjetas = tarjetas.map((t) =>
     t.id_tarjeta === cardId ? { ...t, ...contexto } : t
@@ -112,6 +150,11 @@ export function mockActualizarContexto(cardId, contexto) {
   return tarjetas.find((t) => t.id_tarjeta === cardId);
 }
 
+/**
+ * @brief Simula GET /api/v1/cards/approved: tarjetas en "revisado_docente" con sus aportes
+ * (pestaña "Historial Aprobadas" del panel de curaduría).
+ * @return {Object[]} Tarjetas aprobadas, cada una con su lista de aportes.
+ */
 export function mockListarAprobadas() {
   return tarjetas
     .filter(tarjeta => tarjeta.estado === 'revisado_docente')
