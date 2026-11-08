@@ -1,0 +1,20 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": "\\.(js|jsx)$",
+    "excludePattern": "(\\.test\\.(js|jsx)$|setupTests\\.js$)"
+  },
+  "sourceType": "module",
+  "plugins": ["plugins/markdown", "jsdoc/etiquetas.cjs"],
+  "opts": {
+    "destination": "docs-generados",
+    "recurse": true,
+    "encoding": "utf8",
+    "readme": "jsdoc/INICIO.md"
+  },
+  "templates": {
+    "default": {
+      "includeDate": false
+    }
+  }
+}
