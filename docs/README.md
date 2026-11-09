@@ -16,7 +16,7 @@ Dónde vive cada cosa:
 | --- | --- | --- |
 | Documentación de usuario (IEEE 1063 / ISO/IEC/IEEE 26514) | `docs/usuario/` | Pendiente |
 | Documentación de componentes | `docs/componentes/` | Pendiente |
-| Documentación del código (JSDoc) | Comentarios en `src/` | Parcial |
+| Documentación del código (JSDoc) | Comentarios en `src/`; página generada con `npm run docs:code` ([`codigo/README.md`](codigo/README.md)) | Completo |
 | OpenAPI y Arc42 | Back-end: `docs/api/` y `docs/arquitectura/arc42/` | Ver el índice del back-end |
 
 ## Contratos de datos con el backend

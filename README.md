@@ -101,6 +101,7 @@ Se leen con el prefijo `VITE_` de `.env.local` (plantilla: `.env.example`).
 | `npm run test:coverage` | Pruebas unitarias con cobertura |
 | `npm run test:e2e` | Pruebas E2E con Playwright (requieren backend y PostgreSQL; ver [`e2e/README.md`](e2e/README.md)) |
 | `npm run test:e2e:resumen` | Genera el tablero HTML de métricas de la última ejecución E2E |
+| `npm run docs:code` | Genera la documentación del código en `docs-generados/` (ver [`docs/codigo/README.md`](docs/codigo/README.md)) |
 
 ## Documentación
 

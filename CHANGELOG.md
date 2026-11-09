@@ -10,6 +10,7 @@ Notas:
 ## [Sin publicar]
 
 ### Agregado
+- 2026-11-07 · Documentación del código generada con JSDoc a partir de los comentarios (`npm run docs:code`, `docs/codigo/README.md`).
 - 2026-11-02 · HU-021: reporte de resultados por quiz en PDF. (#65)
 - 2026-10-30 · HU-019: reporte del modo de estudio en PDF. (#63)
 - 2026-10-30 · Aviso al back-end para reconstruir el SUPERPROMPT en cada fusión a `develop`. (#64)

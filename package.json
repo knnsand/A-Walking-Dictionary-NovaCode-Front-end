@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:resumen": "node e2e/soporte/generar-resumen.js"
+    "test:e2e:resumen": "node e2e/soporte/generar-resumen.js",
+    "docs:code": "jsdoc -c jsdoc.json"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
@@ -35,6 +36,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.4",
     "globals": "^17.11.0",
+    "jsdoc": "^4.0.5",
     "jsdom": "^30.0.1",
     "vite": "^8.2.2",
     "vitest": "^5.0.0"

@@ -16,6 +16,9 @@ dist-ssr
 # Reportes de las pruebas E2E (npm run test:e2e)
 reportes-e2e
 
+# Documentación del código generada con JSDoc (npm run docs:code)
+docs-generados
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
