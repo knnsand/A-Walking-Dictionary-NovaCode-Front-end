@@ -1,0 +1,144 @@
+
+.acerca {
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #263247;
+}
+
+.acerca__intro {
+  margin-bottom: 24px;
+}
+
+.acerca__intro h2 {
+  margin: 0 0 12px;
+  font-size: 1.6rem;
+}
+
+.acerca__intro p {
+  max-width: 850px;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+.acerca__categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.acerca__categoria {
+  padding: 11px 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: white;
+  color: #334155;
+  font: inherit;
+  cursor: pointer;
+}
+
+.acerca__categoria:hover {
+  background: #eff6ff;
+}
+
+.acerca__categoria--activa {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.acerca__categoria--activa:hover {
+  background: #1d4ed8;
+}
+
+.acerca__contenido {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.acerca__lista,
+.acerca__detalle {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.acerca__lista h3,
+.acerca__detalle h3 {
+  margin: 0 0 18px;
+  font-size: 1.15rem;
+}
+
+.acerca__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #334155;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.acerca__item:hover {
+  background: #f1f5f9;
+}
+
+.acerca__item--activo {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.acerca__video {
+  display: block;
+  width: 100%;
+  max-height: 540px;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  background: #0f172a;
+}
+
+.acerca__descripcion {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.acerca__descripcion h4 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.acerca__descripcion p {
+  margin: 0;
+  line-height: 1.7;
+  color: #475569;
+}
+
+@media (max-width: 800px) {
+  .acerca__contenido {
+    grid-template-columns: 1fr;
+  }
+
+  .acerca {
+    padding: 12px;
+  }
+
+  .acerca__lista,
+  .acerca__detalle {
+    padding: 16px;
+  }
+}

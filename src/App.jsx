@@ -29,6 +29,7 @@ import { ListaQuices } from './vistas/quices/ListaQuices';
 import { ResponderQuiz } from './vistas/estudiante/responder-quiz/ResponderQuiz';
 import { DiccionarioGlobal } from './vistas/diccionario-global/DiccionarioGlobal';
 import { PalabrasMazo } from './vistas/diccionario-global/PalabrasMazo';
+import { AcercaDe } from './vistas/acerca-de/AcercaDe';
 
 
 /**
@@ -92,6 +93,7 @@ export default function App() {
                 </RutaSoloDocente>
               }
             >
+              <Route path="acerca-de" element={<AcercaDe />} />
               {/* /docente redirige a Mazos de estudio */}
               <Route index element={<Navigate to="mazos" replace />} />
 
@@ -166,6 +168,7 @@ export default function App() {
               path="/invitado"
               element={<LayoutPrincipal rolFijo="invitado" />}
             >
+              <Route path="acerca-de" element={<AcercaDe />} />
               <Route index element={<Navigate to="mazos" replace />} />
               <Route path="mazos" element={<MazosEstudio rol="invitado" />} />
               {/* Botón "Ver palabras del mazo": palabras aprobadas de un mazo */}
