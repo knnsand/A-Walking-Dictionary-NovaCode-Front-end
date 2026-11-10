@@ -32,7 +32,8 @@
       "studyMode": "Study Mode",
       "quizzes": "Quizzes",
       "progressAndPerformance": "Progress & Performance",
-      "settingsAndProfile": "Settings & Profile"
+      "settingsAndProfile": "Settings & Profile",
+      "about": "About"
     },
     "theme": {
       "dark": "Dark Mode",

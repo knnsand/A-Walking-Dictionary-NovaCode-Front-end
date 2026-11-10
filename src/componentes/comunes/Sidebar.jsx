@@ -10,6 +10,7 @@ import { useTheme } from '../../contexto/useTheme';
 import { useTranslation, Trans } from 'react-i18next';
 
 /** @brief Secciones y opciones del menú que ve cada rol. */
+
 const MENU_POR_ROL = {
   docente: [
     {
@@ -28,7 +29,14 @@ const MENU_POR_ROL = {
         { to: '/docente/participacion', labelKey: 'sidebar.menu.participationAnalytics' },
       ],
     },
+    {
+      grupoKey: null,
+      items: [
+        { to: '/docente/acerca-de', labelKey: 'sidebar.menu.about' },
+      ],
+    },
   ],
+
   estudiante: [
     {
       grupoKey: null,
@@ -51,13 +59,26 @@ const MENU_POR_ROL = {
         { to: '/estudiante/configuracion-perfil', labelKey: 'sidebar.menu.settingsAndProfile' },
       ],
     },
+    {
+      grupoKey: null,
+      items: [
+        { to: '/estudiante/acerca-de', labelKey: 'sidebar.menu.about' },
+      ],
+    },
   ],
+
   invitado: [
     {
       grupoKey: null,
       items: [
         { to: '/invitado/diccionario', labelKey: 'sidebar.menu.globalDictionary' },
         { to: '/invitado/mazos', labelKey: 'sidebar.menu.studyDecks' },
+      ],
+    },
+    {
+      grupoKey: null,
+      items: [
+        { to: '/invitado/acerca-de', labelKey: 'sidebar.menu.about' },
       ],
     },
   ],
@@ -217,7 +238,9 @@ export function Sidebar({
           <ul className="sidebar__nav">
             {seccion.items.map((item) => {
               const deshabilitadoPorPerfil =
-                bloqueadoPorPerfil && item.to !== RUTA_PERFIL_ESTUDIANTE;
+                bloqueadoPorPerfil &&
+                  item.to !== RUTA_PERFIL_ESTUDIANTE &&
+                  item.to !== '/estudiante/acerca-de';
 
               const deshabilitadoPorImplementacion =
                 rutasDeshabilitadas.includes(item.to);
