@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useEncabezadoPagina } from '../../contexto/useEncabezadoPagina';
 import './acerca-de.css';
 
-// Los nombres coinciden con los archivos del ZIP.
+// Videos explicativos organizados por rol.
 const VIDEOS = [
   {
     id: 'inicio',
@@ -67,13 +67,14 @@ const VIDEOS = [
   },
 ];
 
+// Categorías disponibles en la aplicación.
 const CATEGORIAS = [
   { id: 'general', nombre: 'Introducción' },
   { id: 'estudiante', nombre: 'Estudiante' },
   { id: 'docente', nombre: 'Docente' },
 ];
 
-export function AcercaDe() {
+export function AcercaDe({ rol }) {
   const [categoria, setCategoria] = useState('general');
   const [seleccionado, setSeleccionado] = useState('inicio');
 
@@ -82,24 +83,50 @@ export function AcercaDe() {
     'Tutoriales y demostraciones de la plataforma'
   );
 
-  const videosVisibles = VIDEOS.filter(
-    (video) => video.rol === categoria
-  );
+  // Cada usuario puede ver la introducción y
+  // los tutoriales correspondientes a su rol.
+ const categoriasVisibles = CATEGORIAS.filter(
+  (item) =>
+    item.id === 'general' ||
+    rol === 'docente' ||
+    item.id === rol
+);
 
-  const videoActual = VIDEOS.find(
+  // Solo se incluyen los videos de la categoría
+  // seleccionada y autorizada para el rol.
+const videosVisibles = VIDEOS.filter(
+  (video) =>
+    video.rol === categoria &&
+    (
+      video.rol === 'general' ||
+      rol === 'docente' ||
+      video.rol === rol
+    )
+);
+
+  // Video seleccionado, siempre que pertenezca
+  // a una categoría permitida para el usuario.
+  const videoActual = videosVisibles.find(
     (video) => video.id === seleccionado
-  );
+  ) ?? videosVisibles[0];
 
+  // Cambia la categoría y selecciona su primer video.
   function cambiarCategoria(nuevaCategoria) {
-    setCategoria(nuevaCategoria);
+    const permitida = categoriasVisibles.some(
+      (item) => item.id === nuevaCategoria
+    );
+
+    if (!permitida) return;
 
     const primero = VIDEOS.find(
       (video) => video.rol === nuevaCategoria
     );
 
+    setCategoria(nuevaCategoria);
     setSeleccionado(primero?.id ?? 'inicio');
   }
 
+  // Construye la URL de los videos almacenados en public.
   function obtenerRuta(archivo) {
     return encodeURI(
       `${import.meta.env.BASE_URL}VideosExplicativos/${archivo}`
@@ -110,18 +137,21 @@ export function AcercaDe() {
     <main className="acerca">
       <section className="acerca__intro">
         <h2>Aprende a utilizar A Walking Dictionary</h2>
+
         <p>
           Explora las funcionalidades de la plataforma
           mediante videos explicativos con narración y subtítulos.
-          Selecciona un rol y elige el tutorial que deseas consultar.
+          Selecciona una categoría y elige el tutorial
+          que deseas consultar.
         </p>
       </section>
 
+      {/* Categorías visibles según el rol */}
       <div
         className="acerca__categorias"
         aria-label="Categorías de tutoriales"
       >
-        {CATEGORIAS.map((item) => (
+        {categoriasVisibles.map((item) => (
           <button
             key={item.id}
             type="button"
@@ -138,28 +168,39 @@ export function AcercaDe() {
         ))}
       </div>
 
-      <div className="acerca__contenido">
-        <aside className="acerca__lista">
-          <h3>Videos disponibles</h3>
+      {/* Reproductor y listado de tutoriales */}
+      <div
+        className={`acerca__contenido ${
+          categoria === 'general'
+            ? 'acerca__contenido--completo'
+            : ''
+        }`}
+      >
+        {/* En introducción no se muestra el listado lateral */}
+        {categoria !== 'general' && (
+          <aside className="acerca__lista">
+            <h3>Videos disponibles</h3>
 
-          {videosVisibles.map((video) => (
-            <button
-              key={video.id}
-              type="button"
-              className={
-                seleccionado === video.id
-                  ? 'acerca__item acerca__item--activo'
-                  : 'acerca__item'
-              }
-              aria-pressed={seleccionado === video.id}
-              onClick={() => setSeleccionado(video.id)}
-            >
-              <span aria-hidden="true">▶</span>
-              {video.titulo}
-            </button>
-          ))}
-        </aside>
+            {videosVisibles.map((video) => (
+              <button
+                key={video.id}
+                type="button"
+                className={
+                  videoActual?.id === video.id
+                    ? 'acerca__item acerca__item--activo'
+                    : 'acerca__item'
+                }
+                aria-pressed={videoActual?.id === video.id}
+                onClick={() => setSeleccionado(video.id)}
+              >
+                <span aria-hidden="true">▶</span>
+                {video.titulo}
+              </button>
+            ))}
+          </aside>
+        )}
 
+        {/* Video y descripción técnica */}
         {videoActual && (
           <section className="acerca__detalle">
             <h3>{videoActual.titulo}</h3>
@@ -175,6 +216,7 @@ export function AcercaDe() {
                 src={obtenerRuta(videoActual.archivo)}
                 type="video/mp4"
               />
+
               Tu navegador no permite reproducir este video.
             </video>
 
