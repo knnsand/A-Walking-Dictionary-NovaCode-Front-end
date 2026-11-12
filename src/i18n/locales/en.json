@@ -346,7 +346,8 @@
       "requiredFields": "Complete the required fields: word, translation and definition.",
       "exampleTooLong": "The example cannot exceed {{max}} characters.",
       "selectDeck": "Select a deck to continue.",
-      "processFailed": "Could not process the word. Please try again."
+      "processFailed": "Could not process the word. Please try again.",
+      "duplicateWord": "This word has already been submitted. Please choose a different word."
     }
   },
   "reviewPage": {
