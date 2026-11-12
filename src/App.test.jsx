@@ -1,3 +1,4 @@
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -156,7 +157,7 @@ describe('App - configuración de rutas', () => {
     expect(screen.getByText('Pantalla de login')).toBeInTheDocument();
   });
 
-  it('redirige al estudiante cuando un docente intenta entrar en la ruta de estudiante', () => {
+  it('redirige al docente cuando intenta entrar en la ruta de estudiante', () => {
     renderApp('/estudiante', {
       autenticado: true,
       rol: 'docente',
@@ -165,13 +166,14 @@ describe('App - configuración de rutas', () => {
     expect(screen.getByText('Panel docente')).toBeInTheDocument();
   });
 
-  it('redirige al docente cuando un estudiante intenta entrar en la ruta de docente', () => {
+  // ACTUALIZADA: el estudiante ahora es redirigido a Study Decks.
+  it('redirige al estudiante a sus mazos cuando intenta entrar en la ruta de docente', () => {
     renderApp('/docente', {
       autenticado: true,
       rol: 'estudiante',
     });
 
-    expect(screen.getByText('Panel estudiante')).toBeInTheDocument();
+    expect(screen.getByText('Mazos de estudiante')).toBeInTheDocument();
   });
 
   it('permite al docente acceder a sus mazos', () => {
@@ -183,13 +185,14 @@ describe('App - configuración de rutas', () => {
     expect(screen.getByText('Panel docente')).toBeInTheDocument();
   });
 
-  it('permite al estudiante acceder a su panel', () => {
+  // ACTUALIZADA: la ruta principal del estudiante muestra Study Decks.
+  it('redirige la ruta principal del estudiante a sus mazos', () => {
     renderApp('/estudiante', {
       autenticado: true,
       rol: 'estudiante',
     });
 
-    expect(screen.getByText('Panel estudiante')).toBeInTheDocument();
+    expect(screen.getByText('Mazos de estudiante')).toBeInTheDocument();
   });
 
   it('redirige la ruta antigua mazoscreados a los mazos del docente', () => {
