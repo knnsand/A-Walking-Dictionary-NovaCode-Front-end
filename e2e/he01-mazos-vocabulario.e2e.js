@@ -60,7 +60,7 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
   test.beforeEach(async ({ page, context }) => {
     await iniciarSesion(context, 'juan');
     await page.goto('/estudiante');
-    await page.getByRole('button', { name: 'Register word' }).click();
+    await page.getByRole('button', { name: /Add Word to Deck/i }).click();
   });
 
   async function llenar(page, datos) {
@@ -90,7 +90,7 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
     await expect(modal.getByRole('alert')).toContainText('Complete the required fields');
   });
 
-  test('CA-1.3.4 + CA-1.3.1 Duplicado exacto: avisa antes de enviar y registra la coautoría', async ({ page }) => {
+  test('CA-1.3.4 Duplicado exacto: muestra un aviso y bloquea el envío', async ({ page }) => {
     // "stone" ya existe en "Fear of Stones" (seed) con esta definición y este ejemplo
     const modal = await llenar(page, {
       palabra: 'Stone',
@@ -98,19 +98,17 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
       definicion: 'A small piece of rock.',
       ejemplo: 'The boy kept a smooth stone in his pocket.',
     });
-    await expect(modal.getByRole('alert')).toContainText('already exists in the deck, with the same definition');
-    await modal.getByRole('button', { name: 'Confirm and submit' }).click();
-    await expect(modal.getByRole('status').filter({ hasText: 'You were registered as a co-author' })).toBeVisible();
+    await expect(modal.getByRole('alert')).toContainText('This word has already been submitted. Please choose a different word.');
+    await expect(modal.getByRole('button', { name: 'Confirm and submit' })).toHaveCount(0);
   });
 
-  test('CA-1.3.4 + CA-1.3.2 Duplicado parcial: avisa y guarda una acepción adicional', async ({ page }) => {
+  test('CA-1.3.4 Duplicado parcial: muestra un aviso y bloquea el envío', async ({ page }) => {
     const modal = await llenar(page, {
       palabra: 'fear',
       traduccion: 'temor',
       definicion: 'To be worried that something bad will happen.',
     });
-    await expect(modal.getByRole('alert')).toContainText('with a different definition');
-    await modal.getByRole('button', { name: 'Confirm and submit' }).click();
-    await expect(modal.getByRole('status').filter({ hasText: 'Additional meaning registered' })).toBeVisible();
+    await expect(modal.getByRole('alert')).toContainText('This word has already been submitted. Please choose a different word.');
+    await expect(modal.getByRole('button', { name: 'Confirm and submit' })).toHaveCount(0);
   });
 });
