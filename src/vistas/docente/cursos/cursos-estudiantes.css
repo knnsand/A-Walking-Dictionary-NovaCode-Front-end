@@ -1,0 +1,194 @@
+
+/*
+ * Tarjetas independientes de cursos académicos.
+ * Una tarjeta por curso, incluso cuando solo existe uno.
+ */
+
+.cursos-estudiantes__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(100%, 310px), 1fr)
+  );
+  gap: 22px;
+  align-items: stretch;
+}
+
+/* Tarjeta */
+
+.cursos-estudiantes__card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  padding: 22px;
+
+  border: 1px solid var(--color-border, #dfe3ed);
+  border-top: 3px solid var(--color-primary, #190080);
+  border-radius: 15px;
+
+  background: var(--color-surface, var(--bg-card, #fff));
+  color: var(--color-text, inherit);
+
+  box-shadow: 0 3px 10px rgb(0 0 0 / 6%);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Resaltar tarjeta al pasar el cursor */
+
+.cursos-estudiantes__card:hover {
+  transform: translateY(-5px);
+
+  border-color: var(--color-primary, #190080);
+
+  box-shadow:
+    0 12px 28px rgb(20 24 60 / 16%);
+}
+
+/* Resaltar cuando un botón recibe el foco */
+
+.cursos-estudiantes__card:focus-within {
+  border-color: var(--color-primary, #190080);
+
+  box-shadow:
+    0 0 0 3px rgb(45 20 150 / 12%),
+    0 8px 24px rgb(20 24 60 / 12%);
+}
+
+/* Encabezado */
+
+.cursos-estudiantes__card-top {
+  display: flex;
+  align-items: center;
+}
+
+.cursos-estudiantes__tag {
+  display: inline-block;
+  align-self: flex-start;
+
+  padding: 4px 9px;
+
+  border: 1px solid var(--color-border, #dfe3ed);
+  border-radius: 6px;
+
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #68728b);
+}
+
+.cursos-estudiantes__name {
+  margin: 0;
+
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+
+/* Sección del código de acceso */
+
+.cursos-estudiantes__code {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding-block: 16px;
+
+  border-top: 1px solid var(--color-border, #dfe3ed);
+  border-bottom: 1px solid var(--color-border, #dfe3ed);
+
+  overflow-wrap: anywhere;
+}
+
+.cursos-estudiantes__code-label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #68728b);
+}
+
+.cursos-estudiantes__code-value {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+/* Botones relacionados con el código */
+
+.cursos-estudiantes__code-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
+  margin-top: 8px;
+}
+
+.cursos-estudiantes__code-actions .btn {
+  width: 100%;
+  min-width: 0;
+
+  padding: 10px 8px;
+
+  font-size: 0.8rem;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+/* Si solo hay un botón, ocupa todo el espacio */
+
+.cursos-estudiantes__code-actions .btn:only-child {
+  grid-column: 1 / -1;
+}
+
+/* Acciones principales */
+
+.cursos-estudiantes__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  margin-top: auto;
+}
+
+.cursos-estudiantes__actions .btn {
+  width: 100%;
+  white-space: normal;
+}
+
+/* Mantener el botón principal destacado */
+
+.cursos-estudiantes__actions .btn-primary {
+  font-weight: 600;
+}
+
+/* Accesibilidad: reducir animaciones */
+
+@media (prefers-reduced-motion: reduce) {
+  .cursos-estudiantes__card {
+    transition: none;
+  }
+
+  .cursos-estudiantes__card:hover {
+    transform: none;
+  }
+}
+
+/* Pantallas pequeñas */
+
+@media (max-width: 420px) {
+  .cursos-estudiantes__card {
+    padding: 16px;
+  }
+
+  .cursos-estudiantes__code-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .cursos-estudiantes__code-actions .btn {
+    grid-column: 1 / -1;
+  }
+}
