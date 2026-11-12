@@ -109,6 +109,7 @@ export function CrearMazoForm({ onMazoCreado, onCerrar }) {
     try {
       const mazoCreado = await crearMazo({
         ...form,
+        semana: Number(form.semana),
         curso_id: Number(form.curso_id),
         docente_id: docenteId,
       });

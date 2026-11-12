@@ -1,6 +1,6 @@
 /**
  * @file RevisionPalabras.jsx
- * @brief Panel de revisión de la docente: términos nuevos, coautorías e historial de aprobadas (HU-004, HU-005).
+ * @brief Panel de revisión de la docente: términos nuevos e historial de aprobadas (HU-004, HU-005).
  */
 
 import { useEffect, useState, useCallback } from 'react';
@@ -12,13 +12,8 @@ import {
   aprobarTarjeta,
   actualizarContextoTarjeta
 } from '../../../cliente-api/tarjetasApi';
-import {
-  listarCoautoriasPendientes,
-  aprobarCoautoria
-} from '../../../cliente-api/coautoriaApi';
 import { Aviso } from '../../../componentes/comunes/Aviso';
 import { TarjetaPendienteCard } from './TarjetaPendienteCard';
-import { CoautoriaPendienteCard } from '../coautoria/CoautoriaPendienteCard';
 import { EtiquetaContextoModal } from './EtiquetaContextoModal';
 import { TABS, REGISTRO_CLAVES } from './revisionPalabras.constants';
 import { VARIANTE_REGIONAL_CLAVES } from '../crear-mazo/crearMazo.constants';
@@ -33,11 +28,10 @@ import './revision-palabras.css';
 const NOMBRES_LISTAS = {
   pendientes: 'reviewPage.lists.pending',
   aprobadas: 'reviewPage.lists.approved',
-  coautorias: 'reviewPage.lists.coauthorships',
 };
 
 /**
- * @brief Pantalla con pestañas para revisar y aprobar las tarjetas y coautorías pendientes.
+ * @brief Pantalla con pestañas para revisar y aprobar las tarjetas pendientes.
  * @return {JSX.Element}
  */
 export function RevisionPalabras() {
@@ -45,9 +39,7 @@ export function RevisionPalabras() {
   const [tabActivo, setTabActivo] = useState('nuevos');
   const [pendientes, setPendientes] = useState([]);
   const [aprobadas, setAprobadas] = useState([]);
-  const [coautorias, setCoautorias] = useState([]);
   const [idEnEdicion, setIdEnEdicion] = useState(null);
-  const [idCoautoriaEnEdicion, setIdCoautoriaEnEdicion] = useState(null);
   const [tarjetaParaAprobar, setTarjetaParaAprobar] = useState(null);
   const [guardandoAprobacion, setGuardandoAprobacion] = useState(false);
   const [aviso, setAviso] = useState({ tipo: null, mensaje: null });
@@ -73,23 +65,17 @@ export function RevisionPalabras() {
     return listarTarjetasAprobadas().then(setAprobadas);
   }, []);
 
-  /** @brief Carga las coautorías pendientes. */
-  const cargarCoautorias = useCallback(() => {
-    return listarCoautoriasPendientes().then(setCoautorias);
-  }, []);
-
   /**
-   * @brief Consulta las tres listas en paralelo.
+   * @brief Consulta las dos listas en paralelo.
    * Si una falla, las demás se actualizan y la lista que falló
    * conserva los datos que ya estaban visibles.
    */
   const consultarListas = useCallback(async () => {
     try {
-      const [rPendientes, rAprobadas, rCoautorias] =
+      const [rPendientes, rAprobadas] =
         await Promise.allSettled([
           listarTarjetasPendientes(),
           listarTarjetasAprobadas(),
-          listarCoautoriasPendientes(),
         ]);
 
       const fallidas = [];
@@ -116,17 +102,11 @@ export function RevisionPalabras() {
         NOMBRES_LISTAS.aprobadas
       );
 
-      aplicar(
-        rCoautorias,
-        setCoautorias,
-        NOMBRES_LISTAS.coautorias
-      );
-
       setListasConError(fallidas);
 
       // La hora solo se actualiza si al menos una lista
       // se pudo consultar correctamente.
-      if (fallidas.length < 3) {
+      if (fallidas.length < 2) {
         setUltimaActualizacion(new Date());
       }
     } finally {
@@ -138,7 +118,7 @@ export function RevisionPalabras() {
     void consultarListas();
   }, [consultarListas]);
 
-  /** @brief Recarga manualmente las tres listas (si no hay una recarga en curso). */
+  /** @brief Recarga manualmente las dos listas (si no hay una recarga en curso). */
   function handleActualizar() {
     if (actualizando) return;
 
@@ -204,37 +184,6 @@ export function RevisionPalabras() {
       });
     } finally {
       setGuardandoAprobacion(false);
-    }
-  }
-
-  /**
-   * @brief Aprueba una coautoría con las correcciones de la docente.
-   * @param {number} idAporte - Id del aporte.
-   * @param {Object} datosEditados - Campos corregidos.
-   */
-  async function handleAprobarCoautoria(
-    idAporte,
-    datosEditados
-  ) {
-    try {
-      await aprobarCoautoria(
-        idAporte,
-        datosEditados
-      );
-
-      setAviso({
-        tipo: 'exito',
-        mensaje: t('reviewPage.success.coauthorshipApproved')
-      });
-
-      setIdCoautoriaEnEdicion(null);
-      void cargarCoautorias();
-    } catch (error) {
-      // error.message viene del backend y puede estar en español (pendiente de revisar).
-      setAviso({
-        tipo: 'error',
-        mensaje: t('reviewPage.errors.coauthorshipFailed', { message: error.message })
-      });
     }
   }
 
@@ -315,13 +264,6 @@ export function RevisionPalabras() {
                   {pendientes.length}
                 </span>
               )}
-
-            {tab.id === 'coautoria' &&
-              coautorias.length > 0 && (
-                <span className="sidebar__badge">
-                  {coautorias.length}
-                </span>
-              )}
           </button>
         ))}
       </div>
@@ -368,50 +310,6 @@ export function RevisionPalabras() {
                   onAprobar={(datosEditados) =>
                     handleSolicitarAprobacion(
                       tarjeta,
-                      datosEditados
-                    )
-                  }
-                />
-              </div>
-            ))}
-          </div>
-        )
-      )}
-
-      {tabActivo === 'coautoria' && (
-        coautorias.length === 0 ? (
-          <p className="empty-state">
-            {t('reviewPage.empty.coauthorships')}
-          </p>
-        ) : (
-          <div className="revision-grid">
-            {coautorias.map((coautoria) => (
-              <div
-                key={coautoria.id_aporte}
-                className={`mazo-pila mazo-pila--sola pila--coautoria${
-                  idCoautoriaEnEdicion ===
-                  coautoria.id_aporte
-                    ? ' pila--editando'
-                    : ''
-                }`}
-              >
-                <CoautoriaPendienteCard
-                  coautoria={coautoria}
-                  enEdicion={
-                    idCoautoriaEnEdicion ===
-                    coautoria.id_aporte
-                  }
-                  onIniciarEdicion={() =>
-                    setIdCoautoriaEnEdicion(
-                      coautoria.id_aporte
-                    )
-                  }
-                  onCancelarEdicion={() =>
-                    setIdCoautoriaEnEdicion(null)
-                  }
-                  onAprobar={(datosEditados) =>
-                    handleAprobarCoautoria(
-                      coautoria.id_aporte,
                       datosEditados
                     )
                   }

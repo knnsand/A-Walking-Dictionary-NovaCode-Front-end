@@ -1,3 +1,4 @@
+
 // HE-01 — Gestión Curricular de Mazos y Vocabulario (HU-1.1, HU-1.2, HU-1.3), desde el navegador
 
 import { test, expect } from '@playwright/test';
@@ -25,7 +26,9 @@ test.describe('HU-1.1 — Crear mazos precargados por semana', () => {
     // Al crearse con éxito el modal se cierra y la lista se actualiza
     await expect(modal).toBeHidden();
     await page.reload();
-    const tarjeta = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: 'Things Fall Apart (E2E)' }) });
+    const tarjeta = page.getByRole('listitem').filter({
+      has: page.getByRole('heading', { name: 'Things Fall Apart (E2E)' }),
+    });
     await expect(tarjeta).toContainText('Week 16');
     await expect(tarjeta).toContainText('Deck open for contributions');
   });
@@ -39,7 +42,9 @@ test.describe('HU-1.1 — Crear mazos precargados por semana', () => {
 
   test('CA-1.1.3 Al cerrar un mazo queda "cerrado" y deja de ofrecerse a los estudiantes', async ({ page, browser }) => {
     await page.getByRole('button', { name: 'Close deck The Composition' }).click();
-    const tarjeta = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: 'The Composition' }) });
+    const tarjeta = page.getByRole('listitem').filter({
+      has: page.getByRole('heading', { name: 'The Composition' }),
+    });
     await expect(tarjeta).toContainText('Deck closed');
     await expect(page.getByRole('button', { name: 'Open deck The Composition' })).toBeVisible();
 
@@ -48,7 +53,7 @@ test.describe('HU-1.1 — Crear mazos precargados por semana', () => {
     await iniciarSesion(contextoEstudiante, 'juan');
     const estudiante = await contextoEstudiante.newPage();
     await estudiante.goto('/estudiante');
-    await estudiante.getByRole('button', { name: 'Register word' }).click();
+    await estudiante.getByRole('button', { name: '+ Add Word to Deck' }).click();
     const opciones = estudiante.locator('#mazo_id option');
     await expect(opciones.filter({ hasText: 'Fear of Stones' })).toHaveCount(1);
     await expect(opciones.filter({ hasText: 'The Composition' })).toHaveCount(0);
@@ -60,18 +65,32 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
   test.beforeEach(async ({ page, context }) => {
     await iniciarSesion(context, 'juan');
     await page.goto('/estudiante');
-    await page.getByRole('button', { name: 'Register word' }).click();
+    await page.getByRole('button', { name: '+ Add Word to Deck' }).click();
   });
 
   async function llenar(page, datos) {
     const modal = page.getByRole('dialog', { name: 'Add new word to the deck' });
-    if (datos.palabra !== undefined) await modal.locator('#palabra').fill(datos.palabra);
-    if (datos.traduccion !== undefined) await modal.locator('#traduccion').fill(datos.traduccion);
-    if (datos.definicion !== undefined) await modal.locator('#definicion').fill(datos.definicion);
-    if (datos.ejemplo !== undefined) await modal.locator('#ejemplo').fill(datos.ejemplo);
-    const valor = await modal.locator('#mazo_id option', { hasText: 'Fear of Stones' }).getAttribute('value');
+
+    if (datos.palabra !== undefined) {
+      await modal.locator('#palabra').fill(datos.palabra);
+    }
+    if (datos.traduccion !== undefined) {
+      await modal.locator('#traduccion').fill(datos.traduccion);
+    }
+    if (datos.definicion !== undefined) {
+      await modal.locator('#definicion').fill(datos.definicion);
+    }
+    if (datos.ejemplo !== undefined) {
+      await modal.locator('#ejemplo').fill(datos.ejemplo);
+    }
+
+    const valor = await modal
+      .locator('#mazo_id option', { hasText: 'Fear of Stones' })
+      .getAttribute('value');
+
     await modal.locator('#mazo_id').selectOption(valor);
     await modal.locator('button[type="submit"]').click();
+
     return modal;
   }
 
@@ -82,35 +101,55 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
       definicion: 'The land along the edge of a river.',
       ejemplo: 'They sat on the riverbank.',
     });
-    await expect(modal.getByRole('status').filter({ hasText: 'Word submitted successfully' })).toBeVisible();
+
+    await expect(
+      modal.getByRole('status').filter({ hasText: 'Word submitted successfully' })
+    ).toBeVisible();
   });
 
   test('CA-1.2.2 Si falta un campo obligatorio se indica y no se envía', async ({ page }) => {
-    const modal = await llenar(page, { palabra: 'incomplete', traduccion: '', definicion: '' });
-    await expect(modal.getByRole('alert')).toContainText('Complete the required fields');
+    const modal = await llenar(page, {
+      palabra: 'incomplete',
+      traduccion: '',
+      definicion: '',
+    });
+
+    await expect(modal.getByRole('alert')).toContainText(
+      'Complete the required fields'
+    );
   });
 
-  test('CA-1.3.4 + CA-1.3.1 Duplicado exacto: avisa antes de enviar y registra la coautoría', async ({ page }) => {
-    // "stone" ya existe en "Fear of Stones" (seed) con esta definición y este ejemplo
+  test('CA-1.3.4 Duplicado exacto: muestra un aviso y bloquea el envío', async ({ page }) => {
+    // "stone" ya existe en "Fear of Stones" (seed)
     const modal = await llenar(page, {
       palabra: 'Stone',
       traduccion: 'piedra',
       definicion: 'A small piece of rock.',
       ejemplo: 'The boy kept a smooth stone in his pocket.',
     });
-    await expect(modal.getByRole('alert')).toContainText('already exists in the deck, with the same definition');
-    await modal.getByRole('button', { name: 'Confirm and submit' }).click();
-    await expect(modal.getByRole('status').filter({ hasText: 'You were registered as a co-author' })).toBeVisible();
+
+    await expect(modal.getByRole('alert')).toContainText(
+      'This word has already been submitted. Please choose a different word.'
+    );
+
+    await expect(
+      modal.getByRole('button', { name: 'Confirm and submit' })
+    ).toHaveCount(0);
   });
 
-  test('CA-1.3.4 + CA-1.3.2 Duplicado parcial: avisa y guarda una acepción adicional', async ({ page }) => {
+  test('CA-1.3.4 Duplicado parcial: muestra un aviso y bloquea el envío', async ({ page }) => {
     const modal = await llenar(page, {
       palabra: 'fear',
       traduccion: 'temor',
       definicion: 'To be worried that something bad will happen.',
     });
-    await expect(modal.getByRole('alert')).toContainText('with a different definition');
-    await modal.getByRole('button', { name: 'Confirm and submit' }).click();
-    await expect(modal.getByRole('status').filter({ hasText: 'Additional meaning registered' })).toBeVisible();
+
+    await expect(modal.getByRole('alert')).toContainText(
+      'This word has already been submitted. Please choose a different word.'
+    );
+
+    await expect(
+      modal.getByRole('button', { name: 'Confirm and submit' })
+    ).toHaveCount(0);
   });
 });
