@@ -34,7 +34,7 @@ test.describe('HU-5.3 — Inscribir o asignar a cursos', () => {
     await iniciarSesion(context, 'ana');
     await page.goto('/docente/cursos');
     await page.getByRole('button', { name: 'Generate code', exact: true }).click();
-    const tarjetaCurso = page.getByRole('link', { name: /Literatura Anglófona/ });
+    const tarjetaCurso = page.locator('.cursos-estudiantes__card').filter({ hasText: 'Anglophone Literature' });
     await expect(tarjetaCurso).not.toContainText('No code');
     const codigo = (await tarjetaCurso.textContent()).match(/[A-Z0-9]{8}/)[0];
 
@@ -42,7 +42,7 @@ test.describe('HU-5.3 — Inscribir o asignar a cursos', () => {
     await iniciarSesion(contextoEstudiante, 'karen');
     const estudiante = await contextoEstudiante.newPage();
     await estudiante.goto('/estudiante');
-    await estudiante.locator('button.btn', { hasText: 'Join a course' }).click();
+    await estudiante.getByRole('complementary').getByRole('button', { name: 'Join a course' }).click();
     await estudiante.getByLabel('Access code').fill(codigo.toLowerCase());
     await estudiante.locator('form button[type="submit"]').click();
     await expect(estudiante.getByRole('alert')).toContainText('You joined the course successfully.');
@@ -56,7 +56,7 @@ test.describe('HU-5.3 — Inscribir o asignar a cursos', () => {
   test('CA-5.3.1 Un código inválido muestra el error', async ({ page, context }) => {
     await iniciarSesion(context, 'manuela');
     await page.goto('/estudiante');
-    await page.locator('button.btn', { hasText: 'Join a course' }).click();
+    await page.getByRole('complementary').getByRole('button', { name: 'Join a course' }).click();
     await page.getByLabel('Access code').fill('ZZZZZZZZ');
     await page.locator('form button[type="submit"]').click();
     await expect(page.getByRole('alert')).toContainText('Código de acceso inválido'); // mensaje del backend: sigue en español hasta que la API envíe "code"

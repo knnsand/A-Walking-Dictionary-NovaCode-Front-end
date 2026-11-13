@@ -30,7 +30,7 @@ const MENU_POR_ROL = {
       ],
     },
     {
-      grupoKey: null,
+      grupoKey: 'sidebar.groups.aboutWalkingDictionary',
       items: [
         { to: '/docente/acerca-de', labelKey: 'sidebar.menu.about' },
       ],
@@ -60,7 +60,7 @@ const MENU_POR_ROL = {
       ],
     },
     {
-      grupoKey: null,
+      grupoKey: 'sidebar.groups.aboutWalkingDictionary',
       items: [
         { to: '/estudiante/acerca-de', labelKey: 'sidebar.menu.about' },
       ],
@@ -76,7 +76,7 @@ const MENU_POR_ROL = {
       ],
     },
     {
-      grupoKey: null,
+      grupoKey: 'sidebar.groups.aboutWalkingDictionary',
       items: [
         { to: '/invitado/acerca-de', labelKey: 'sidebar.menu.about' },
       ],

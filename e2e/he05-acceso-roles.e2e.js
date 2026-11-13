@@ -45,8 +45,8 @@ test.describe('HU-5.4 — Iniciar sesión y control de roles', () => {
   test('CA-5.4.2 Un estudiante que abre una URL de docente es redirigido a su vista', async ({ page, context }) => {
     await iniciarSesion(context, 'juan');
     await page.goto('/docente/revision-palabras');
-    await expect(page).toHaveURL(/\/estudiante$/);
-    await expect(page.getByRole('heading', { name: 'My Contributions' })).toBeVisible();
+    await expect(page).toHaveURL(/\/estudiante\/mazos$/);
+    await expect(page.getByRole('heading', { name: 'Study Decks' })).toBeVisible();
   });
 
   test('CA-5.4.2 Una docente que abre una URL de estudiante es redirigida a su vista', async ({ page, context }) => {

@@ -1,8 +1,4 @@
-/**
- * @file Login.jsx
- * @brief Pantalla de inicio de sesión con Google.
- */
-
+/** Pantalla de inicio de sesión con Google. */
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
@@ -13,11 +9,6 @@ import { obtenerPerfil } from '../../cliente-api/perfilApi';
 import { calcularPerfilCompleto } from '../../contexto/perfilCompleto';
 import './Login.css';
 
-/**
- * @brief Inicia sesión con Google y lleva a cada usuario a su panel según el rol; si el
- * estudiante no ha completado su perfil, lo lleva a completarlo.
- * @return {JSX.Element}
- */
 export function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -26,44 +17,32 @@ export function Login() {
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
 
-  /**
-   * @brief Recibe la credencial de Google, inicia sesión en el backend y redirige.
-   * @param {{credential?: string}} credentialResponse - Respuesta del botón de Google.
-   */
   async function manejarLoginGoogle(credentialResponse) {
     if (!credentialResponse?.credential) {
       setError(t('auth.errors.noGoogleCredential'));
       return;
     }
-
     setError('');
     setCargando(true);
-
     try {
       const respuesta = await loginWithGoogle(credentialResponse.credential);
-
       if (respuesta.usuario.rol === 'docente') {
         void navigate('/docente', { replace: true });
       } else if (respuesta.usuario.rol === 'estudiante') {
-        // Si aún no ha completado su perfil, se le lleva a completarlo.
         let perfilCompleto = null;
         try {
-          perfilCompleto = calcularPerfilCompleto(
-            await obtenerPerfil(respuesta.usuario.id_usuario)
-          );
+          perfilCompleto = calcularPerfilCompleto(await obtenerPerfil(respuesta.usuario.id_usuario));
         } catch {
-          // Sin datos del perfil: se entra al panel normal.
+          // Si el perfil no está disponible, se permite entrar a los mazos.
         }
-
         void navigate(
-          perfilCompleto === false ? '/estudiante/configuracion-perfil' : '/estudiante',
+          perfilCompleto === false ? '/estudiante/configuracion-perfil' : '/estudiante/mazos',
           { replace: true }
         );
       } else {
         setError(t('login.errors.invalidRole'));
       }
     } catch (errorLogin) {
-      // errorLogin.message viene del backend y puede estar en español (pendiente de revisar).
       setError(errorLogin.message || t('login.errors.loginFailed'));
     } finally {
       setCargando(false);
@@ -75,24 +54,13 @@ export function Login() {
       <button type="button" className="login__tema" onClick={alternarTema}>
         {tema === 'claro' ? `🌙 ${t('auth.darkMode')}` : `☀️ ${t('auth.lightMode')}`}
       </button>
-
       <section className="login__content">
         <div className="login__marca" aria-hidden="true" />
-
         <h1>A Walking Dictionary</h1>
         <p className="login__subtitulo">{t('auth.subtitle')}</p>
-
         <p className="login__texto">{t('login.prompt')}</p>
-
-        {error && (
-          <p role="alert" className="aviso aviso--error login__error">
-            {error}
-          </p>
-        )}
-
-        {cargando ? (
-          <p>{t('login.loggingIn')}</p>
-        ) : (
+        {error && <p role="alert" className="aviso aviso--error login__error">{error}</p>}
+        {cargando ? <p>{t('login.loggingIn')}</p> : (
           <>
             <div className="login__google">
               <GoogleLogin
@@ -100,29 +68,17 @@ export function Login() {
                 width="300"
                 locale="en"
                 onSuccess={manejarLoginGoogle}
-                onError={() => {
-                  setError(t('login.errors.googleFailed'));
-                }}
+                onError={() => setError(t('login.errors.googleFailed'))}
               />
             </div>
-
-            <button
-              type="button"
-              className="btn btn-secondary login__guest-button"
-              onClick={() => {
-                logout();
-                void navigate('/invitado');
-              }}
-            >
+            <button type="button" className="btn btn-secondary login__guest-button" onClick={() => {
+              logout();
+              void navigate('/invitado');
+            }}>
               {t('login.continueAsGuest')}
             </button>
-
-            {/* HU-012: entrada al registro autónomo de estudiante. */}
             <p className="login__enlace">
-              <Trans
-                i18nKey="login.registerNotice"
-                components={{ registerlink: <Link to="/registro" /> }}
-              />
+              <Trans i18nKey="login.registerNotice" components={{ registerlink: <Link to="/registro" /> }} />
             </p>
           </>
         )}
