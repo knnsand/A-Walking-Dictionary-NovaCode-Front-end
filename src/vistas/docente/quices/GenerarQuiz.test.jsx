@@ -7,6 +7,7 @@ import i18n from '../../../i18n';
 import { GenerarQuiz } from './GenerarQuiz';
 import { TEXTOS_CLAVES, ERRORES_VALIDACION } from './generarQuiz.constants';
 import { TEXTOS_CLAVES as TEXTOS_LISTA } from '../../quices/listaQuices.constants';
+import { MemoryRouter } from 'react-router-dom';
 
 // Los textos de la pantalla y los errores de validación son claves de traducción:
 // las pruebas buscan el texto en inglés que ve el usuario.
@@ -299,7 +300,11 @@ describe('GenerarQuiz', () => {
     const QUIZ_GUARDADO = { ...RESPUESTA.quiz };
     listarQuices.mockResolvedValueOnce([]).mockResolvedValue([QUIZ_GUARDADO]);
     generarQuiz.mockResolvedValue(RESPUESTA);
-    render(<GenerarQuiz />);
+    render(
+      <MemoryRouter>
+        <GenerarQuiz />
+      </MemoryRouter>
+    );
 
     expect(await screen.findByText(t(TEXTOS_LISTA.vacioDocente))).toBeInTheDocument();
 

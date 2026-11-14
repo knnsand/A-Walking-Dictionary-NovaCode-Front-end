@@ -31,6 +31,9 @@ import { ResponderQuiz } from './vistas/estudiante/responder-quiz/ResponderQuiz'
 import { DiccionarioGlobal } from './vistas/diccionario-global/DiccionarioGlobal';
 import { PalabrasMazo } from './vistas/diccionario-global/PalabrasMazo';
 
+// HU-022: panel docente de análisis de resultados de quices.
+import { RevisionResultadosQuices } from './vistas/docente/quices/RevisionResultadosQuices';
+
 // Sección About / Acerca de con tutoriales filtrados por rol.
 import { AcercaDe } from './vistas/acerca-de/AcercaDe';
 
@@ -150,6 +153,11 @@ export default function App() {
               <Route
                 path="quices"
                 element={<GenerarQuiz />}
+              />
+              {/* HU-022 (CA-22.1): revisión de resultados de un quiz. */}
+              <Route
+                path="quices/:idQuiz/resultados"
+                element={<RevisionResultadosQuices />}
               />
 
               <Route

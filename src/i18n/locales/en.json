@@ -329,7 +329,7 @@
       "noOpenDecks": "There are no open decks in your courses. If you haven't enrolled yet, join a course with the access code your teacher gives you."
     },
     "reviewNotice": {
-      "title": "ℹ️ Contribution for teacher review",
+      "title": "ℹContribution for teacher review",
       "text": "Your proposal will be sent to the teacher's review panel for academic review and approval."
     },
     "actions": {
@@ -771,5 +771,43 @@
     "quizzesTitle": "Quiz Results",
     "studyTitle": "Study Progress"
 
-  }
+  },
+
+"quizResults": {
+  "viewResults": "View results",
+  "viewResultsAria": "View results for quiz {{title}}",
+  "title": "Quiz results review",
+  "description": "Review students' grades, statistics and answers.",
+  "back": "Back to quizzes",
+  "loading": "Loading results...",
+  "loadError": "Could not load quiz results.",
+  "retry": "Retry",
+  "participants": "Participants",
+  "average": "Average",
+  "maxGrade": "Highest grade",
+  "minGrade": "Lowest grade",
+  "participation": "Participation",
+  "individualResults": "Individual results",
+  "student": "Student",
+  "grade": "Grade",
+  "score": "Score",
+  "time": "Time spent",
+  "submittedAt": "Submission date",
+  "actions": "Actions",
+  "notSubmitted": "Not submitted",
+  "viewAnswers": "View answers",
+  "noResults": "There are no recorded results for this quiz yet.",
+  "questionDifficulty": "Most difficult questions",
+  "noDifficulty": "No question difficulty data available.",
+  "answersOf": "Answers by",
+  "loadingAnswers": "Loading answers...",
+  "detailError": "Could not load the student's answers.",
+  "question": "Question",
+  "studentAnswer": "Student's answer",
+  "correctAnswer": "Correct answer",
+  "unanswered": "Unanswered",
+  "correct": "Correct",
+  "incorrect": "Incorrect"
+}
+
 }

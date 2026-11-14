@@ -193,6 +193,14 @@ export function ListaQuices({
                           etiqueta={t(TEXTOS_CLAVES.botonExportarResultados)}
                           ariaLabel={t(TEXTOS_CLAVES.botonExportarResultadosAria, { title: quiz.titulo })}
                         />
+                        {/* HU-022 (CA-22.1): acceso al panel de resultados del quiz. */}
+                          <Link
+                            to={`/docente/quices/${quiz.id_quiz}/resultados`}
+                            className="btn btn-primary"
+                            aria-label={t('quizResults.viewResultsAria', { title: quiz.titulo })}
+                          >
+                            {t('quizResults.viewResults')}
+                          </Link>
                       </>
                     ) : (
                       <Link
