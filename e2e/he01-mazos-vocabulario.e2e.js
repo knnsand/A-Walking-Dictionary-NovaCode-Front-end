@@ -120,13 +120,24 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
   });
 
   test('CA-1.3.4 Aporte propio: avisa que ya envió la palabra y bloquea el envío', async ({ page }) => {
-    // "stone" ya existe en "Fear of Stones" (seed) y la creó el mismo estudiante (juan)
-    const modal = await llenar(page, {
-      palabra: 'Stone',
-      traduccion: 'piedra',
-      definicion: 'A small piece of rock.',
-      ejemplo: 'The boy kept a smooth stone in his pocket.',
-    });
+    const palabra = `ownword${Date.now()}${test.info().retry}`;
+
+    const datos = {
+      palabra,
+      traduccion: 'palabra de prueba',
+      definicion: 'A word created to verify duplicate submissions.',
+      ejemplo: 'This word belongs to the same student.',
+    };
+
+    const modal = await llenar(page, datos);
+
+    await expect(
+      modal.getByRole('status').filter({
+        hasText: 'Word submitted successfully',
+      })
+    ).toBeVisible();
+
+    await llenar(page, datos);
 
     await expect(modal.getByRole('alert')).toContainText(
       'You already submitted this word in this deck'
@@ -135,6 +146,8 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
     await expect(
       modal.getByRole('button', { name: 'Confirm and submit' })
     ).toHaveCount(0);
+
+    await expect(modal.locator('#palabra')).toHaveValue(palabra);
   });
 
   test('CA-1.3.2 Palabra repetida de otro estudiante: se registra como aporte', async ({ page }) => {
