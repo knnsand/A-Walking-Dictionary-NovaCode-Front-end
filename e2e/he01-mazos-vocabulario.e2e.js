@@ -119,37 +119,47 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
     );
   });
 
-  test('CA-1.3.4 Duplicado exacto: muestra un aviso y bloquea el envío', async ({ page }) => {
-    // "stone" ya existe en "Fear of Stones" (seed)
-    const modal = await llenar(page, {
-      palabra: 'Stone',
-      traduccion: 'piedra',
-      definicion: 'A small piece of rock.',
-      ejemplo: 'The boy kept a smooth stone in his pocket.',
-    });
+  test('CA-1.3.4 Aporte propio: avisa que ya envió la palabra y bloquea el envío', async ({ page }) => {
+    const palabra = `ownword${Date.now()}${test.info().retry}`;
+
+    const datos = {
+      palabra,
+      traduccion: 'palabra de prueba',
+      definicion: 'A word created to verify duplicate submissions.',
+      ejemplo: 'This word belongs to the same student.',
+    };
+
+    const modal = await llenar(page, datos);
+
+    await expect(
+      modal.getByRole('status').filter({
+        hasText: 'Word submitted successfully',
+      })
+    ).toBeVisible();
+
+    await llenar(page, datos);
 
     await expect(modal.getByRole('alert')).toContainText(
-      'This word has already been submitted. Please choose a different word.'
+      'You already submitted this word in this deck'
     );
 
     await expect(
       modal.getByRole('button', { name: 'Confirm and submit' })
     ).toHaveCount(0);
+
+    await expect(modal.locator('#palabra')).toHaveValue(palabra);
   });
 
-  test('CA-1.3.4 Duplicado parcial: muestra un aviso y bloquea el envío', async ({ page }) => {
+  test('CA-1.3.2 Palabra repetida de otro estudiante: se registra como aporte', async ({ page }) => {
+    // "fear" ya existe en "Fear of Stones" (seed) y la creó otra estudiante (maria)
     const modal = await llenar(page, {
       palabra: 'fear',
       traduccion: 'temor',
       definicion: 'To be worried that something bad will happen.',
     });
 
-    await expect(modal.getByRole('alert')).toContainText(
-      'This word has already been submitted. Please choose a different word.'
-    );
-
     await expect(
-      modal.getByRole('button', { name: 'Confirm and submit' })
-    ).toHaveCount(0);
+      modal.getByRole('status').filter({ hasText: 'This word was already in the deck' })
+    ).toBeVisible();
   });
 });

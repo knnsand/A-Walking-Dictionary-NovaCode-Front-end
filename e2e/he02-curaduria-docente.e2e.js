@@ -81,12 +81,29 @@ test.describe('HU-2.3 — Visualizar resumen de participación', () => {
 
   const filaDe = (page, nombre) => page.getByRole('row').filter({ hasText: nombre });
 
-  test('CA-2.3.1 Tabla por mazo con palabras aportadas, coautorías y estado de revisión', async ({ page }) => {
-    for (const columna of ['Student', 'Contributed words', 'Co-authorships', 'Pending', 'Approved']) {
-      await expect(page.getByRole('columnheader', { name: columna })).toBeVisible();
+  test('CA-2.3.1 Tabla por mazo con palabras aportadas, repetidas y estado de revisión', async ({ page }) => {
+    for (const columna of [
+      'Student',
+      'Contributed words',
+      'Repeated words',
+      'Pending',
+      'Approved',
+    ]) {
+      await expect(
+        page.getByRole('columnheader', { name: columna, exact: true })
+      ).toBeVisible();
     }
-    // Juan: 1 palabra, 0 coautorías, 1 pendiente, 0 aprobadas
-    await expect(filaDe(page, 'Juan Estudiante').getByRole('cell')).toHaveText([/Juan Estudiante/, '1', '0', '1', '0', /.*/]);
+
+    await expect(
+      filaDe(page, 'Juan Estudiante').getByRole('cell')
+    ).toHaveText([
+      /Juan Estudiante/,
+      '1',
+      '0',
+      '1',
+      '0',
+      /.*/,
+    ]);
   });
 
   test('CA-2.3.2 "Solo sin aportes" resalta a los estudiantes que no han participado', async ({ page }) => {

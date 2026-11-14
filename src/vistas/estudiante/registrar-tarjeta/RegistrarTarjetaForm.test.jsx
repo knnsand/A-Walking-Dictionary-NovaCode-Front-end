@@ -1,11 +1,16 @@
 
 // vistas/estudiante/registrar-tarjeta/RegistrarTarjetaForm.test.jsx
 // HU-002 / HU-003: el estudiante registra una palabra en un mazo abierto.
-// Con coautorías desactivadas, las palabras duplicadas no se registran.
+// Con coautorías desactivadas, la palabra repetida de otro estudiante se registra como aporte;
+// si el mismo estudiante ya la envió, se le avisa y no se registra.
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
 import { RegistrarTarjetaForm } from './RegistrarTarjetaForm';
+
+vi.hoisted(() => {
+  vi.stubEnv('VITE_ENABLE_COAUTHORSHIP', 'false');
+});
 
 vi.mock('../../../contexto/useAuth', () => ({
   useAuth: () => ({ inscripcionId: 44 }),
@@ -47,8 +52,11 @@ const MAZOS = [
   },
 ];
 
-const MENSAJE_DUPLICADO =
-  'This word has already been submitted. Please choose a different word.';
+const MENSAJE_YA_ENVIADA =
+  'You already submitted this word in this deck, so it is not counted again.';
+
+const MENSAJE_REPETIDA =
+  'This word was already in the deck. Your contribution was recorded as a repeated word.';
 
 function escribir(etiqueta, valor) {
   fireEvent.change(screen.getByLabelText(etiqueta), {
@@ -222,9 +230,14 @@ describe('RegistrarTarjetaForm', () => {
     ).toHaveValue('');
   });
 
-  it('rechaza una palabra duplicada con la misma definición cuando las coautorías están desactivadas', async () => {
+  it('registra la palabra repetida de otro estudiante como aporte cuando las coautorías están desactivadas', async () => {
     verificarDuplicado.mockResolvedValue({
       duplicado: true,
+      resultado: 'coautoria',
+      ya_enviada: false,
+    });
+
+    registrarTarjeta.mockResolvedValue({
       resultado: 'coautoria',
     });
 
@@ -235,12 +248,10 @@ describe('RegistrarTarjetaForm', () => {
     enviar();
 
     expect(
-      await screen.findByRole('alert')
-    ).toHaveTextContent(MENSAJE_DUPLICADO);
+      await screen.findByRole('status')
+    ).toHaveTextContent(MENSAJE_REPETIDA);
 
-    expect(verificarDuplicado).toHaveBeenCalledTimes(1);
-
-    expect(registrarTarjeta).not.toHaveBeenCalled();
+    expect(registrarTarjeta).toHaveBeenCalledTimes(1);
 
     expect(
       screen.queryByRole('button', {
@@ -249,9 +260,14 @@ describe('RegistrarTarjetaForm', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('rechaza una palabra duplicada con diferente definición cuando las coautorías están desactivadas', async () => {
+  it('también registra la repetida con diferente definición como aporte', async () => {
     verificarDuplicado.mockResolvedValue({
       duplicado: true,
+      resultado: 'acepcion_nueva',
+      ya_enviada: false,
+    });
+
+    registrarTarjeta.mockResolvedValue({
       resultado: 'acepcion_nueva',
     });
 
@@ -262,24 +278,17 @@ describe('RegistrarTarjetaForm', () => {
     enviar();
 
     expect(
-      await screen.findByRole('alert')
-    ).toHaveTextContent(MENSAJE_DUPLICADO);
+      await screen.findByRole('status')
+    ).toHaveTextContent(MENSAJE_REPETIDA);
 
-    expect(verificarDuplicado).toHaveBeenCalledTimes(1);
-
-    expect(registrarTarjeta).not.toHaveBeenCalled();
-
-    expect(
-      screen.queryByRole('button', {
-        name: 'Confirm and submit',
-      })
-    ).not.toBeInTheDocument();
+    expect(registrarTarjeta).toHaveBeenCalledTimes(1);
   });
 
-  it('limpia el aviso de duplicado cuando el estudiante modifica la palabra', async () => {
+  it('avisa y no registra si el mismo estudiante ya envió la palabra', async () => {
     verificarDuplicado.mockResolvedValue({
       duplicado: true,
       resultado: 'coautoria',
+      ya_enviada: true,
     });
 
     render(<RegistrarTarjetaForm />);
@@ -290,7 +299,52 @@ describe('RegistrarTarjetaForm', () => {
 
     expect(
       await screen.findByRole('alert')
-    ).toHaveTextContent(MENSAJE_DUPLICADO);
+    ).toHaveTextContent(MENSAJE_YA_ENVIADA);
+
+    expect(verificarDuplicado).toHaveBeenCalledTimes(1);
+
+    expect(registrarTarjeta).not.toHaveBeenCalled();
+  });
+
+  it('muestra el aviso propio si el backend responde 409 CARD_ALREADY_SUBMITTED al registrar', async () => {
+    verificarDuplicado.mockResolvedValue({
+      duplicado: false,
+    });
+
+    registrarTarjeta.mockRejectedValue(
+      Object.assign(new Error('Ya enviaste esta palabra en este mazo.'), {
+        status: 409,
+        cuerpo: { code: 'CARD_ALREADY_SUBMITTED' },
+      })
+    );
+
+    render(<RegistrarTarjetaForm />);
+
+    await llenarFormulario();
+
+    enviar();
+
+    expect(
+      await screen.findByRole('alert')
+    ).toHaveTextContent(MENSAJE_YA_ENVIADA);
+  });
+
+  it('limpia el aviso de palabra ya enviada cuando el estudiante modifica la palabra', async () => {
+    verificarDuplicado.mockResolvedValue({
+      duplicado: true,
+      resultado: 'coautoria',
+      ya_enviada: true,
+    });
+
+    render(<RegistrarTarjetaForm />);
+
+    await llenarFormulario();
+
+    enviar();
+
+    expect(
+      await screen.findByRole('alert')
+    ).toHaveTextContent(MENSAJE_YA_ENVIADA);
 
     escribir(/^Word/, 'another word');
 
