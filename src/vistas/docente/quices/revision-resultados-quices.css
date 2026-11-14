@@ -1,0 +1,269 @@
+
+/**
+ * @file revision-resultados-quices.css
+ * @brief HU-022: estilos del panel docente de resultados.
+ * Diseño basado en las tarjetas de A Walking Dictionary.
+ */
+
+.revision-quices {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Botón para regresar a la lista de quices */
+.revision-quices > a.btn {
+  align-self: flex-start;
+  width: auto;
+  text-decoration: none;
+}
+
+/* Tarjeta blanca del encabezado */
+.revision-quices__encabezado {
+  background: #fff;
+  border: 1px solid #dce3ed;
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: 0 3px 10px rgba(20, 42, 75, 0.04);
+}
+
+.revision-quices__encabezado h2 {
+  margin: 0 0 8px;
+  color: #0b214b;
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.revision-quices__encabezado p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* Cuadrícula de estadísticas */
+.revision-quices__estadisticas {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Cada estadística es una tarjeta blanca */
+.revision-quices__indicador {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 110px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #dce3ed;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(20, 42, 75, 0.04);
+  box-sizing: border-box;
+}
+
+.revision-quices__indicador span {
+  font-size: 0.9rem;
+  color: #526179;
+}
+
+.revision-quices__indicador strong {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #081d49;
+  line-height: 1.2;
+}
+
+/* Secciones principales: tarjetas blancas */
+.revision-quices__seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 26px 28px;
+  background: #fff;
+  border: 1px solid #dce3ed;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(20, 42, 75, 0.04);
+  min-width: 0;
+}
+
+.revision-quices__seccion h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #0b214b;
+  line-height: 1.4;
+}
+
+/* El detalle tendrá una separación visual adicional */
+.revision-quices__seccion--detalle {
+  border-left: 4px solid #132c88;
+  scroll-margin-top: 110px;
+}
+
+.revision-quices__seccion--detalle > button {
+  align-self: flex-start;
+}
+
+/* Tabla de estudiantes */
+.revision-quices__tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.revision-quices__tabla {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  text-align: left;
+  background: #fff;
+}
+
+.revision-quices__tabla th {
+  padding: 16px;
+  background: #f1f4fa;
+  color: #0b214b;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-bottom: 1px solid #dce3ed;
+}
+
+.revision-quices__tabla td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e8edf4;
+  color: #25364d;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.revision-quices__tabla tbody tr:hover {
+  background: #f7f9fd;
+}
+
+.revision-quices__tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.revision-quices__tabla td .btn {
+  white-space: nowrap;
+}
+
+/* Dificultad y respuestas */
+.revision-quices__dificultad,
+.revision-quices__respuestas {
+  display: grid;
+  gap: 14px;
+}
+
+/* Tarjetas individuales de preguntas */
+.revision-quices__pregunta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 22px;
+  background: #f8faff;
+  border: 1px solid #dce3ed;
+  border-radius: 10px;
+}
+
+.revision-quices__pregunta h4 {
+  margin: 0;
+  color: #0b214b;
+  font-size: 1rem;
+}
+
+.revision-quices__pregunta p {
+  margin: 0;
+  color: #25364d;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.revision-quices__pregunta > strong {
+  color: #132c88;
+  font-size: 1.1rem;
+}
+
+/* Estados de las respuestas */
+.revision-quices__correcta,
+.revision-quices__incorrecta {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.revision-quices__correcta {
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+}
+
+.revision-quices__incorrecta {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+/* Errores y reintentos */
+.revision-quices__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px;
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  color: #991b1b;
+}
+
+.revision-quices__error p {
+  margin: 0;
+}
+
+/* Adaptación para tabletas */
+@media (max-width: 1100px) {
+  .revision-quices__estadisticas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Adaptación para celulares */
+@media (max-width: 700px) {
+  .revision-quices {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .revision-quices__estadisticas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .revision-quices__indicador {
+    padding: 16px;
+  }
+
+  .revision-quices__indicador strong {
+    font-size: 1.4rem;
+  }
+
+  .revision-quices__encabezado,
+  .revision-quices__seccion {
+    padding: 18px 16px;
+  }
+
+  .revision-quices__pregunta {
+    padding: 16px;
+  }
+}

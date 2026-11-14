@@ -813,5 +813,41 @@
         "description": "Explains how to configure cumulative quizzes, select study decks, schedule assessments, and export them as PDF files."
       }
     }
+  },
+  "quizResults": {
+    "viewResults": "View results",
+    "viewResultsAria": "View results for quiz {{title}}",
+    "title": "Quiz results review",
+    "description": "Review students' grades, statistics and answers.",
+    "back": "Back to quizzes",
+    "loading": "Loading results...",
+    "loadError": "Could not load quiz results.",
+    "retry": "Retry",
+    "participants": "Participants",
+    "average": "Average",
+    "maxGrade": "Highest grade",
+    "minGrade": "Lowest grade",
+    "participation": "Participation",
+    "individualResults": "Individual results",
+    "student": "Student",
+    "grade": "Grade",
+    "score": "Score",
+    "time": "Time spent",
+    "submittedAt": "Submission date",
+    "actions": "Actions",
+    "notSubmitted": "Not submitted",
+    "viewAnswers": "View answers",
+    "noResults": "There are no recorded results for this quiz yet.",
+    "questionDifficulty": "Most difficult questions",
+    "noDifficulty": "No question difficulty data available.",
+    "answersOf": "Answers by",
+    "loadingAnswers": "Loading answers...",
+    "detailError": "Could not load the student's answers.",
+    "question": "Question",
+    "studentAnswer": "Student's answer",
+    "correctAnswer": "Correct answer",
+    "unanswered": "Unanswered",
+    "correct": "Correct",
+    "incorrect": "Incorrect"
   }
 }

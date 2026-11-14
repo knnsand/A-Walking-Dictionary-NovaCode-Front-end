@@ -138,7 +138,17 @@ describe('ListaQuices', () => {
       renderLista({ rol: 'docente' });
 
       await screen.findAllByRole('listitem');
-      expect(screen.queryByRole('link')).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'Take quiz' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'View details' })).not.toBeInTheDocument();
+    });
+
+    it('ofrece ver los resultados de cada quiz', async () => {
+      listarQuices.mockResolvedValue(QUICES);
+      renderLista({ rol: 'docente' });
+
+      expect(
+        await screen.findByRole('link', { name: 'View results for quiz Quiz semanas 1-4' })
+      ).toHaveAttribute('href', `/docente/quices/${QUICES[0].id_quiz}/resultados`);
     });
 
     it('avisa cuando todavía no hay quices', async () => {
