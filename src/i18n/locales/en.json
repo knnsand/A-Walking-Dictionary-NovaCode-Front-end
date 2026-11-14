@@ -300,7 +300,6 @@
     "title": "Add New Word to the Deck",
     "close": "Close",
     "requiredLegend": "Fields marked with * are required.",
-    "duplicateWord": "This word has already been submitted. Please choose a different word.",
     "duplicate": {
       "sameTitle": "⚠️ This word already exists in the deck, with the same definition.",
       "sameText": "You will be added as a co-author of the existing contribution; no new card will be created.",
@@ -339,7 +338,8 @@
     "success": {
       "coauthor": "You were registered as a co-author: this word already existed in the deck with the same information.",
       "newMeaning": "Additional meaning registered successfully for teacher review.",
-      "submitted": "Word submitted successfully for teacher review."
+      "submitted": "Word submitted successfully for teacher review.",
+      "repeated": "This word was already in the deck. Your contribution was recorded as a repeated word."
     },
     "errors": {
       "loadDecks": "Could not load the available decks.",
@@ -347,7 +347,7 @@
       "exampleTooLong": "The example cannot exceed {{max}} characters.",
       "selectDeck": "Select a deck to continue.",
       "processFailed": "Could not process the word. Please try again.",
-      "duplicateWord": "This word has already been submitted. Please choose a different word."
+      "alreadySubmitted": "You already submitted this word in this deck, so it is not counted again."
     }
   },
   "reviewPage": {
@@ -539,7 +539,7 @@
   },
   "participationPage": {
     "title": "Participation Summary by Deck",
-    "description": "See how many words and co-authorships each student has contributed in the selected weekly deck, and spot those who are not participating yet.",
+    "description": "See how many words each student has contributed in the selected weekly deck, how many repeated words they sent, and spot those who are not participating yet.",
     "onlyNoContributions": "Only without contributions",
     "refreshNow": "Refresh now",
     "loading": "Loading participation…",
@@ -557,7 +557,7 @@
     "columns": {
       "student": "Student",
       "words": "Contributed words",
-      "coauthorships": "Co-authorships",
+      "coauthorships": "Repeated words",
       "pending": "Pending",
       "approved": "Approved",
       "remarks": "Remarks"
