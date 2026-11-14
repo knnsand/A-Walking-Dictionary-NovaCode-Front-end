@@ -1,4 +1,3 @@
-
 {
   "sidebar": {
     "brand": {
@@ -20,7 +19,8 @@
     },
     "groups": {
       "teacherManagement": "Teacher Management",
-      "myLearning": "My Learning"
+      "myLearning": "My Learning",
+      "aboutWalkingDictionary": "About A Walking Dictionary"
     },
     "menu": {
       "globalDictionary": "Global Dictionary",
@@ -33,7 +33,7 @@
       "quizzes": "Quizzes",
       "progressAndPerformance": "Progress & Performance",
       "settingsAndProfile": "Settings & Profile",
-      "about": "About"
+      "about": "Tutorials & Videos"
     },
     "theme": {
       "dark": "Dark Mode",
@@ -346,19 +346,19 @@
       "requiredFields": "Complete the required fields: word, translation and definition.",
       "exampleTooLong": "The example cannot exceed {{max}} characters.",
       "selectDeck": "Select a deck to continue.",
-      "processFailed": "Could not process the word. Please try again."
+      "processFailed": "Could not process the word. Please try again.",
+      "duplicateWord": "This word has already been submitted. Please choose a different word."
     }
   },
   "reviewPage": {
-    "title": "Vocabulary and Co-authorship Review",
-    "subtitle": "Validate the term and co-authorship proposals submitted by the course students.",
+    "title": "Vocabulary Review",
+    "subtitle": "Review and approve vocabulary proposals submitted by students.",
     "lastUpdated": "Last updated:",
     "refresh": "Refresh",
     "refreshing": "Refreshing…",
     "sectionsLabel": "Review sections",
     "tabs": {
       "newTerms": "New Terms",
-      "coauthorship": "Co-authorship",
       "history": "Approved History"
     },
     "lists": {
@@ -462,12 +462,16 @@
       "generating": "Generating...",
       "copy": "Copy",
       "copied": "Copied!",
-      "addStudent": "Add student to the course"
+      "addStudent": "Add student to the course",
+      "viewStudents": "View students",
+      "copyCode": "Copy code"
     },
     "errors": {
       "generateFailed": "Could not generate the course code.",
-      "copyFailed": "Could not copy the code."
-    }
+      "copyFailed": "Could not copy the code.",
+      "loadFailed": "Could not load courses."
+    },
+    "loading": "Loading courses..."
   },
   "courseDetail": {
     "titleFallback": "Course",
@@ -489,15 +493,13 @@
     "errors": {
       "loadFailed": "Could not load the course."
     },
-    
     "reportsTitle": "Reports",
     "reportsSubtitle": "Download the course report or the general study mode report.",
     "exportCourseReport": "Download Course Report PDF",
     "studentsTitle": "Enrolled students",
     "exportReportFor": "Export the report of all students in {{name}}"
-
   },
-   "studyModeReport": {
+  "studyModeReport": {
     "downloadGeneral": "Download Study Mode Report PDF",
     "generalScope": "The study mode report includes all students, not only those enrolled in this course.",
     "ownTitle": "Study Mode Report",
@@ -510,7 +512,6 @@
     "ratings": "Repeat, Hard, Good and Easy ratings",
     "difficultWordsTitle": "Difficult Words",
     "difficultWords": "Words with the lowest ease factors and upcoming reviews"
-
   },
   "enrollStudentForm": {
     "title": "Enroll student",
@@ -770,44 +771,83 @@
     "wordsTitle": "Vocabulary",
     "quizzesTitle": "Quiz Results",
     "studyTitle": "Study Progress"
-
   },
-
-"quizResults": {
-  "viewResults": "View results",
-  "viewResultsAria": "View results for quiz {{title}}",
-  "title": "Quiz results review",
-  "description": "Review students' grades, statistics and answers.",
-  "back": "Back to quizzes",
-  "loading": "Loading results...",
-  "loadError": "Could not load quiz results.",
-  "retry": "Retry",
-  "participants": "Participants",
-  "average": "Average",
-  "maxGrade": "Highest grade",
-  "minGrade": "Lowest grade",
-  "participation": "Participation",
-  "individualResults": "Individual results",
-  "student": "Student",
-  "grade": "Grade",
-  "score": "Score",
-  "time": "Time spent",
-  "submittedAt": "Submission date",
-  "actions": "Actions",
-  "notSubmitted": "Not submitted",
-  "viewAnswers": "View answers",
-  "noResults": "There are no recorded results for this quiz yet.",
-  "questionDifficulty": "Most difficult questions",
-  "noDifficulty": "No question difficulty data available.",
-  "answersOf": "Answers by",
-  "loadingAnswers": "Loading answers...",
-  "detailError": "Could not load the student's answers.",
-  "question": "Question",
-  "studentAnswer": "Student's answer",
-  "correctAnswer": "Correct answer",
-  "unanswered": "Unanswered",
-  "correct": "Correct",
-  "incorrect": "Incorrect"
-}
-
+  "aboutPage": {
+    "title": "About A Walking Dictionary",
+    "subtitle": "Platform tutorials and demonstrations",
+    "categories": {
+      "introduction": "Introduction",
+      "student": "Student",
+      "teacher": "Teacher"
+    },
+    "availableVideos": "Available videos",
+    "featureDescription": "Feature description",
+    "videoUnsupported": "Your browser does not support video playback.",
+    "tutorials": {
+      "inicio": {
+        "title": "Accessing the platform",
+        "description": "Introduces the authentication methods and access options for students, teachers, and guests, according to their permissions within the platform."
+      },
+      "perfil-reportes": {
+        "title": "Academic profile and reports",
+        "description": "Shows how to configure students' academic information, validate their profiles, and view PDF reports on progress and study mode."
+      },
+      "palabras-estudio": {
+        "title": "Registering words and study mode",
+        "description": "Explains how to register vocabulary in study decks, the form validations, and practice using interactive flashcards and spaced repetition."
+      },
+      "diccionario-mazos": {
+        "title": "Global Dictionary and Study Decks",
+        "description": "Shows how to consult approved vocabulary using searches and filters, explore academic study decks, and access semantic relationships through WordNet."
+      },
+      "quices-estudiante": {
+        "title": "Taking quizzes",
+        "description": "Demonstrates how to complete vocabulary assessments, select answers, and receive feedback on the results obtained."
+      },
+      "mazos-analiticas": {
+        "title": "Creating decks and viewing analytics",
+        "description": "Shows how to configure academic study decks, validate dates, and track student contributions through participation indicators."
+      },
+      "quices-docente": {
+        "title": "Generating and exporting quizzes",
+        "description": "Explains how to configure cumulative quizzes, select study decks, schedule assessments, and export them as PDF files."
+      }
+    }
+  },
+  "quizResults": {
+    "viewResults": "View results",
+    "viewResultsAria": "View results for quiz {{title}}",
+    "title": "Quiz results review",
+    "description": "Review students' grades, statistics and answers.",
+    "back": "Back to quizzes",
+    "loading": "Loading results...",
+    "loadError": "Could not load quiz results.",
+    "retry": "Retry",
+    "participants": "Participants",
+    "average": "Average",
+    "maxGrade": "Highest grade",
+    "minGrade": "Lowest grade",
+    "participation": "Participation",
+    "individualResults": "Individual results",
+    "student": "Student",
+    "grade": "Grade",
+    "score": "Score",
+    "time": "Time spent",
+    "submittedAt": "Submission date",
+    "actions": "Actions",
+    "notSubmitted": "Not submitted",
+    "viewAnswers": "View answers",
+    "noResults": "There are no recorded results for this quiz yet.",
+    "questionDifficulty": "Most difficult questions",
+    "noDifficulty": "No question difficulty data available.",
+    "answersOf": "Answers by",
+    "loadingAnswers": "Loading answers...",
+    "detailError": "Could not load the student's answers.",
+    "question": "Question",
+    "studentAnswer": "Student's answer",
+    "correctAnswer": "Correct answer",
+    "unanswered": "Unanswered",
+    "correct": "Correct",
+    "incorrect": "Incorrect"
+  }
 }

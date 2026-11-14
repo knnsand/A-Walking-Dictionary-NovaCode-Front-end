@@ -1,5 +1,7 @@
-// vistas/docente/revision-palabras/RevisionPalabras.test.jsx
-// HU-004: actualización manual, aprobación de tarjetas y coautorías.
+
+ // vistas/docente/revision-palabras/RevisionPalabras.test.jsx
+ // HU-004: actualización manual, aprobación de tarjetas y coautorías.
+ // Las coautorías permanecen desactivadas por defecto.
 
 import {
   render,
@@ -112,6 +114,7 @@ describe('RevisionPalabras: actualización manual', () => {
     render(<RevisionPalabras />);
 
     expect(await screen.findByText(HORA_VISIBLE)).toBeInTheDocument();
+
     expect(
       screen.getByRole('button', { name: 'Refresh' }),
     ).toBeEnabled();
@@ -121,10 +124,12 @@ describe('RevisionPalabras: actualización manual', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('vuelve a consultar las tres listas al actualizar y bloquea el botón mientras carga', async () => {
+  // ACTUALIZADA: solo se consultan las dos listas habilitadas.
+  it('vuelve a consultar las dos listas al actualizar y bloquea el botón mientras carga', async () => {
     render(<RevisionPalabras />);
 
     await screen.findByText(HORA_VISIBLE);
+
     expect(listarTarjetasPendientes).toHaveBeenCalledTimes(1);
 
     let terminarConsulta;
@@ -146,6 +151,7 @@ describe('RevisionPalabras: actualización manual', () => {
     expect(botonOcupado).toBeDisabled();
 
     fireEvent.click(botonOcupado);
+
     expect(listarTarjetasPendientes).toHaveBeenCalledTimes(2);
 
     terminarConsulta([]);
@@ -156,23 +162,29 @@ describe('RevisionPalabras: actualización manual', () => {
 
     expect(listarTarjetasPendientes).toHaveBeenCalledTimes(2);
     expect(listarTarjetasAprobadas).toHaveBeenCalledTimes(2);
-    expect(listarCoautoriasPendientes).toHaveBeenCalledTimes(2);
+
+    expect(listarCoautoriasPendientes).not.toHaveBeenCalled();
   });
 
-  it('si falla la lista de coautorías, informa el error y actualiza las demás', async () => {
+  // ACTUALIZADA: un fallo del servicio de coautorías no debe
+  // afectar la revisión cuando la funcionalidad está desactivada.
+  it('ignora el servicio de coautorías desactivado y actualiza las demás listas', async () => {
     listarCoautoriasPendientes.mockRejectedValue(
       new Error('Error 500'),
     );
 
     render(<RevisionPalabras />);
 
-    expect(
-      await screen.findByText(
-        'Could not refresh: co-authorships. The previous data is being shown.',
-      ),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(HORA_VISIBLE)).toBeInTheDocument();
 
-    expect(screen.getByText(HORA_VISIBLE)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Could not refresh/),
+    ).not.toBeInTheDocument();
+
+    expect(listarCoautoriasPendientes).not.toHaveBeenCalled();
+
+    expect(listarTarjetasPendientes).toHaveBeenCalledTimes(1);
+    expect(listarTarjetasAprobadas).toHaveBeenCalledTimes(1);
 
     fireEvent.click(
       screen.getByRole('tab', { name: /approved history/i }),
@@ -181,13 +193,16 @@ describe('RevisionPalabras: actualización manual', () => {
     expect(screen.getByText('horse')).toBeInTheDocument();
   });
 
-  it('si fallan las tres listas, informa los errores y muestra que no hay hora previa', async () => {
+  // ACTUALIZADA: los errores solo incluyen las listas habilitadas.
+  it('si fallan las dos listas habilitadas, informa los errores y muestra que no hay hora previa', async () => {
     listarTarjetasPendientes.mockRejectedValue(
       new Error('sin conexión'),
     );
+
     listarTarjetasAprobadas.mockRejectedValue(
       new Error('sin conexión'),
     );
+
     listarCoautoriasPendientes.mockRejectedValue(
       new Error('sin conexión'),
     );
@@ -196,14 +211,17 @@ describe('RevisionPalabras: actualización manual', () => {
 
     expect(
       await screen.findByText(
-        'Could not refresh: new terms, history, co-authorships. The previous data is being shown.',
+        'Could not refresh: new terms, history. The previous data is being shown.',
       ),
     ).toBeInTheDocument();
 
     expect(screen.getByText(/Last updated:/)).toBeInTheDocument();
+
     expect(
       screen.getByRole('button', { name: 'Refresh' }),
     ).toBeEnabled();
+
+    expect(listarCoautoriasPendientes).not.toHaveBeenCalled();
   });
 
   it('conserva los datos anteriores si falla la actualización de una lista', async () => {
@@ -234,14 +252,16 @@ describe('RevisionPalabras: actualización manual', () => {
     expect(screen.getByText('horse')).toBeInTheDocument();
   });
 
+  // ACTUALIZADA: se comprueba la recuperación de un fallo
+  // en una lista que sí está habilitada.
   it('se recupera de un fallo y limpia el aviso después de actualizar correctamente', async () => {
-    listarCoautoriasPendientes.mockRejectedValueOnce(
+    listarTarjetasPendientes.mockRejectedValueOnce(
       new Error('Error 500'),
     );
 
     render(<RevisionPalabras />);
 
-    await screen.findByText(/Could not refresh: co-authorships/);
+    await screen.findByText(/Could not refresh: new terms/);
 
     fireEvent.click(
       screen.getByRole('button', { name: 'Refresh' }),
@@ -254,6 +274,8 @@ describe('RevisionPalabras: actualización manual', () => {
     });
 
     expect(screen.getByText(HORA_VISIBLE)).toBeInTheDocument();
+
+    expect(listarCoautoriasPendientes).not.toHaveBeenCalled();
   });
 
   it('abre el modal de contexto al aprobar una tarjeta pendiente y permite cancelarlo', async () => {
@@ -414,7 +436,9 @@ describe('RevisionPalabras: actualización manual', () => {
     expect(actualizarContextoTarjeta).not.toHaveBeenCalled();
   });
 
-  it('aprueba una coautoría y vuelve a consultar las listas', async () => {
+  // ACTUALIZADA: una coautoría pendiente no debe mostrarse
+  // ni poder aprobarse cuando la funcionalidad está desactivada.
+  it('oculta las coautorías pendientes cuando la funcionalidad está desactivada', async () => {
     listarCoautoriasPendientes.mockResolvedValue([
       {
         id_aporte: 40,
@@ -428,31 +452,29 @@ describe('RevisionPalabras: actualización manual', () => {
 
     render(<RevisionPalabras />);
 
-    // Primero se selecciona la pestaña que contiene las coautorías.
-    fireEvent.click(
-      screen.getByRole('tab', { name: /co-authorship/i }),
-    );
+    await screen.findByText(HORA_VISIBLE);
 
-    // Espera la tarjeta una vez que la pestaña está visible.
-    const tarjeta = await screen.findByText('correr');
-    const contenedor = tarjeta.closest('.tarjeta-pendiente');
+    expect(
+      screen.getByRole('tab', { name: /new terms/i }),
+    ).toBeInTheDocument();
 
-    expect(contenedor).not.toBeNull();
+    expect(
+      screen.getByRole('tab', { name: /approved history/i }),
+    ).toBeInTheDocument();
 
-    fireEvent.click(
-      within(contenedor).getByRole('button', { name: /approve/i }),
-    );
+    expect(
+      screen.queryByRole('tab', { name: /co-authorship/i }),
+    ).not.toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(aprobarCoautoria).toHaveBeenCalled();
-    });
+    expect(screen.queryByText('correr')).not.toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(listarCoautoriasPendientes).toHaveBeenCalledTimes(2);
-    });
+    expect(listarCoautoriasPendientes).not.toHaveBeenCalled();
+    expect(aprobarCoautoria).not.toHaveBeenCalled();
   });
 
-  it('maneja un error al aprobar una coautoría', async () => {
+  // ACTUALIZADA: tampoco debe aparecer la opción de aprobar
+  // coautorías si existen registros pendientes.
+  it('no permite aprobar coautorías cuando la funcionalidad está desactivada', async () => {
     listarCoautoriasPendientes.mockResolvedValue([
       {
         id_aporte: 41,
@@ -464,27 +486,29 @@ describe('RevisionPalabras: actualización manual', () => {
       },
     ]);
 
-    aprobarCoautoria.mockRejectedValueOnce(
-      new Error('Error al aprobar la coautoría'),
-    );
-
     render(<RevisionPalabras />);
 
+    await screen.findByText(HORA_VISIBLE);
+
+    expect(
+      screen.queryByRole('tab', { name: /co-authorship/i }),
+    ).not.toBeInTheDocument();
+
+    expect(screen.queryByText('caminar')).not.toBeInTheDocument();
+
+    expect(listarCoautoriasPendientes).not.toHaveBeenCalled();
+    expect(aprobarCoautoria).not.toHaveBeenCalled();
+
     fireEvent.click(
-      screen.getByRole('tab', { name: /co-authorship/i }),
-    );
-
-    const tarjeta = await screen.findByText('caminar');
-    const contenedor = tarjeta.closest('.tarjeta-pendiente');
-
-    expect(contenedor).not.toBeNull();
-
-    fireEvent.click(
-      within(contenedor).getByRole('button', { name: /approve/i }),
+      screen.getByRole('button', { name: 'Refresh' }),
     );
 
     await waitFor(() => {
-      expect(aprobarCoautoria).toHaveBeenCalled();
+      expect(listarTarjetasPendientes).toHaveBeenCalledTimes(2);
+      expect(listarTarjetasAprobadas).toHaveBeenCalledTimes(2);
     });
+
+    expect(listarCoautoriasPendientes).not.toHaveBeenCalled();
+    expect(aprobarCoautoria).not.toHaveBeenCalled();
   });
 });

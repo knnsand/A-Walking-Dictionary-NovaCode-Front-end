@@ -13,7 +13,6 @@ import { LayoutPrincipal } from './componentes/comunes/LayoutPrincipal';
 
 import { PanelDocente } from './vistas/docente/PanelDocente';
 import { RevisionPalabras } from './vistas/docente/revision-palabras/RevisionPalabras';
-import { PanelEstudiante } from './vistas/estudiante/PanelEstudiante';
 import { ProgresoEstudiante } from './vistas/estudiante/reportes/ProgresoEstudiante';
 
 import { CursosEstudiantes } from './vistas/docente/cursos/CursosEstudiantes';
@@ -181,7 +180,7 @@ export default function App() {
             >
               <Route
                 index
-                element={<PanelEstudiante />}
+                element={<Navigate to="mazos" replace />}
               />
 
               {/* About: solo muestra introducción y tutoriales estudiantiles */}

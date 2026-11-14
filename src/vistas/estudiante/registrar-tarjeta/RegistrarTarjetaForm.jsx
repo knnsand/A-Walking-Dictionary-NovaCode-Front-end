@@ -128,7 +128,7 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       if (chequeo.duplicado) {
         if (!COAUTORIAS_HABILITADAS) {
           setError({
-            clave: 'registerWordForm.errors.duplicateWord',
+            clave: 'registerWordForm.duplicateWord',
           });
           return;
         }
