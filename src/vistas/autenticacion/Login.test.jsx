@@ -171,6 +171,19 @@ describe('Login', () => {
     );
   });
 
+  it('lleva al administrador a su vista (HU-023)', async () => {
+    mocks.loginWithGoogle.mockResolvedValue({
+      usuario: { rol: 'administrador', id_usuario: 9 },
+    });
+    mostrar();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Google success' }));
+
+    await waitFor(() =>
+      expect(mocks.navigate).toHaveBeenCalledWith('/admin', { replace: true })
+    );
+  });
+
   it('muestra un error para roles desconocidos', async () => {
     mocks.loginWithGoogle.mockResolvedValue({
       usuario: { rol: 'desconocido', id_usuario: 3 },

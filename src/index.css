@@ -79,8 +79,30 @@
 }
 
 /* ============================================================
+   ADMINISTRADOR (HU-023)
+   ============================================================ */
+
+.app-shell--administrador {
+  --color-role: #4A3B8C;
+  --color-role-hover: #382C6E;
+  --color-role-bg: #EEEBF7;
+  --color-role-bg-soft: #F6F4FB;
+  --color-role-text: #33275F;
+  --color-role-border: #A59BCF;
+}
+
+/* ============================================================
    COLORES POR ROL - MODO OSCURO
    ============================================================ */
+
+[data-theme='oscuro'] .app-shell--administrador {
+  --color-role: #9C8FDB;
+  --color-role-hover: #B1A6E4;
+  --color-role-bg: #241D45;
+  --color-role-bg-soft: #2C2452;
+  --color-role-text: #D9D3F3;
+  --color-role-border: #9C8FDB;
+}
 
 [data-theme='oscuro'] .app-shell--estudiante {
   --color-role: #D4636F;
