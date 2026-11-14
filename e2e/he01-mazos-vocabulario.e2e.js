@@ -119,8 +119,8 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
     );
   });
 
-  test('CA-1.3.4 Duplicado exacto: muestra un aviso y bloquea el envío', async ({ page }) => {
-    // "stone" ya existe en "Fear of Stones" (seed)
+  test('CA-1.3.4 Aporte propio: avisa que ya envió la palabra y bloquea el envío', async ({ page }) => {
+    // "stone" ya existe en "Fear of Stones" (seed) y la creó el mismo estudiante (juan)
     const modal = await llenar(page, {
       palabra: 'Stone',
       traduccion: 'piedra',
@@ -129,7 +129,7 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
     });
 
     await expect(modal.getByRole('alert')).toContainText(
-      'This word has already been submitted. Please choose a different word.'
+      'You already submitted this word in this deck'
     );
 
     await expect(
@@ -137,19 +137,16 @@ test.describe('HU-1.2 / HU-1.3 — Registrar palabra y detectar duplicados', () 
     ).toHaveCount(0);
   });
 
-  test('CA-1.3.4 Duplicado parcial: muestra un aviso y bloquea el envío', async ({ page }) => {
+  test('CA-1.3.2 Palabra repetida de otro estudiante: se registra como aporte', async ({ page }) => {
+    // "fear" ya existe en "Fear of Stones" (seed) y la creó otra estudiante (maria)
     const modal = await llenar(page, {
       palabra: 'fear',
       traduccion: 'temor',
       definicion: 'To be worried that something bad will happen.',
     });
 
-    await expect(modal.getByRole('alert')).toContainText(
-      'This word has already been submitted. Please choose a different word.'
-    );
-
     await expect(
-      modal.getByRole('button', { name: 'Confirm and submit' })
-    ).toHaveCount(0);
+      modal.getByRole('status').filter({ hasText: 'This word was already in the deck' })
+    ).toBeVisible();
   });
 });
