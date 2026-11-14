@@ -8,6 +8,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
 import { RegistrarTarjetaForm } from './RegistrarTarjetaForm';
 
+vi.hoisted(() => {
+  vi.stubEnv('VITE_ENABLE_COAUTHORSHIP', 'false');
+});
+
 vi.mock('../../../contexto/useAuth', () => ({
   useAuth: () => ({ inscripcionId: 44 }),
 }));

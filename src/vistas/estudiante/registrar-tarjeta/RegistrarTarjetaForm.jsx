@@ -224,8 +224,37 @@ export function RegistrarTarjetaForm({ onCerrar }) {
 
       {COAUTORIAS_HABILITADAS && confirmacion && (
         <div className="form-tarjeta__notice" role="alert">
-          {/* Aquí permanece todo el contenido original
-              de confirmación de coautorías */}
+          <strong>
+            {t(
+              confirmacion === 'coautoria'
+                ? 'registerWordForm.duplicate.sameTitle'
+                : 'registerWordForm.duplicate.differentTitle'
+            )}
+          </strong>
+
+          <p>
+            {t(
+              confirmacion === 'coautoria'
+                ? 'registerWordForm.duplicate.sameText'
+                : 'registerWordForm.duplicate.differentText'
+            )}
+          </p>
+
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setConfirmacion(null)}
+          >
+            {t('registerWordForm.duplicate.cancel')}
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => enviarTarjeta()}
+          >
+            {t('registerWordForm.duplicate.confirm')}
+          </button>
         </div>
       )}
 
