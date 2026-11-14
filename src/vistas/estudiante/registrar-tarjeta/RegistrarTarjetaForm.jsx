@@ -31,6 +31,11 @@ const COAUTORIAS_HABILITADAS =
  * @return {{mensaje?: string, clave?: string}}
  */
 function errorDeApi(e) {
+  // El mismo estudiante ya envió esa palabra: el backend responde 409 con este código.
+  if (e.cuerpo?.code === 'CARD_ALREADY_SUBMITTED') {
+    return { clave: 'registerWordForm.errors.alreadySubmitted' };
+  }
+
   return e.message
     ? { mensaje: e.message }
     : { clave: 'registerWordForm.errors.processFailed' };
@@ -126,15 +131,18 @@ export function RegistrarTarjetaForm({ onCerrar }) {
       );
 
       if (chequeo.duplicado) {
-        if (!COAUTORIAS_HABILITADAS) {
-          setError({
-            clave: 'registerWordForm.duplicateWord',
-          });
+        // Si el mismo estudiante ya envió la palabra, no se cuenta otra vez: se le avisa.
+        if (chequeo.ya_enviada) {
+          setError({ clave: 'registerWordForm.errors.alreadySubmitted' });
           return;
         }
 
-        setConfirmacion(chequeo.resultado);
-        return;
+        // Con coautorías habilitadas se pide confirmación; sin ellas, la palabra repetida
+        // de otro estudiante se registra igual como aporte (cuenta en participación).
+        if (COAUTORIAS_HABILITADAS) {
+          setConfirmacion(chequeo.resultado);
+          return;
+        }
       }
 
       await enviarTarjeta();
@@ -157,12 +165,18 @@ export function RegistrarTarjetaForm({ onCerrar }) {
         inscripcion_id: inscripcionId,
       });
 
-      if (registro.resultado === 'coautoria') {
-        setExito(t('registerWordForm.success.coauthor'));
-      } else if (registro.resultado === 'acepcion_nueva') {
-        setExito(t('registerWordForm.success.newMeaning'));
-      } else {
+      const esRepetida =
+        registro.resultado === 'coautoria' ||
+        registro.resultado === 'acepcion_nueva';
+
+      if (!esRepetida) {
         setExito(t('registerWordForm.success.submitted'));
+      } else if (!COAUTORIAS_HABILITADAS) {
+        setExito(t('registerWordForm.success.repeated'));
+      } else if (registro.resultado === 'coautoria') {
+        setExito(t('registerWordForm.success.coauthor'));
+      } else {
+        setExito(t('registerWordForm.success.newMeaning'));
       }
 
       setForm(FORM_INICIAL);
