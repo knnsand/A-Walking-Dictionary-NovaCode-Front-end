@@ -20,7 +20,8 @@
     "groups": {
       "teacherManagement": "Teacher Management",
       "myLearning": "My Learning",
-      "aboutWalkingDictionary": "About A Walking Dictionary"
+      "aboutWalkingDictionary": "About A Walking Dictionary",
+      "administration": "Administration"
     },
     "menu": {
       "globalDictionary": "Global Dictionary",
@@ -33,7 +34,8 @@
       "quizzes": "Quizzes",
       "progressAndPerformance": "Progress & Performance",
       "settingsAndProfile": "Settings & Profile",
-      "about": "Tutorials & Videos"
+      "about": "Tutorials & Videos",
+      "userManagement": "Users & Roles"
     },
     "theme": {
       "dark": "Dark Mode",
@@ -755,7 +757,8 @@
   "roles": {
     "docente": "Teacher",
     "estudiante": "Student",
-    "invitado": "Guest"
+    "invitado": "Guest",
+    "administrador": "Administrator"
   },
   "studentProgress": {
     "title": "Progress & Performance",
@@ -849,5 +852,63 @@
     "unanswered": "Unanswered",
     "correct": "Correct",
     "incorrect": "Incorrect"
+  },
+  "adminUsers": {
+    "title": "Users & Roles",
+    "subtitle": "Manage accounts, roles and access to the platform",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Name or email",
+    "roleFilter": "Role",
+    "statusFilter": "Status",
+    "allRoles": "All roles",
+    "allStatuses": "All statuses",
+    "active": "Active",
+    "inactive": "Inactive",
+    "search": "Search",
+    "clearFilters": "Clear filters",
+    "loading": "Loading users…",
+    "retry": "Retry",
+    "empty": "No users match the current filters.",
+    "total_one": "{{count}} user",
+    "total_other": "{{count}} users",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "registered": "Registered",
+      "actions": "Actions"
+    },
+    "you": "you",
+    "ownAccount": "You cannot change your own account",
+    "roleOf": "Role of {{name}}",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "confirmRole": "Change the role of {{name}} to {{role}}?",
+    "confirmActivate": "Activate the account of {{name}}?",
+    "confirmDeactivate": "Deactivate the account of {{name}}? They will not be able to log in.",
+    "roleChanged": "{{name}} is now {{role}}. The change applies the next time they log in.",
+    "activated": "The account of {{name}} was activated.",
+    "deactivated": "The account of {{name}} was deactivated. Open sessions expire within 8 hours.",
+    "pagination": "Users pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{total}}",
+    "errors": {
+      "generic": "The operation could not be completed. Please try again.",
+      "INVALID_ID": "The selected user is not valid.",
+      "ADMIN_INVALID_ROLE": "That role cannot be assigned. Use student, teacher or administrator.",
+      "ADMIN_INVALID_STATUS": "The status filter or value is not valid.",
+      "ADMIN_INVALID_QUERY": "The search or page is not valid.",
+      "ADMIN_USER_NOT_FOUND": "The account no longer exists.",
+      "USER_NOT_FOUND": "The account no longer exists.",
+      "ADMIN_SELF_CHANGE": "You cannot change your own role or status.",
+      "ADMIN_LAST_ADMIN": "You cannot remove or deactivate the last active administrator.",
+      "ADMIN_TEACHER_HAS_COURSES": "This teacher has assigned courses, so their role cannot be changed.",
+      "AUTH_TOKEN_MISSING": "Your session has expired. Please log in again.",
+      "AUTH_TOKEN_INVALID": "Your session has expired. Please log in again.",
+      "AUTH_FORBIDDEN": "Only administrators can manage users.",
+      "RATE_LIMITED": "Too many requests. Please wait a few minutes and try again."
+    }
   }
 }

@@ -106,6 +106,10 @@ vi.mock('./vistas/diccionario-global/DiccionarioGlobal', () => ({
   DiccionarioGlobal: () => <div>Diccionario global</div>,
 }));
 
+vi.mock('./vistas/administrador/usuarios/GestionUsuarios', () => ({
+  GestionUsuarios: () => <div>Gestión de usuarios</div>,
+}));
+
 function renderApp(ruta, { autenticado = false, rol = null } = {}) {
   authMock.autenticado = autenticado;
   authMock.rol = rol;
@@ -232,5 +236,43 @@ describe('App - configuración de rutas', () => {
     renderApp('/invitado/diccionario');
 
     expect(screen.getByText('Diccionario global')).toBeInTheDocument();
+  });
+
+  // HU-023 (CA-23.3): rutas del administrador.
+  it('redirige al login si no hay sesión al entrar como administrador', () => {
+    renderApp('/admin');
+
+    expect(screen.getByText('Pantalla de login')).toBeInTheDocument();
+  });
+
+  it('lleva al administrador a la gestión de usuarios', () => {
+    renderApp('/admin', { autenticado: true, rol: 'administrador' });
+
+    expect(screen.getByText('Gestión de usuarios')).toBeInTheDocument();
+  });
+
+  it.each(['/docente/mazos', '/estudiante/mazos'])(
+    'devuelve al administrador a su vista, sin bucles, si entra a %s',
+    (ruta) => {
+      renderApp(ruta, { autenticado: true, rol: 'administrador' });
+
+      expect(screen.getByText('Gestión de usuarios')).toBeInTheDocument();
+    }
+  );
+
+  it.each([
+    ['docente', 'Panel docente'],
+    ['estudiante', 'Mazos de estudiante'],
+  ])('no deja entrar al %s a la gestión de usuarios', (rol, vista) => {
+    renderApp('/admin/usuarios', { autenticado: true, rol });
+
+    expect(screen.queryByText('Gestión de usuarios')).not.toBeInTheDocument();
+    expect(screen.getByText(vista)).toBeInTheDocument();
+  });
+
+  it('manda al login a un rol sin vista propia', () => {
+    renderApp('/docente', { autenticado: true, rol: 'desconocido' });
+
+    expect(screen.getByText('Pantalla de login')).toBeInTheDocument();
   });
 });

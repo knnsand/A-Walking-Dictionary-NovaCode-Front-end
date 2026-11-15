@@ -28,6 +28,9 @@ export function Login() {
       const respuesta = await loginWithGoogle(credentialResponse.credential);
       if (respuesta.usuario.rol === 'docente') {
         void navigate('/docente', { replace: true });
+      } else if (respuesta.usuario.rol === 'administrador') {
+        // HU-023 (CA-23.3): el administrador va directo a su vista.
+        void navigate('/admin', { replace: true });
       } else if (respuesta.usuario.rol === 'estudiante') {
         let perfilCompleto = null;
         try {

@@ -36,48 +36,68 @@ import { RevisionResultadosQuices } from './vistas/docente/quices/RevisionResult
 // Sección About / Acerca de con tutoriales filtrados por rol.
 import { AcercaDe } from './vistas/acerca-de/AcercaDe';
 
+// HU-023: gestión de usuarios y roles del administrador.
+import { GestionUsuarios } from './vistas/administrador/usuarios/GestionUsuarios';
+
+/** @brief Página de inicio de cada rol con sesión. */
+const INICIO_POR_ROL = {
+  docente: '/docente',
+  estudiante: '/estudiante',
+  administrador: '/admin',
+};
+
 /**
- * @brief Protege una ruta para que solo la vea un estudiante autenticado.
- * Sin sesión redirige a /login y con otro rol redirige a /docente.
+ * @brief Protege una ruta para que solo la vea un rol.
+ * Sin sesión redirige a /login; con otro rol, a la página de inicio de ese rol
+ * (o a /login si el rol no tiene vista), así no hay bucles de redirección (CA-23.3).
  *
  * @param {Object} props
+ * @param {string} props.rolPermitido - Rol que puede ver la ruta.
  * @param {React.ReactNode} props.children - Contenido protegido.
  * @return {JSX.Element}
  */
-function RutaSoloEstudiante({ children }) {
+function RutaSoloRol({ rolPermitido, children }) {
   const { autenticado, rol } = useAuth();
 
   if (!autenticado) {
     return <Navigate to="/login" replace />;
   }
 
-  if (rol !== 'estudiante') {
-    return <Navigate to="/docente" replace />;
+  if (rol !== rolPermitido) {
+    return <Navigate to={INICIO_POR_ROL[rol] ?? '/login'} replace />;
   }
 
   return children;
 }
 
 /**
+ * @brief Protege una ruta para que solo la vea un estudiante autenticado.
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Contenido protegido.
+ * @return {JSX.Element}
+ */
+function RutaSoloEstudiante({ children }) {
+  return <RutaSoloRol rolPermitido="estudiante">{children}</RutaSoloRol>;
+}
+
+/**
  * @brief Protege una ruta para que solo la vea la docente autenticada.
- * Sin sesión redirige a /login y con otro rol redirige a /estudiante.
- *
  * @param {Object} props
  * @param {React.ReactNode} props.children - Contenido protegido.
  * @return {JSX.Element}
  */
 function RutaSoloDocente({ children }) {
-  const { autenticado, rol } = useAuth();
+  return <RutaSoloRol rolPermitido="docente">{children}</RutaSoloRol>;
+}
 
-  if (!autenticado) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (rol !== 'docente') {
-    return <Navigate to="/estudiante" replace />;
-  }
-
-  return children;
+/**
+ * @brief HU-023 (CA-23.3): protege una ruta para que solo la vea el administrador.
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Contenido protegido.
+ * @return {JSX.Element}
+ */
+function RutaSoloAdministrador({ children }) {
+  return <RutaSoloRol rolPermitido="administrador">{children}</RutaSoloRol>;
 }
 
 /**
@@ -239,6 +259,30 @@ export default function App() {
                 element={<DiccionarioGlobal />}
               />
 
+            </Route>
+
+            {/* ========================================= */}
+            {/* RUTAS DEL ADMINISTRADOR (HU-023)          */}
+            {/* ========================================= */}
+
+            <Route
+              path="/admin"
+              element={
+                <RutaSoloAdministrador>
+                  <LayoutPrincipal />
+                </RutaSoloAdministrador>
+              }
+            >
+              <Route
+                index
+                element={<Navigate to="usuarios" replace />}
+              />
+
+              {/* CA-23.1 y CA-23.2: listar, buscar, cambiar rol y estado */}
+              <Route
+                path="usuarios"
+                element={<GestionUsuarios />}
+              />
             </Route>
 
             {/* ========================================= */}

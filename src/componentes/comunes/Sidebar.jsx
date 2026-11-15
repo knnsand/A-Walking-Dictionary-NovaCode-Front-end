@@ -37,6 +37,17 @@ const MENU_POR_ROL = {
     },
   ],
 
+  // HU-023: el administrador solo gestiona cuentas y roles (CA-23.3: sin funciones de docente
+  // ni de estudiante).
+  administrador: [
+    {
+      grupoKey: 'sidebar.groups.administration',
+      items: [
+        { to: '/admin/usuarios', labelKey: 'sidebar.menu.userManagement' },
+      ],
+    },
+  ],
+
   estudiante: [
     {
       grupoKey: null,
@@ -108,7 +119,7 @@ const RUTAS_DESHABILITADAS_POR_ROL = {
  * definidas en MENU_POR_ROL según el rol activo.
  *
  * @param {Object} props
- * @param {string} props.rol - 'docente' | 'estudiante' | 'invitado'.
+ * @param {string} props.rol - 'docente' | 'estudiante' | 'invitado' | 'administrador'.
  * @param {string} [props.nombreUsuario] - Nombre para el pie del sidebar.
  * @param {string} [props.correoUsuario] - Correo para el pie del sidebar.
  * @param {Object} [props.contadores] - Objeto opcional { pendientes: 2 } para badges (HU-004).
