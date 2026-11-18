@@ -23,7 +23,7 @@ frontend para implementarlo.
 ### Criterios de aceptación
 | CA | Dado | Cuando | Entonces |
 |----|------|--------|----------|
-| **CA-20.1** Listado de estudiantes y aportes | Existen estudiantes inscritos en el curso y la docente elige «Exportar reporte de estudiantes» | Se genera el PDF | Incluye el nombre del curso, la fecha de generación y una tabla con nombre, código, nivel MCER, palabras añadidas, palabras aprobadas y coautorías de cada estudiante, junto con los totales del grupo |
+| **CA-20.1** Listado de estudiantes y aportes | Existen estudiantes inscritos en el curso y la docente elige «Exportar reporte de estudiantes» | Se genera el PDF | Incluye el nombre del curso, la fecha de generación y una tabla con nombre, código, nivel MCER, palabras añadidas, palabras aprobadas y palabras repetidas de cada estudiante, junto con los totales del grupo |
 | **CA-20.2** Notas de quices por estudiante | Existen quices presentados | Se genera el reporte | Muestra la calificación de cada estudiante en cada quiz y su promedio, marcando «No presentó» donde corresponda; si no hay quices, la sección lo indica sin generar un error |
 | **CA-20.3** Restricción de acceso al reporte | Un usuario que no es docente intenta descargar el reporte | Solicita la descarga | El sistema deniega el acceso con error HTTP 403 y no genera el documento |
 
@@ -77,7 +77,7 @@ columnas numéricas.
 | Nivel MCER | `usuario.nivel_ingles` |
 | Palabras añadidas | `aporte` del estudiante (por `inscripcion_id`) con `tipo_aporte = 'creada'` |
 | Palabras aprobadas | De las anteriores, las que tienen `tarjeta.estado = 'revisado_docente'` (supuesto 2) |
-| Coautorías | `aporte` con `tipo_aporte = 'coautoria'` (supuesto 3) |
+| Repetidas | `aporte` con `tipo_aporte IN ('coautoria', 'acepcion_nueva')`: palabras que el estudiante envió y ya estaban en el mazo (supuesto 3) |
 
 **Notas de quices (CA-20.2).** Para cada estudiante, la calificación en cada quiz del curso
 (`quiz.curso_id` ← `resultado_quiz.calificacion` por `estudiante_id`) y su **promedio**.
@@ -126,7 +126,7 @@ pide este contrato: encabezado, tabla con totales, notas con promedio y «No pre
    `student_id` de la HU-019, se cambia en el frontend.
 2. **Palabras aprobadas:** se propone `tarjeta.estado = 'revisado_docente'`; confirmar que no
    sea `aporte.estado = 'aprobado'`.
-3. **Coautorías:** confirmar si los aportes `acepcion_nueva` también cuentan.
+3. **Repetidas:** cuentan los aportes `coautoria` y `acepcion_nueva`; si el mismo estudiante repite una palabra, no se cuenta (el backend responde 409 `CARD_ALREADY_SUBMITTED`).
 4. **Promedio de quices:** confirmar si los quices no presentados se excluyen del promedio
    (propuesta) o cuentan como 0.
 5. **Escala de la nota:** se muestra `resultado_quiz.calificacion` tal cual; la escala (0-5)
