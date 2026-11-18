@@ -41,6 +41,9 @@ jobs:
       DISABLE_AUTH: 'false'
       GOOGLE_CLIENT_ID: ci-sin-google.apps.googleusercontent.com
       CORS_ORIGINS: http://localhost:3000
+      # Toda la suite llama desde la misma IP: se sube el límite de /admin (100 por 15 min en
+      # producción) solo en este backend de prueba, para que las pruebas de HU-023 no reciban 429.
+      RATE_LIMIT_ADMIN_MAX: 1000
       # Frontend (Vite)
       VITE_API_BASE_URL: http://localhost:5000/api/v1
       VITE_USE_MOCK: 'false'

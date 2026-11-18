@@ -28,8 +28,9 @@ const CRITERIOS = args.criterios || path.join(BACK_REPO, 'backend/pruebas-funcio
 const SALIDA = args.salida || path.join(raizFront, 'reportes-e2e/resumen.html');
 
 const ESTADO = { PASA: 'pasa', FALLA: 'falla', CONOCIDO: 'error conocido', PENDIENTE: 'pendiente' };
-const RE_CA = /CA-\d+\.\d+\.\d+/g;
-const RE_HU = /HU-\d+\.\d+/;
+// CA con tres números (CA-1.2.3, HU-1.2) o con dos (CA-23.1, HU-023), según la versión del backlog.
+const RE_CA = /CA-\d+\.\d+(?:\.\d+)?/g;
+const RE_HU = /HU-\d+(?:\.\d+)?/;
 
 /** Épicas del backlog (CLAUDE.md del backend). */
 const EPICAS = {
@@ -38,7 +39,27 @@ const EPICAS = {
   'HE-03': 'Evaluación Automatizada y Exportación',
   'HE-04': 'Repaso Adaptativo y Enriquecimiento Léxico',
   'HE-05': 'Gestión de Usuarios, Perfiles e Inscripción',
+  'HE-06': 'Consulta centralizada de vocabulario y mazos',
+  'HE-07': 'Generación de reportes',
 };
+
+/** Épica de las HU con numeración de tres cifras (Backlog_HU.xlsx, hoja "Historias de usuario"). */
+const EPICA_POR_HU = {
+  'HU-001': 'HE-01', 'HU-002': 'HE-01', 'HU-003': 'HE-01',
+  'HU-004': 'HE-02', 'HU-005': 'HE-02', 'HU-006': 'HE-02',
+  'HU-007': 'HE-03', 'HU-008': 'HE-03', 'HU-009': 'HE-03', 'HU-022': 'HE-03',
+  'HU-010': 'HE-04', 'HU-011': 'HE-04',
+  'HU-012': 'HE-05', 'HU-013': 'HE-05', 'HU-014': 'HE-05', 'HU-015': 'HE-05', 'HU-023': 'HE-05',
+  'HU-016': 'HE-06', 'HU-017': 'HE-06',
+  'HU-018': 'HE-07', 'HU-019': 'HE-07', 'HU-020': 'HE-07', 'HU-021': 'HE-07',
+};
+
+/** Épica de una HU: por la tabla de arriba, o por el primer número en el formato HU-x.y. */
+function epicaDe(hu) {
+  if (EPICA_POR_HU[hu]) return EPICA_POR_HU[hu];
+  const formatoAntiguo = hu.match(/^HU-(\d+)\.\d+$/);
+  return formatoAntiguo ? `HE-${formatoAntiguo[1].padStart(2, '0')}` : 'Otras';
+}
 
 // Códigos de color de la terminal (ESC[...m) que traen los mensajes de error.
 const COLOR_TERMINAL = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
@@ -53,7 +74,11 @@ const ordenNatural = (a, b) => a.localeCompare(b, 'es', { numeric: true });
 /** HU de la prueba: del primer CA del nombre, o del título del grupo (test.describe). */
 function huDe(nombre, contexto) {
   const ca = (nombre.match(RE_CA) || [])[0];
-  if (ca) return `HU-${ca.slice(3).split('.').slice(0, 2).join('.')}`;
+  if (ca) {
+    const partes = ca.slice(3).split('.');
+    // CA-1.2.3 → HU-1.2; CA-23.1 → HU-023
+    return partes.length === 3 ? `HU-${partes[0]}.${partes[1]}` : `HU-${partes[0].padStart(3, '0')}`;
+  }
   return (nombre.match(RE_HU) || contexto.match(RE_HU) || ['Otras'])[0];
 }
 
@@ -87,7 +112,7 @@ function desdePlaywright(json) {
           contexto,
           archivo: spec.file || '',
           hu,
-          epica: hu.startsWith('HU-') ? `HE-${hu.slice(3).split('.')[0].padStart(2, '0')}` : 'Otras',
+          epica: epicaDe(hu),
           estado,
           inestable: t.status === 'flaky',
           intentos: t.results.length,
