@@ -1,0 +1,29 @@
+name: Avisar al dashboard NovaCode
+on:
+  pull_request_target:
+    types: [opened, reopened, closed, synchronize, edited]
+  workflow_dispatch:
+permissions: {}
+jobs:
+  dispatch:
+    if: github.ref == 'refs/heads/main' && github.repository == 'knnsand/A-Walking-Dictionary-NovaCode-Front-end'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Solicitar actualización al Back-end
+        env:
+          DISPATCH_TOKEN: ${{ secrets.NOVACODE_STATS_DISPATCH_TOKEN }}
+        run: |
+          if [[ -z "$DISPATCH_TOKEN" ]]; then
+            echo "::warning::Configura NOVACODE_STATS_DISPATCH_TOKEN para activar el aviso."
+            exit 0
+          fi
+          curl --silent --show-error --fail-with-body --max-time 30 \
+            -X POST \
+            -H "Authorization: Bearer $DISPATCH_TOKEN" \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            -H 'Content-Type: application/json' \
+            --data '{"ref":"main"}' \
+            'https://api.github.com/repos/wsernam/A-Walking-Dictionary-NovaCode-Back-end/actions/workflows/novacode-stats.yml/dispatches'
+
