@@ -1,0 +1,65 @@
+name: Avisar al dashboard NovaCode
+
+on:
+  push:
+    branches: [develop]
+
+permissions: {}
+
+jobs:
+  notify:
+    if: >-
+      github.repository == 'knnsand/A-Walking-Dictionary-NovaCode-Front-end'
+      && !github.event.created && !github.event.deleted && !github.event.forced
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Detectar PR fusionado a develop
+        id: merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          commits=$(jq -c '[.commits[].id] + [.after]' "$GITHUB_EVENT_PATH")
+          for attempt in 1 2 3; do
+            prs=$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=closed&base=develop&sort=updated&direction=desc&per_page=100")
+            if jq -e --argjson commits "$commits" \
+              'any(.[]; .merged_at != null and (.merge_commit_sha as $sha | $commits | index($sha) != null))' \
+              <<< "$prs" >/dev/null; then
+              echo 'merged=true' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [[ "$attempt" != 3 ]]; then sleep 5; fi
+          done
+          echo 'merged=false' >> "$GITHUB_OUTPUT"
+
+      - name: Avisar al Back-end
+        if: steps.merge.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.NOVACODE_STATS_SIGNAL_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo '::error::Falta el secreto NOVACODE_STATS_SIGNAL_TOKEN.'
+            exit 1
+          fi
+          repo='wsernam/A-Walking-Dictionary-NovaCode-Back-end'
+          branch='novacode-stats-signal'
+
+          for attempt in 1 2 3; do
+            parent=$(gh api "repos/$repo/git/ref/heads/$branch" --jq .object.sha)
+            tree=$(gh api "repos/$repo/git/commits/$parent" --jq .tree.sha)
+            sha=$(jq -n --arg tree "$tree" --arg parent "$parent" \
+              --arg message "NovaCode: Front-end develop $GITHUB_SHA" \
+              '{message:$message,tree:$tree,parents:[$parent]}' |
+              gh api --method POST "repos/$repo/git/commits" --input - --jq .sha)
+
+            if gh api --method PATCH "repos/$repo/git/refs/heads/$branch" \
+              -f sha="$sha" -F force=false >/dev/null; then
+              exit 0
+            fi
+            if [[ "$attempt" != 3 ]]; then sleep 3; fi
+          done
+
+          echo '::error::No se pudo actualizar la rama auxiliar de Back-end.'
+          exit 1
