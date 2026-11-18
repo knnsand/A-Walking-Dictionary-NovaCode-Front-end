@@ -23,7 +23,15 @@ function contenedorCorriendo() {
 }
 
 export function reiniciarBaseDeDatos() {
-  const opciones = { input: sqlDeReinicio(), stdio: ['pipe', 'ignore', 'pipe'] };
+  ejecutarSql(sqlDeReinicio());
+}
+
+/**
+ * Corre SQL contra la base de pruebas (contenedor local o PostgreSQL del CI).
+ * @param {string} sql - Sentencias a ejecutar; si una falla, se detiene (ON_ERROR_STOP).
+ */
+export function ejecutarSql(sql) {
+  const opciones = { input: sql, stdio: ['pipe', 'ignore', 'pipe'] };
 
   if (contenedorCorriendo()) {
     execFileSync(

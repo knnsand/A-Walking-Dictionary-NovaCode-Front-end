@@ -1,12 +1,14 @@
 // Se ejecuta UNA vez antes de toda la suite E2E:
 //   1. Verifica que front y back respondan y que DISABLE_AUTH no esté activo.
 //   2. Reinicia la base al estado de init.sql + seed.sql (ver base-datos.js).
-//   3. Completa el perfil de los estudiantes que usan las pruebas (si el perfil está incompleto el
+//   3. HU-023: convierte en administrador a William Serna (docente del seed SIN cursos). El seed no
+//      trae administrador y el primero solo se crea por SQL (crear-primer-administrador.sql del back).
+//   4. Completa el perfil de los estudiantes que usan las pruebas (si el perfil está incompleto el
 //      front bloquea el menú, HU-012). Carlos se deja sin completar para probar HU-5.2.
 
 import { API_URL, FRONT_URL, JWT_SECRET, DISABLE_AUTH } from './entorno.js';
-import { reiniciarBaseDeDatos } from './base-datos.js';
-import { api } from './sesion.js';
+import { ejecutarSql, reiniciarBaseDeDatos } from './base-datos.js';
+import { api, USUARIOS } from './sesion.js';
 
 async function responde(url) {
   try {
@@ -23,6 +25,8 @@ export default async function preparacionGlobal() {
   if (!(await responde(FRONT_URL))) throw new Error(`El frontend no responde en ${FRONT_URL}.`);
 
   if (process.env.SIN_REINICIO_BD !== 'true') reiniciarBaseDeDatos();
+
+  ejecutarSql(`UPDATE usuario SET rol = 'administrador', activo = true WHERE email = '${USUARIOS.admin.email}';`);
 
   const perfiles = { juan: '104600001', maria: '104600002', karen: '104600006', manuela: '104600007' };
   for (const [nombre, codigo] of Object.entries(perfiles)) {

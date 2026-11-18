@@ -15,6 +15,9 @@ export const USUARIOS = {
   carlos: { id_usuario: 4, nombre_completo: 'Carlos Estudiante', email: 'carlos.estudiante@unicauca.edu.co', rol: 'estudiante' },
   karen: { id_usuario: 6, nombre_completo: 'ksandoval', email: 'ksandoval@unicauca.edu.co', rol: 'estudiante' },
   manuela: { id_usuario: 7, nombre_completo: 'manmeneses', email: 'manmeneses@unicauca.edu.co', rol: 'estudiante' },
+  thalia: { id_usuario: 8, nombre_completo: 'thaliabernal', email: 'thaliabernal@unicauca.edu.co', rol: 'estudiante' },
+  // HU-023: en el seed es docente sin cursos; preparacion-global.js lo convierte en administrador.
+  admin: { id_usuario: 5, nombre_completo: 'William Serna', email: 'wsernamunoz@gmail.com', rol: 'administrador' },
 };
 
 const base64url = (texto) => Buffer.from(texto).toString('base64url');
