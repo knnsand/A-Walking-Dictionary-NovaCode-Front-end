@@ -75,6 +75,7 @@ Además: resultados por épica y por HU, fallas con su captura y *trace*, y la m
 Estas pruebas describen el comportamiento correcto y hoy fallan "a propósito". Cuando se corrija el error, Playwright avisa que pasan, y hay que quitar el `test.fail`.
 
 - **CA-2.2.1, variante "Ghanés":** el modal la ofrece, pero el backend solo acepta "inglés ghanés" y responde 400. Como el front aprueba antes de guardar el contexto, la tarjeta queda aprobada sin registro ni variante.
+- **CA-23.2, cuenta desactivada con sesión abierta:** el middleware `authenticate` del back solo valida la firma del JWT y no revisa `usuario.activo`, así que la cuenta desactivada sigue usando la API hasta que el token vence (8 h). La prueba abre la sesión de la estudiante en otro contexto (`browser.newContext()`) mientras el administrador la desactiva.
 - **CA-4.2.1 a 4.2.3 (WordNet):** `WordnetCacheRepository.js` del back lee las columnas `categoria_gramatical` y `familia` de `wordnet_cache`, pero `init.sql` no las crea, así que `GET /enrichment/family/:word` responde 500 y la tarjeta muestra "Could not load the suggestions".
 - **CA-3.2.3, desde otro dispositivo:** `ResponderQuiz.jsx` solo recuerda el envío en `localStorage` y no consulta `GET /quizzes/:id/result`.
 

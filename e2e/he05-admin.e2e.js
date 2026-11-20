@@ -89,6 +89,31 @@ test.describe('HU-023 — Administrar usuarios y roles', () => {
     await expect(page.getByRole('status')).toContainText('The account of thaliabernal was activated.');
   });
 
+  test('CA-23.2 Una cuenta desactivada ya no puede usar la aplicación, aunque tenga la sesión abierta', async ({ page, browser }) => {
+    // Error conocido del back: el middleware `authenticate` solo valida la firma del JWT y no
+    // revisa `usuario.activo`, así que el token de la cuenta desactivada sigue sirviendo hasta que
+    // vence (8 h). Es la limitación de HU-023 anotada en el CLAUDE.md del back. Al corregirla, quitar el test.fail.
+    test.fail(true, 'authenticate no revisa usuario.activo: el JWT sigue vigente tras desactivar');
+
+    // Thalía tiene la sesión abierta en su propio navegador (otro contexto, otro localStorage).
+    const contextoThalia = await browser.newContext();
+    await iniciarSesion(contextoThalia, 'thalia');
+    const thalia = await contextoThalia.newPage();
+    await thalia.goto('/estudiante');
+    await expect(thalia).toHaveURL(/\/estudiante/);
+    const rutaPropia = `/students/${USUARIOS.thalia.id_usuario}/context`;
+    await api('GET', rutaPropia, 'thalia'); // antes de desactivarla, su token sirve
+
+    // El administrador la desactiva desde la interfaz.
+    page.once('dialog', (dialogo) => dialogo.accept());
+    await filaDe(page, USUARIOS.thalia.email).getByRole('button', { name: 'Deactivate' }).click();
+    await expect(page.getByRole('status')).toContainText('The account of thaliabernal was deactivated.');
+
+    // Con el mismo token, la API ya no la deja entrar.
+    await expect(api('GET', rutaPropia, 'thalia')).rejects.toThrow(/ 40[13] /);
+    await contextoThalia.close();
+  });
+
   test('CA-23.4 No deja quitar el rol a un docente con cursos y muestra el error traducido', async ({ page }) => {
     const fila = filaDe(page, USUARIOS.ana.email);
     page.once('dialog', (dialogo) => dialogo.accept());

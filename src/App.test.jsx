@@ -270,6 +270,33 @@ describe('App - configuración de rutas', () => {
     expect(screen.getByText(vista)).toBeInTheDocument();
   });
 
+  // Quien ya tiene sesión no se queda en el login: va a la página de inicio de su rol.
+  it.each([
+    ['/login', 'administrador', 'Gestión de usuarios'],
+    ['/', 'administrador', 'Gestión de usuarios'],
+    ['/login', 'docente', 'Panel docente'],
+    ['/login', 'estudiante', 'Mazos de estudiante'],
+  ])('lleva desde %s al %s con sesión a su vista', (ruta, rol, vista) => {
+    renderApp(ruta, { autenticado: true, rol });
+
+    expect(screen.queryByText('Pantalla de login')).not.toBeInTheDocument();
+    expect(screen.getByText(vista)).toBeInTheDocument();
+  });
+
+  it('no redirige el login cuando la sesión empieza estando en él (lo hace Login.jsx)', () => {
+    const { rerender } = renderApp('/login');
+
+    authMock.autenticado = true;
+    authMock.rol = 'estudiante';
+    rerender(
+      <MemoryRouter initialEntries={['/login']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Pantalla de login')).toBeInTheDocument();
+  });
+
   it('manda al login a un rol sin vista propia', () => {
     renderApp('/docente', { autenticado: true, rol: 'desconocido' });
 
