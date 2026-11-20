@@ -5,6 +5,7 @@
  * (docente, estudiante e invitado) y las protege según la sesión.
  */
 
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexto/AuthProvider';
 import { ThemeProvider } from './contexto/ThemeProvider';
@@ -68,6 +69,23 @@ function RutaSoloRol({ rolPermitido, children }) {
   }
 
   return children;
+}
+
+/**
+ * @brief Pantallas de entrada (/login): quien ya tiene sesión va a la página de inicio de su rol.
+ * Se usa el rol que había al abrir la pantalla, no el actual, para no adelantarse a la
+ * navegación que hace Login.jsx justo después de iniciar sesión (p. ej. al perfil incompleto).
+ *
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Pantalla para quien no tiene sesión.
+ * @return {JSX.Element}
+ */
+function RutaSinSesion({ children }) {
+  const { rol } = useAuth();
+  const [rolAlEntrar] = useState(rol);
+  const inicio = INICIO_POR_ROL[rolAlEntrar];
+
+  return inicio ? <Navigate to={inicio} replace /> : children;
 }
 
 /**
@@ -328,7 +346,11 @@ export default function App() {
 
             <Route
               path="/login"
-              element={<Login />}
+              element={
+                <RutaSinSesion>
+                  <Login />
+                </RutaSinSesion>
+              }
             />
 
             {/* HU-012: registro autónomo con Google */}

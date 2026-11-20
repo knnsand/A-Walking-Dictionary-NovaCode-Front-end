@@ -1,8 +1,9 @@
 // HU-5.4 / HU-023 — Matriz de control de acceso por rol (RBAC) en el navegador
 //
-// Cada rol abre la página de inicio de todos los roles. Si la ruta es suya, se queda; si no, termina
-// en SU propia vista (o en /login sin sesión), y la URL deja de cambiar: no hay bucles de
-// redirección (CA-23.3). También se comprueba que cada rol vea solo su menú.
+// Cada rol abre la página de inicio de todos los roles, la raíz y el login. Si la ruta es suya, se
+// queda; si no, termina en SU propia vista (o en /login sin sesión), y la URL deja de cambiar: no
+// hay bucles de redirección (CA-23.3). Con sesión, / y /login también llevan a su vista. También
+// se comprueba que cada rol vea solo su menú.
 
 import { test, expect } from '@playwright/test';
 import { iniciarSesion } from './soporte/sesion.js';
@@ -14,7 +15,7 @@ const ROLES = [
   { rol: 'administrador', usuario: 'admin', inicio: '/admin/usuarios' },
 ];
 
-const RUTAS = ['/estudiante/mazos', '/docente/mazos', '/admin/usuarios'];
+const RUTAS = ['/', '/login', '/estudiante/mazos', '/docente/mazos', '/admin/usuarios'];
 
 /** Opción del menú lateral que identifica a cada rol. */
 const MENU = {
