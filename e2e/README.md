@@ -66,6 +66,7 @@ Además: resultados por épica y por HU, fallas con su captura y *trace*, y la m
 | `he03-evaluacion.e2e.js` | HU-3.1, 3.2, 3.3 |
 | `he05-acceso-roles.e2e.js` | HU-5.4 |
 | `he05-perfil-inscripcion.e2e.js` | HU-5.2, 5.3 |
+| `he06-diccionario.e2e.js` | HU-016, HU-017 (estudiante e invitado) |
 
 ### Errores conocidos (`test.fail`)
 
