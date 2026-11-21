@@ -69,6 +69,7 @@ Además: resultados por épica y por HU, fallas con su captura y *trace*, y la m
 | `he05-admin.e2e.js` | HU-023 |
 | `he05-matriz-roles.e2e.js` | HU-5.4, HU-023 (matriz de roles) |
 | `he05-perfil-inscripcion.e2e.js` | HU-5.2, 5.3 |
+| `he07-reportes.e2e.js` | HU-018, 019, 020, 021 (descarga de los PDF y su contenido, con `soporte/pdf.js`) |
 | `he06-diccionario.e2e.js` | HU-016, HU-017 (estudiante e invitado) |
 
 ### Errores conocidos (`test.fail`)
