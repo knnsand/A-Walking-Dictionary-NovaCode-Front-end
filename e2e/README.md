@@ -64,6 +64,7 @@ Además: resultados por épica y por HU, fallas con su captura y *trace*, y la m
 | `he01-mazos-vocabulario.e2e.js` | HU-1.1, 1.2, 1.3 |
 | `he02-curaduria-docente.e2e.js` | HU-2.1, 2.2, 2.3 |
 | `he03-evaluacion.e2e.js` | HU-3.1, 3.2, 3.3 |
+| `he03-resultados-quiz.e2e.js` | HU-022 (panel de resultados de la docente) |
 | `he04-estudio.e2e.js` | HU-4.1, 4.2 |
 | `he05-acceso-roles.e2e.js` | HU-5.4 |
 | `he05-admin.e2e.js` | HU-023 |
