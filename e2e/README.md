@@ -15,11 +15,21 @@ Los archivos se llaman `*.e2e.js` para que Vitest no los ejecute.
 
 ## Ejecutar en local
 
-Con este repo clonado dentro de `walking-dictionary-infra`:
+Clona los dos repos en la misma carpeta, con sus nombres originales: el E2E busca el back en
+`../A-Walking-Dictionary-NovaCode-Back-end` (se puede cambiar con `BACK_REPO`).
 
 ```bash
-# desde la raíz de walking-dictionary-infra (necesita CORS_ORIGINS en el docker-compose.yml)
-docker compose up -d
+# 1) desde la raíz del repo del back: base de datos
+docker compose up -d postgres
+# 2) desde backend/ del repo del back (CORS_ORIGINS debe incluir http://localhost:3000)
+npm run dev
+# 3) desde la raíz de este repo, la primera vez:
+npm install
+npx playwright install chromium
+# 4) front-end en otra terminal, y luego las pruebas:
+npm run dev
+npm run test:e2e
+```
 
 # desde la raíz de este repo, la primera vez:
 npm install
@@ -29,7 +39,7 @@ npm run test:e2e
 ```
 
 - **Las pruebas reinician la base local** al estado de `init.sql` + `seed.sql` del backend antes de empezar. Si el contenedor `walking_dictionary_db` está corriendo, el reinicio se hace dentro de él. Para no reiniciarla: `SIN_REINICIO_BD=true npm run test:e2e`.
-- **Variables:** se leen del `.env` de infra (`JWT_SECRET` debe ser el mismo del backend, y `DISABLE_AUTH=false`). También se pueden pasar `FRONT_URL`, `API_URL` y `BACK_REPO`.
+- **Variables:** se leen de las variables del proceso o del .env de la carpeta que contiene los dos clones (necesita JWT_SECRET, el mismo del backend, y DISABLE_AUTH=false). También se pueden pasar `FRONT_URL`, `API_URL` y `BACK_REPO`.
 - **Ver el navegador:** `npx playwright test --headed`. Modo interactivo: `npx playwright test --ui`.
 
 ## Login
